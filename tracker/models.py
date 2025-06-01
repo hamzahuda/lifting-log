@@ -12,7 +12,7 @@ class Workout(models.Model):
 class Exercise(models.Model):
     workout = models.ForeignKey(Workout, on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
-    rest_period = models.TimeField()
+    rest_period = models.DurationField()
     min_reps = models.IntegerField()
     max_reps = models.IntegerField()
     notes = models.TextField()
