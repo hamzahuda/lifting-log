@@ -1,10 +1,10 @@
-from django.shortcuts import render
 from .models import *
-from rest_framework import viewsets
+from rest_framework import generics
+from rest_framework.permissions import AllowAny
 from .serializers import *
 
-# Create your views here.
 
-class WorkoutView(viewsets.ModelViewSet):
-    serializer_class = WorkoutSerializer
-    queryset = Workout.objects.all()
+class CreateUserView(generics.CreateAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [AllowAny]
