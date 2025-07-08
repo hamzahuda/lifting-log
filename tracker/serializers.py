@@ -10,7 +10,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
         extra_kwargs = {"password": {"write_only": True}}
 
 
-class WorkoutSerializer(serializers.ModelSerializer):
+class WorkoutSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Workout
         fields = ("id", "user", "name", "date", "notes")
