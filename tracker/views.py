@@ -32,9 +32,10 @@ class WorkoutViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated, IsObjectOwnerOrAdmin]
 
     def get_queryset(self):
+        username = self.request.query_params.get("username", None)
         user = self.request.user
-        if user.is_staff:
-            return Workout.objects.all()
+        if user.is_staff and username:
+            return Workout.objects.filter(user__username=username)
         return Workout.objects.filter(user=user)
 
     def perform_create(self, serializer):
