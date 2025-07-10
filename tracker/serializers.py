@@ -32,7 +32,7 @@ class WorkoutSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Workout
-        fields = ("id", "user", "name", "date", "notes")
+        fields = ("url", "user", "name", "date", "notes")
 
 
 class WorkoutTemplateSerializer(serializers.HyperlinkedModelSerializer):
@@ -41,4 +41,4 @@ class WorkoutTemplateSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Workout
-        fields = ("id", "user", "name", "date", "notes")
+        fields = ("url", "user", "name", "date", "notes")
