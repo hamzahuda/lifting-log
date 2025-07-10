@@ -33,3 +33,12 @@ class WorkoutSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Workout
         fields = ("id", "user", "name", "date", "notes")
+
+
+class WorkoutTemplateSerializer(serializers.HyperlinkedModelSerializer):
+
+    user = serializers.ReadOnlyField(source="user.username")
+
+    class Meta:
+        model = Workout
+        fields = ("id", "user", "name", "date", "notes")

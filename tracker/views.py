@@ -32,3 +32,15 @@ class WorkoutViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
+
+
+class WorkoutTemplateViewSet(viewsets.ModelViewSet):
+    serializer_class = WorkoutTemplateSerializer
+    permission_classes = [IsAuthenticated, IsObjectOwner]
+
+    def get_queryset(self):
+        user = self.request.user
+        return WorkoutTemplate.objects.filter(user=user)
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
