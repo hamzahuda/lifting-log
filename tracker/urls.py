@@ -6,7 +6,7 @@ router = routers.DefaultRouter()
 router.register(r"users", views.UserViewSet, basename="user")
 router.register(r"workouts", views.WorkoutViewSet, basename="workout")
 router.register(
-    r"workout-templates", views.WorkoutTemplateViewSet, basename="workout-template"
+    r"workout-templates", views.WorkoutTemplateViewSet, basename="workouttemplate"
 )
 
 urlpatterns = [
