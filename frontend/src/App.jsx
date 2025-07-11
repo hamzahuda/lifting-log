@@ -6,6 +6,7 @@ import Logout from "./components/Logout.jsx";
 import Register from "./pages/Register.jsx";
 import NotFound from "./pages/NotFound.jsx";
 import Navbar from "./components/Navbar.jsx";
+import Templates from "./pages/Templates.jsx";
 
 function App() {
     return (
@@ -13,18 +14,14 @@ function App() {
             <Navbar />
             <div>
                 <Routes>
-                    <Route
-                        path="/"
-                        element={
-                            <ProtectedRoute>
-                                {/* This is where the main application code that requires authentication goes */}
-                                <Home />
-                            </ProtectedRoute>
-                        }
-                    />
+                    <Route element={<ProtectedRoute />}>
+                        <Route path="/" element={<Home />} />
+                        <Route path="/templates" element={<Templates />} />
+                    </Route>
                     <Route path="/login" element={<Login />} />
                     <Route path="/logout" element={<Logout />} />
                     <Route path="/register" element={<Register />} />
+
                     <Route path="/*" element={<NotFound />} />
                 </Routes>
             </div>
