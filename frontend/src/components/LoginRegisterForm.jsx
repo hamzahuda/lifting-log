@@ -3,7 +3,7 @@ import api from "../api";
 import { useNavigate } from "react-router";
 import { ACCESS_TOKEN, REFRESH_TOKEN } from "../constants";
 
-function Form({ route, method }) {
+function LoginRegisterForm({ route, method }) {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const navigate = useNavigate();
@@ -51,4 +51,4 @@ function Form({ route, method }) {
     );
 }
 
-export default Form;
+export default LoginRegisterForm;
