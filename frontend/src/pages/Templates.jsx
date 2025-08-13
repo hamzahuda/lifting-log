@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import api from "../api";
+import TemplateForm from "../components/TemplateForm";
+import { Link } from "react-router";
 
 export default function Templates() {
     const [templates, setTemplates] = useState([]);
@@ -12,7 +14,6 @@ export default function Templates() {
         api.get("/workout-templates/")
             .then((result) => {
                 setTemplates(result.data);
-                console.log(result);
             })
             .catch((err) => {
                 console.error(err);
@@ -25,12 +26,14 @@ export default function Templates() {
             <h2>Your Workout Templates</h2>
             <div>
                 {templates.map((template) => (
-                    <div key={template.id}>
+                    <Link to={`/templates/${template.id}`} key={template.id}>
                         <h3>{template.name}</h3>
                         <p>Notes: {template.notes}</p>
-                    </div>
+                    </Link>
                 ))}
             </div>
+            <h2>Create New Template</h2>
+            <TemplateForm />
         </div>
     );
 }

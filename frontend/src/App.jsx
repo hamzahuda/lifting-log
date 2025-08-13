@@ -7,6 +7,7 @@ import Register from "./pages/Register.jsx";
 import NotFound from "./pages/NotFound.jsx";
 import Navbar from "./components/Navbar.jsx";
 import Templates from "./pages/Templates.jsx";
+import TemplateDetail from "./pages/TemplateDetail.jsx";
 
 function App() {
     return (
@@ -17,6 +18,10 @@ function App() {
                     <Route element={<ProtectedRoute />}>
                         <Route path="/" element={<Home />} />
                         <Route path="/templates" element={<Templates />} />
+                        <Route
+                            path="/templates/:id"
+                            element={<TemplateDetail />}
+                        />
                     </Route>
                     <Route path="/login" element={<Login />} />
                     <Route path="/logout" element={<Logout />} />
