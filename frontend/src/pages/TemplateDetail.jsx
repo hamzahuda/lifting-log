@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import api from "../api";
 
 function TemplateDetail() {
     const { id } = useParams();
     const [template, setTemplate] = useState(null);
+    let navigate = useNavigate();
 
     useEffect(() => {
         api.get(`/workout-templates/${id}/`)
@@ -17,6 +18,14 @@ function TemplateDetail() {
     if (!template) {
         return <div>Loading template...</div>;
     }
+
+    const handleDeleteTemplate = () => {
+        api.delete(`/workout-templates/${id}/`)
+            .then(() => {
+                navigate("/templates/");
+            })
+            .catch((err) => alert(err));
+    };
 
     return (
         <div>
@@ -39,6 +48,9 @@ function TemplateDetail() {
                     ))}
                 </div>
             ))}
+            <button type="button" onClick={handleDeleteTemplate}>
+                Delete Template
+            </button>
         </div>
     );
 }
