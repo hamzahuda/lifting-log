@@ -50,7 +50,7 @@ class WorkoutSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Workout
-        fields = ("url", "user", "name", "date", "notes", "exercises", "template")
+        fields = ("id", "url", "user", "name", "date", "notes", "exercises", "template")
 
 
 # --- Template Serializers ---
