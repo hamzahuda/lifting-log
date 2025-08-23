@@ -32,8 +32,7 @@ export default function Templates() {
                     </Link>
                 ))}
             </div>
-            <h2>Create New Template</h2>
-            <TemplateForm />
+            <TemplateForm onTemplateCreated={getTemplates} />
         </div>
     );
 }
