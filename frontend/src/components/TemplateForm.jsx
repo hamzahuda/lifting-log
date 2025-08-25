@@ -19,6 +19,7 @@ function TemplateForm({ formType, originalTemplate, onSubmit }) {
     // Handlers for form state changes
     const handleAddExercise = () => {
         const newExercise = {
+            id: `temp-${Date.now()}`,
             name: "",
             rest_period: "00:02:00",
             min_reps: 8,
