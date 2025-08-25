@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import api from "../api";
-import TemplateForm from "../components/TemplateForm";
+import CreateTemplateForm from "../components/CreateTemplateForm";
 import { Link } from "react-router";
 
 export default function Templates() {
@@ -32,7 +32,7 @@ export default function Templates() {
                     </Link>
                 ))}
             </div>
-            <TemplateForm onTemplateCreated={getTemplates} />
+            <CreateTemplateForm onTemplateCreated={getTemplates} />
         </div>
     );
 }

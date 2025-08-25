@@ -1,7 +1,7 @@
 import { useState } from "react";
 import api from "../api";
 
-function TemplateForm({ onTemplateCreated }) {
+function CreateTemplateForm({ onTemplateCreated }) {
     const [name, setName] = useState("");
     const [notes, setNotes] = useState("");
     const [exercises, setExercises] = useState([]);
@@ -191,4 +191,4 @@ function TemplateForm({ onTemplateCreated }) {
     );
 }
 
-export default TemplateForm;
+export default CreateTemplateForm;
