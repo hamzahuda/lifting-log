@@ -92,15 +92,39 @@ class WorkoutTemplateSerializer(serializers.HyperlinkedModelSerializer):
         exercise_templates_data = validated_data.pop("exercise_templates")
         workout_template = WorkoutTemplate.objects.create(**validated_data)
 
-        # For every exercise, remove and save the sets (nested data), create the exercise, then create all the sets
-        for exercise_data in exercise_templates_data:
-            set_templates_data = exercise_data.pop("set_templates")
+        # For every exercise template, remove the set templates, create the exercise template, then create all the sets
+        for exercise_template_data in exercise_templates_data:
+            set_templates_data = exercise_template_data.pop("set_templates")
             exercise_template = ExerciseTemplate.objects.create(
-                workout_template=workout_template, **exercise_data
+                workout_template=workout_template, **exercise_template_data
             )
-            for set_data in set_templates_data:
+            for set_template_data in set_templates_data:
                 SetTemplate.objects.create(
-                    exercise_template=exercise_template, **set_data
+                    exercise_template=exercise_template, **set_template_data
                 )
 
         return workout_template
+
+    @transaction.atomic
+    def update(self, instance, validated_data):
+
+        instance.name = validated_data.get("name", instance.name)
+        instance.notes = validated_data.get("notes", instance.notes)
+        instance.save()
+
+        # Delete old exercises and sets
+        instance.exercise_templates.all().delete()
+
+        # Create new exercises and sets from the request data
+        exercise_templates_data = validated_data.get("exercise_templates")
+        for exercise_template_data in exercise_templates_data:
+            set_templates_data = exercise_template_data.pop("set_templates")
+            exercise_template = ExerciseTemplate.objects.create(
+                workout_template=instance, **exercise_template_data
+            )
+            for set_template_data in set_templates_data:
+                SetTemplate.objects.create(
+                    exercise_template=exercise_template, **set_template_data
+                )
+
+        return instance
