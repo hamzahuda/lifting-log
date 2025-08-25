@@ -1,74 +1,76 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import api from "../api";
 
 function EditTemplateForm({ originalTemplate, onSave }) {
-    const [name, setName] = useState(originalTemplate.name);
-    const [notes, setNotes] = useState(originalTemplate.notes);
-    const [exercises, setExercises] = useState(
-        originalTemplate.exercise_templates
-    );
+    const [formData, setFormData] = useState(null);
+
+    useEffect(() => {
+        setFormData(JSON.parse(JSON.stringify(originalTemplate)));
+    }, [originalTemplate]);
+
+    if (!formData) {
+        return <div>Loading form...</div>;
+    }
 
     // Exercise handlers
     const handleAddExercise = () => {
-        setExercises([
-            ...exercises,
+        const exercise_templates = [
+            ...formData.exercise_templates,
             {
                 name: "",
                 rest_period: "00:02:00",
                 min_reps: 8,
                 max_reps: 12,
                 notes: "",
-                set_templates: [{ notes: "" }, { notes: "" }, { notes: "" }],
+                set_templates: [{ notes: "" }],
             },
-        ]);
+        ];
+        setFormData({
+            ...formData,
+            exercise_templates,
+        });
     };
 
     const handleExerciseChange = (index, event) => {
-        const newExercises = [...exercises];
+        const newExercises = [...formData.exercise_templates];
         newExercises[index][event.target.name] = event.target.value;
-        setExercises(newExercises);
+        setFormData({ ...formData, exercise_templates: newExercises });
     };
 
     const handleRemoveExercise = (index) => {
-        const newExercises = [...exercises];
+        const newExercises = [...formData.exercise_templates];
         newExercises.splice(index, 1);
-        setExercises(newExercises);
+        setFormData({ ...formData, exercise_templates: newExercises });
     };
 
     // Set handlers
     const handleAddSet = (exerciseIndex) => {
-        const newExercises = [...exercises];
+        const newExercises = [...formData.exercise_templates];
         newExercises[exerciseIndex].set_templates.push({ notes: "" });
-        setExercises(newExercises);
+        setFormData({ ...formData, exercise_templates: newExercises });
     };
 
     const handleSetChange = (exerciseIndex, setIndex, event) => {
-        const newExercises = [...exercises];
+        const newExercises = [...formData.exercise_templates];
         newExercises[exerciseIndex].set_templates[setIndex][event.target.name] =
             event.target.value;
-        setExercises(newExercises);
+        setFormData({ ...formData, exercise_templates: newExercises });
     };
 
     const handleRemoveSet = (exerciseIndex, setIndex) => {
-        const newExercises = [...exercises];
+        const newExercises = [...formData.exercise_templates];
         newExercises[exerciseIndex].set_templates.splice(setIndex, 1);
-        setExercises(newExercises);
+        setFormData({ ...formData, exercise_templates: newExercises });
     };
 
     // Form submission
     const handleSubmit = async (event) => {
         event.preventDefault();
 
-        const templateData = {
-            name,
-            notes,
-            exercise_templates: exercises,
-        };
-
         try {
             await api.put(
                 `/workout-templates/${originalTemplate.id}/`,
-                templateData
+                formData
             );
             alert("Template edited successfully!");
 
@@ -85,21 +87,25 @@ function EditTemplateForm({ originalTemplate, onSave }) {
             <input
                 type="text"
                 name="name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
+                value={formData.name}
+                onChange={(e) =>
+                    setFormData({ ...formData, name: e.target.value })
+                }
                 placeholder="Template Name (e.g., Upper Body)"
                 required
             />
             <textarea
                 name="notes"
-                value={notes}
-                onChange={(e) => setNotes(e.target.value)}
+                value={formData.notes}
+                onChange={(e) =>
+                    setFormData({ ...formData, notes: e.target.value })
+                }
                 placeholder="Template Notes (e.g., Focus on strength)"
             />
 
             <h3>Exercises</h3>
-            {exercises.map((exercise, exerciseIndex) => (
-                <div key={exerciseIndex}>
+            {formData.exercise_templates.map((exercise, exerciseIndex) => (
+                <div key={exercise.id}>
                     <h4>Exercise {exerciseIndex + 1}</h4>
                     <input
                         type="text"

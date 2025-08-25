@@ -82,9 +82,11 @@ function TemplateDetail() {
             >
                 {isEditing ? "Exit Editing Without Saving" : "Edit Template"}
             </button>
-            <button type="button" onClick={handleDeleteTemplate}>
-                Delete Template
-            </button>
+            {!isEditing && (
+                <button type="button" onClick={handleDeleteTemplate}>
+                    Delete Template
+                </button>
+            )}
         </div>
     );
 }
