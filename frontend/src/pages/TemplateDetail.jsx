@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router";
 import api from "../api";
-import EditTemplateForm from "../components/EditTemplateForm";
+import TemplateForm from "../components/TemplateForm";
 
 function TemplateDetail() {
     const { id } = useParams();
@@ -32,6 +32,19 @@ function TemplateDetail() {
         getTemplate();
     };
 
+    const handleUpdateSubmit = (templateData) => {
+        api.put(`/workout-templates/${id}/`, templateData)
+            .then((res) => {
+                if (res.status === 200) {
+                    alert("Template updated successfully!");
+                    handleSave();
+                } else {
+                    alert("Failed to update template.");
+                }
+            })
+            .catch((err) => alert(err));
+    };
+
     const handleDeleteTemplate = () => {
         if (window.confirm("Are you sure you want to delete this template?")) {
             api.delete(`/workout-templates/${id}/`)
@@ -46,9 +59,10 @@ function TemplateDetail() {
     return (
         <div>
             {isEditing ? (
-                <EditTemplateForm
+                <TemplateForm
+                    formType={"edit"}
                     originalTemplate={template}
-                    onSave={handleSave}
+                    onSubmit={handleUpdateSubmit}
                 />
             ) : (
                 <>
@@ -74,14 +88,10 @@ function TemplateDetail() {
                     ))}
                 </>
             )}
-            <button
-                type="button"
-                onClick={() => {
-                    setIsEditing(!isEditing);
-                }}
-            >
-                {isEditing ? "Exit Editing Without Saving" : "Edit Template"}
+            <button type="button" onClick={() => setIsEditing(!isEditing)}>
+                {isEditing ? "Cancel Edit" : "Edit Template"}
             </button>
+
             {!isEditing && (
                 <button type="button" onClick={handleDeleteTemplate}>
                     Delete Template

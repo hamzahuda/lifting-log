@@ -1,33 +1,34 @@
 import { useEffect, useState } from "react";
-import api from "../api";
 
-function EditTemplateForm({ originalTemplate, onSave }) {
+const BLANK_TEMPLATE = {
+    name: "",
+    notes: "",
+    exercise_templates: [],
+};
+
+function TemplateForm({ formType, originalTemplate, onSubmit }) {
+    // If editing use the original template. If creating, use blank
+    const initialData = originalTemplate || BLANK_TEMPLATE;
     const [formData, setFormData] = useState(null);
 
     useEffect(() => {
-        setFormData(JSON.parse(JSON.stringify(originalTemplate)));
+        // Deep copy of og template
+        setFormData(JSON.parse(JSON.stringify(initialData)));
     }, [originalTemplate]);
 
-    if (!formData) {
-        return <div>Loading form...</div>;
-    }
-
-    // Exercise handlers
+    // Handlers for form state changes
     const handleAddExercise = () => {
-        const exercise_templates = [
-            ...formData.exercise_templates,
-            {
-                name: "",
-                rest_period: "00:02:00",
-                min_reps: 8,
-                max_reps: 12,
-                notes: "",
-                set_templates: [{ notes: "" }],
-            },
-        ];
+        const newExercise = {
+            name: "",
+            rest_period: "00:02:00",
+            min_reps: 8,
+            max_reps: 12,
+            notes: "",
+            set_templates: [{ id: `temp-set-${Date.now()}`, notes: "" }],
+        };
         setFormData({
             ...formData,
-            exercise_templates,
+            exercise_templates: [...formData.exercise_templates, newExercise],
         });
     };
 
@@ -43,10 +44,10 @@ function EditTemplateForm({ originalTemplate, onSave }) {
         setFormData({ ...formData, exercise_templates: newExercises });
     };
 
-    // Set handlers
     const handleAddSet = (exerciseIndex) => {
         const newExercises = [...formData.exercise_templates];
-        newExercises[exerciseIndex].set_templates.push({ notes: "" });
+        const newSet = { id: `temp-set-${Date.now()}`, notes: "" };
+        newExercises[exerciseIndex].set_templates.push(newSet);
         setFormData({ ...formData, exercise_templates: newExercises });
     };
 
@@ -63,27 +64,27 @@ function EditTemplateForm({ originalTemplate, onSave }) {
         setFormData({ ...formData, exercise_templates: newExercises });
     };
 
-    // Form submission
-    const handleSubmit = async (event) => {
+    const handleSubmit = (event) => {
         event.preventDefault();
-
-        try {
-            await api.put(
-                `/workout-templates/${originalTemplate.id}/`,
-                formData
-            );
-            alert("Template edited successfully!");
-
-            // Refresh template list
-            onSave();
-        } catch (error) {
-            alert("Failed to edit template: " + error);
+        // Pass final form data to parent's handler
+        onSubmit(formData);
+        // reset form after creation
+        if (formType === "create") {
+            setFormData(JSON.parse(JSON.stringify(BLANK_TEMPLATE)));
         }
     };
 
+    if (!formData) {
+        return <div>Loading form...</div>;
+    }
+
     return (
         <form onSubmit={handleSubmit}>
-            <h2>Create New Template</h2>
+            <h2>
+                {formType === "create"
+                    ? "Create New Template"
+                    : "Edit Template"}
+            </h2>
             <input
                 type="text"
                 name="name"
@@ -192,9 +193,11 @@ function EditTemplateForm({ originalTemplate, onSave }) {
                 Add Exercise
             </button>
             <br />
-            <button type="submit">Save Edits</button>
+            <button type="submit">
+                {formType === "create" ? "Create Template" : "Save Changes"}
+            </button>
         </form>
     );
 }
 
-export default EditTemplateForm;
+export default TemplateForm;

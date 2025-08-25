@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import api from "../api";
-import CreateTemplateForm from "../components/CreateTemplateForm";
+import TemplateForm from "../components/TemplateForm";
 import { Link } from "react-router";
 
 export default function Templates() {
@@ -20,6 +20,19 @@ export default function Templates() {
             });
     }
 
+    const handleCreateSubmit = (templateData) => {
+        api.post("/workout-templates/", templateData)
+            .then((res) => {
+                if (res.status === 201) {
+                    alert("Template created successfully!");
+                    getTemplates();
+                } else {
+                    alert("Failed to create template.");
+                }
+            })
+            .catch((err) => alert(err));
+    };
+
     return (
         <div>
             <h1>Templates Page</h1>
@@ -32,7 +45,7 @@ export default function Templates() {
                     </Link>
                 ))}
             </div>
-            <CreateTemplateForm onTemplateCreated={getTemplates} />
+            <TemplateForm formType="create" onSubmit={handleCreateSubmit} />
         </div>
     );
 }
