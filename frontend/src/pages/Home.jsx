@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import api from "../api";
+import CreateWorkoutForm from "../components/CreateWorkoutForm";
 
 export default function Home() {
     const [workouts, setWorkouts] = useState([]);
@@ -31,6 +32,7 @@ export default function Home() {
                     </div>
                 ))}
             </div>
+            <CreateWorkoutForm />
         </div>
     );
 }
