@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import api from "../api";
 import CreateWorkoutForm from "../components/CreateWorkoutForm";
+import { Link } from "react-router";
 
 export default function Home() {
     const [workouts, setWorkouts] = useState([]);
@@ -25,11 +26,12 @@ export default function Home() {
             <h2>Your Workouts</h2>
             <div>
                 {workouts.map((workout) => (
-                    <div key={workout.id}>
+                    <Link to={`/workouts/${workout.id}`} key={workout.id}>
+                        <br />
                         <h3>{workout.name}</h3>
                         <p>Date: {workout.date}</p>
                         <p>Notes: {workout.notes}</p>
-                    </div>
+                    </Link>
                 ))}
             </div>
             <CreateWorkoutForm />

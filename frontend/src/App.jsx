@@ -8,6 +8,7 @@ import NotFound from "./pages/NotFound.jsx";
 import Navbar from "./components/Navbar.jsx";
 import Templates from "./pages/Templates.jsx";
 import TemplateDetail from "./pages/TemplateDetail.jsx";
+import WorkoutDetail from "./pages/WorkoutDetail.jsx";
 
 function App() {
     return (
@@ -17,6 +18,10 @@ function App() {
                 <Routes>
                     <Route element={<ProtectedRoute />}>
                         <Route path="/" element={<Home />} />
+                        <Route
+                            path="/workouts/:id"
+                            element={<WorkoutDetail />}
+                        />
                         <Route path="/templates" element={<Templates />} />
                         <Route
                             path="/templates/:id"
