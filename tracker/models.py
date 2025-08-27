@@ -54,11 +54,6 @@ class Workout(models.Model):
             exercises_data = workout_data.get("exercises")
             for exercise_data in exercises_data:
                 sets_data = exercise_data.pop("sets")
-
-                rest_period = exercise_data.get("rest_period")
-                if rest_period and isinstance(rest_period, str):
-                    exercise_data["rest_period"] = parse_duration(rest_period)
-
                 exercise = self.exercises.create(**exercise_data)
                 for set_data in sets_data:
                     set_data.setdefault("reps", 0)
@@ -122,13 +117,14 @@ class WorkoutTemplate(models.Model):
         self.notes = template_data.get("notes", self.notes)
         self.save()
 
-        self.exercise_templates.all().delete()  # Delete old exercises
-        exercise_data = template_data.get("exercise_templates", [])
-        for exercise_template_data in exercise_data:
-            set_data = exercise_template_data.pop("set_templates")
-            exercise = self.exercise_templates.create(**exercise_template_data)
-            for set_template_data in set_data:
-                exercise.set_templates.create(**set_template_data)
+        if "exercise_templates" in template_data:
+            self.exercise_templates.all().delete()
+            exercise_data = template_data.get("exercise_templates", [])
+            for exercise_template_data in exercise_data:
+                set_data = exercise_template_data.pop("set_templates")
+                exercise = self.exercise_templates.create(**exercise_template_data)
+                for set_template_data in set_data:
+                    exercise.set_templates.create(**set_template_data)
         return self
 
     def __str__(self):
