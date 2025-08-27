@@ -84,47 +84,12 @@ class WorkoutTemplateSerializer(serializers.HyperlinkedModelSerializer):
         model = WorkoutTemplate
         fields = ["url", "id", "user", "name", "notes", "exercise_templates"]
 
-    # This is so if any of the saves to db fail the everything gets rolled back
-    @transaction.atomic
     def create(self, validated_data):
+        # View gives user in context
+        user = self.context["request"].user
+        return WorkoutTemplate.create_with_exercises(
+            user=user, template_data=validated_data
+        )
 
-        # Remove the nested exercise templates data to allow workout template construction
-        exercise_templates_data = validated_data.pop("exercise_templates")
-        workout_template = WorkoutTemplate.objects.create(**validated_data)
-
-        # For every exercise template, remove the set templates, create the exercise template, then create all the sets
-        for exercise_template_data in exercise_templates_data:
-            set_templates_data = exercise_template_data.pop("set_templates")
-            exercise_template = ExerciseTemplate.objects.create(
-                workout_template=workout_template, **exercise_template_data
-            )
-            for set_template_data in set_templates_data:
-                SetTemplate.objects.create(
-                    exercise_template=exercise_template, **set_template_data
-                )
-
-        return workout_template
-
-    @transaction.atomic
     def update(self, instance, validated_data):
-
-        instance.name = validated_data.get("name", instance.name)
-        instance.notes = validated_data.get("notes", instance.notes)
-        instance.save()
-
-        # Delete old exercises and sets
-        instance.exercise_templates.all().delete()
-
-        # Create new exercises and sets from the request data
-        exercise_templates_data = validated_data.get("exercise_templates")
-        for exercise_template_data in exercise_templates_data:
-            set_templates_data = exercise_template_data.pop("set_templates")
-            exercise_template = ExerciseTemplate.objects.create(
-                workout_template=instance, **exercise_template_data
-            )
-            for set_template_data in set_templates_data:
-                SetTemplate.objects.create(
-                    exercise_template=exercise_template, **set_template_data
-                )
-
-        return instance
+        return instance.update_with_exercises(template_data=validated_data)
