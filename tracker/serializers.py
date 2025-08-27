@@ -32,7 +32,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
 class SetSerializer(serializers.ModelSerializer):
     class Meta:
         model = Set
-        fields = ["reps", "weight", "notes"]
+        fields = ["id", "reps", "weight", "notes"]
 
 
 class ExerciseSerializer(serializers.ModelSerializer):
@@ -40,7 +40,7 @@ class ExerciseSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Exercise
-        fields = ["name", "rest_period", "min_reps", "max_reps", "notes", "sets"]
+        fields = ["id", "name", "rest_period", "min_reps", "max_reps", "notes", "sets"]
 
 
 class WorkoutSerializer(serializers.HyperlinkedModelSerializer):
