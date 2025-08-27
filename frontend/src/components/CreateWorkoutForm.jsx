@@ -14,7 +14,7 @@ function CreateWorkoutForm() {
             .then((res) => {
                 setTemplates(res.data);
                 if (res.data.length > 0) {
-                    setSelectedTemplate(res.data[0].id);
+                    setSelectedTemplate(res.data[0].url);
                 }
             })
             .catch((err) => console.error(err));
@@ -42,7 +42,7 @@ function CreateWorkoutForm() {
                 onChange={(e) => setSelectedTemplate(e.target.value)}
             >
                 {templates.map((template) => (
-                    <option key={template.id} value={template.id}>
+                    <option key={template.id} value={template.url}>
                         {template.name}
                     </option>
                 ))}
