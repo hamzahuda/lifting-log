@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from .models import *
 from django.contrib.auth.models import User
-from django.db import transaction
+import datetime
 
 
 # User Serializer
@@ -52,6 +52,21 @@ class WorkoutSerializer(serializers.HyperlinkedModelSerializer):
         model = Workout
         fields = ("id", "url", "user", "name", "date", "notes", "exercises", "template")
 
+    def create(self, validated_data):
+        user = self.context["request"].user
+        template = validated_data.get("template")
+        date = validated_data.get("date", datetime.date.today())
+
+        if template.user != user:
+            raise serializers.ValidationError(
+                "You do not have permission to use this template."
+            )
+
+        return Workout.create_from_template(user=user, template=template, date=date)
+
+    def update(self, instance, validated_data):
+        return instance.update_with_exercises(validated_data)
+
 
 # --- Template Serializers ---
 class SetTemplateSerializer(serializers.ModelSerializer):
@@ -85,7 +100,6 @@ class WorkoutTemplateSerializer(serializers.HyperlinkedModelSerializer):
         fields = ["url", "id", "user", "name", "notes", "exercise_templates"]
 
     def create(self, validated_data):
-        # View gives user in context
         user = self.context["request"].user
         return WorkoutTemplate.create_with_exercises(
             user=user, template_data=validated_data
