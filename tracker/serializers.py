@@ -46,7 +46,7 @@ class ExerciseSerializer(serializers.ModelSerializer):
 class WorkoutSerializer(serializers.HyperlinkedModelSerializer):
 
     user = serializers.ReadOnlyField(source="user.username")
-    exercises = ExerciseSerializer(many=True, read_only=True)
+    exercises = ExerciseSerializer(many=True, required=False)
 
     class Meta:
         model = Workout
