@@ -51,7 +51,7 @@ function WorkoutDetail() {
             api.delete(`/workouts/${id}/`)
                 .then(() => {
                     alert("Workout deleted successfully!");
-                    navigate("/workouts");
+                    navigate("/");
                 })
                 .catch((err) => alert(err));
         }
