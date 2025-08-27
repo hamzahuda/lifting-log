@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.db import models, transaction
+from django.utils.dateparse import parse_duration
 
 # --- Workout Models ---
 
@@ -12,6 +13,58 @@ class Workout(models.Model):
     template = models.ForeignKey(
         "WorkoutTemplate", on_delete=models.SET_NULL, null=True, blank=True
     )
+
+    @classmethod
+    @transaction.atomic
+    def create_from_template(cls, user, template, date):
+        new_workout = cls.objects.create(
+            user=user,
+            name=template.name,
+            notes=template.notes,
+            date=date,
+            template=template,
+        )
+
+        # Copy exercises and sets from the template
+        for exercise_template in template.exercise_templates.all():
+            new_exercise = new_workout.exercises.create(
+                name=exercise_template.name,
+                rest_period=exercise_template.rest_period,
+                min_reps=exercise_template.min_reps,
+                max_reps=exercise_template.max_reps,
+                notes=exercise_template.notes,
+            )
+            for set_template in exercise_template.set_templates.all():
+                new_exercise.sets.create(
+                    reps=0,
+                    weight=0,
+                    notes=set_template.notes,
+                )
+        return new_workout
+
+    @transaction.atomic
+    def update_with_exercises(self, workout_data):
+        self.name = workout_data.get("name", self.name)
+        self.date = workout_data.get("date", self.date)
+        self.notes = workout_data.get("notes", self.notes)
+        self.save()
+
+        if "exercises" in workout_data:
+            self.exercises.all().delete()
+            exercises_data = workout_data.get("exercises")
+            for exercise_data in exercises_data:
+                sets_data = exercise_data.pop("sets")
+
+                rest_period = exercise_data.get("rest_period")
+                if rest_period and isinstance(rest_period, str):
+                    exercise_data["rest_period"] = parse_duration(rest_period)
+
+                exercise = self.exercises.create(**exercise_data)
+                for set_data in sets_data:
+                    set_data.setdefault("reps", 0)
+                    set_data.setdefault("weight", 0)
+                    exercise.sets.create(**set_data)
+        return self
 
     def __str__(self):
         return f"{self.name} on {self.date}"

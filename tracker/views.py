@@ -5,7 +5,6 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from .permissions import *
 from .serializers import *
 import datetime
-from django.db import transaction
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -42,14 +41,11 @@ class WorkoutViewSet(viewsets.ModelViewSet):
         user = self.request.user
         return Workout.objects.filter(user=user)
 
-    @transaction.atomic
     def create(self, request, *args, **kwargs):
-
         template_id = request.data.get("template")
-
         if not template_id:
             return Response(
-                {"error": "Template required to create a workout."},
+                {"error": "A 'template' ID is required to create a workout."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -61,35 +57,21 @@ class WorkoutViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_404_NOT_FOUND,
             )
 
-        # Create the new Workout from the template
-        new_workout = Workout.objects.create(
-            user=request.user,
-            name=template.name,
-            notes=template.notes,
-            date=request.data.get("date", datetime.date.today()),
-            template=template,
+        date = request.data.get("date", datetime.date.today())
+        new_workout = Workout.create_from_template(
+            user=request.user, template=template, date=date
         )
-
-        # Copy exercises and sets from the template
-        for exercise_template in template.exercise_templates.all():
-            new_exercise = Exercise.objects.create(
-                workout=new_workout,
-                name=exercise_template.name,
-                rest_period=exercise_template.rest_period,
-                min_reps=exercise_template.min_reps,
-                max_reps=exercise_template.max_reps,
-                notes=exercise_template.notes,
-            )
-            for set_template in exercise_template.set_templates.all():
-                Set.objects.create(
-                    exercise=new_exercise,
-                    reps=0,
-                    weight=0,
-                    notes=set_template.notes,
-                )
 
         serializer = self.get_serializer(new_workout)
         headers = self.get_success_headers(serializer.data)
         return Response(
             serializer.data, status=status.HTTP_201_CREATED, headers=headers
         )
+
+    def update(self, request, *args, **kwargs):
+        workout_instance = self.get_object()
+
+        updated_workout = workout_instance.update_with_exercises(request.data)
+
+        serializer = self.get_serializer(updated_workout)
+        return Response(serializer.data)
