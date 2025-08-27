@@ -33,6 +33,10 @@ class SetSerializer(serializers.ModelSerializer):
     class Meta:
         model = Set
         fields = ["id", "reps", "weight", "notes"]
+        extra_kwargs = {
+            "reps": {"required": False},
+            "weight": {"required": False},
+        }
 
 
 class ExerciseSerializer(serializers.ModelSerializer):
