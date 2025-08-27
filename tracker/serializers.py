@@ -51,6 +51,9 @@ class WorkoutSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Workout
         fields = ("id", "url", "user", "name", "date", "notes", "exercises", "template")
+        extra_kwargs = {
+            "name": {"required": False},
+        }
 
     def create(self, validated_data):
         user = self.context["request"].user
