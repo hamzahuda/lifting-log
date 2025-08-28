@@ -1,6 +1,5 @@
 from django.conf import settings
 from django.db import models, transaction
-from django.utils.dateparse import parse_duration
 
 # --- Workout Models ---
 
