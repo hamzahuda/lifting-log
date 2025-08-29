@@ -1,1 +1,1 @@
-# gym-tracker
+# Lifting Log
