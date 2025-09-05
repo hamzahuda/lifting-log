@@ -1,5 +1,5 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios, { AxiosError, InternalAxiosRequestConfig } from "axios";
+import * as SecureStore from "expo-secure-store";
 import { ACCESS_TOKEN, REFRESH_TOKEN } from "./constants";
 
 const api = axios.create({
@@ -8,7 +8,7 @@ const api = axios.create({
 
 api.interceptors.request.use(
     async (config: InternalAxiosRequestConfig) => {
-        const token = await AsyncStorage.getItem(ACCESS_TOKEN);
+        const token = await SecureStore.getItemAsync(ACCESS_TOKEN);
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
         }
@@ -35,7 +35,9 @@ api.interceptors.response.use(
             originalRequest._retry = true;
 
             try {
-                const refreshToken = await AsyncStorage.getItem(REFRESH_TOKEN);
+                const refreshToken = await SecureStore.getItemAsync(
+                    REFRESH_TOKEN
+                );
                 const res = await axios.post(
                     `${process.env.EXPO_PUBLIC_API_URL}/token/refresh/`,
                     {
@@ -44,7 +46,10 @@ api.interceptors.response.use(
                 );
 
                 if (res.status === 200) {
-                    await AsyncStorage.setItem(ACCESS_TOKEN, res.data.access);
+                    await SecureStore.setItemAsync(
+                        ACCESS_TOKEN,
+                        res.data.access
+                    );
                     api.defaults.headers.Authorization = `Bearer ${res.data.access}`;
                     originalRequest.headers.Authorization = `Bearer ${res.data.access}`;
                     // Do the api call again with the new access token
