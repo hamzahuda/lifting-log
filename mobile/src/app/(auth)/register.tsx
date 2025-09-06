@@ -1,4 +1,5 @@
-import { Text, View } from "react-native";
+import LoginRegisterForm from "@/src/components/LoginRegisterForm";
+import { View } from "react-native";
 
 export default function Register() {
     return (
@@ -9,7 +10,7 @@ export default function Register() {
                 alignItems: "center",
             }}
         >
-            <Text>Register</Text>
+            <LoginRegisterForm route="/users/" method="register" />
         </View>
     );
 }
