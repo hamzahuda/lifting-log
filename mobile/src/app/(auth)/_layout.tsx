@@ -1,10 +1,12 @@
-import { Tabs } from "expo-router";
+import { Redirect, Stack } from "expo-router";
+import { useAuth } from "@clerk/clerk-expo";
 
-export default function AuthLayout() {
-    return (
-        <Tabs>
-            <Tabs.Screen name="login" />
-            <Tabs.Screen name="register" />
-        </Tabs>
-    );
+export default function AuthRoutesLayout() {
+    const { isSignedIn } = useAuth();
+
+    if (isSignedIn) {
+        return <Redirect href={"/"} />;
+    }
+
+    return <Stack />;
 }

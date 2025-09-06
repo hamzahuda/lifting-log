@@ -1,17 +1,11 @@
 import { Stack } from "expo-router";
-
-const isAuthenticated = true;
+import { ClerkProvider } from "@clerk/clerk-expo";
+import { tokenCache } from "@clerk/clerk-expo/token-cache";
 
 export default function RootLayout() {
     return (
-        <Stack>
-            <Stack.Protected guard={!isAuthenticated}>
-                <Stack.Screen name="(auth)" />
-            </Stack.Protected>
-
-            <Stack.Protected guard={isAuthenticated}>
-                <Stack.Screen name="(app)" />
-            </Stack.Protected>
-        </Stack>
+        <ClerkProvider tokenCache={tokenCache}>
+            <Stack></Stack>
+        </ClerkProvider>
     );
 }
