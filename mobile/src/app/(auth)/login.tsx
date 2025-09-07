@@ -1,6 +1,7 @@
-import { Text, View } from "react-native";
+import { View } from "react-native";
+import LoginRegisterForm from "../../components/LoginRegisterForm";
 
-export default function Index() {
+export default function Login() {
     return (
         <View
             style={{
@@ -9,7 +10,7 @@ export default function Index() {
                 alignItems: "center",
             }}
         >
-            <Text>Home Page</Text>
+            <LoginRegisterForm route="/token/" method="login" />
         </View>
     );
 }
