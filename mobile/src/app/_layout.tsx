@@ -1,20 +1,28 @@
 import { Stack } from "expo-router";
-import { SessionProvider } from "../context/ctx";
+import { SessionProvider, useSession } from "../context/ctx";
+import { SplashScreenController } from "../splash";
 
-const isAuthenticated = true;
-
-export default function RootLayout() {
+export default function Root() {
     return (
         <SessionProvider>
-            <Stack>
-                <Stack.Protected guard={!isAuthenticated}>
-                    <Stack.Screen name="(auth)" />
-                </Stack.Protected>
-
-                <Stack.Protected guard={isAuthenticated}>
-                    <Stack.Screen name="(app)" />
-                </Stack.Protected>
-            </Stack>
+            <SplashScreenController />
+            <RootNavigator />
         </SessionProvider>
+    );
+}
+
+function RootNavigator() {
+    const { session } = useSession();
+
+    return (
+        <Stack>
+            <Stack.Protected guard={!!session}>
+                <Stack.Screen name="(app)" />
+            </Stack.Protected>
+
+            <Stack.Protected guard={!session}>
+                <Stack.Screen name="auth" />
+            </Stack.Protected>
+        </Stack>
     );
 }
