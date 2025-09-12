@@ -1,67 +1,23 @@
-import axios, { AxiosError, InternalAxiosRequestConfig } from "axios";
-import * as SecureStore from "expo-secure-store";
-import { ACCESS_TOKEN, REFRESH_TOKEN } from "./constants";
+import axios, { InternalAxiosRequestConfig } from "axios";
+import { supabase } from "./supabase"; // Import the supabase client
 
 const api = axios.create({
     baseURL: process.env.EXPO_PUBLIC_API_URL,
 });
 
+// Supabase handles refreshing tokens automatically,
+// so we just need to attach the current access token to each request
 api.interceptors.request.use(
     async (config: InternalAxiosRequestConfig) => {
-        const token = await SecureStore.getItemAsync(ACCESS_TOKEN);
-        if (token) {
-            config.headers.Authorization = `Bearer ${token}`;
+        const {
+            data: { session },
+        } = await supabase.auth.getSession();
+        if (session) {
+            config.headers.Authorization = `Bearer ${session.access_token}`;
         }
         return config;
     },
     (error) => {
-        return Promise.reject(error);
-    }
-);
-
-// This interceptor handles 401 errors and refreshes the token
-api.interceptors.response.use(
-    (response) => response, // Return the response if it's successful
-    async (error: AxiosError) => {
-        const originalRequest = error.config as InternalAxiosRequestConfig & {
-            _retry?: boolean;
-        }; // Type assertion to add _retry property
-
-        if (
-            error.response?.status === 401 &&
-            originalRequest &&
-            !originalRequest._retry
-        ) {
-            originalRequest._retry = true;
-
-            try {
-                const refreshToken = await SecureStore.getItemAsync(
-                    REFRESH_TOKEN
-                );
-                const res = await axios.post(
-                    `${process.env.EXPO_PUBLIC_API_URL}/token/refresh/`,
-                    {
-                        refresh: refreshToken,
-                    }
-                );
-
-                if (res.status === 200) {
-                    await SecureStore.setItemAsync(
-                        ACCESS_TOKEN,
-                        res.data.access
-                    );
-                    api.defaults.headers.Authorization = `Bearer ${res.data.access}`;
-                    originalRequest.headers.Authorization = `Bearer ${res.data.access}`;
-                    // Do the api call again with the new access token
-                    return api(originalRequest);
-                }
-            } catch (refreshError) {
-                console.error("Refresh token failed:", refreshError);
-                // logout after failing to refresh access token
-                return Promise.reject(refreshError);
-            }
-        }
-
         return Promise.reject(error);
     }
 );
