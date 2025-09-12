@@ -1,5 +1,11 @@
 from django.conf import settings
 from django.db import models, transaction
+from django.contrib.auth.models import AbstractUser
+
+
+class User(AbstractUser):
+    supabase_id = models.CharField(max_length=255, unique=True, null=True, blank=True)
+
 
 # --- Workout Models ---
 
