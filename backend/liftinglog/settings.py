@@ -139,9 +139,12 @@ CORS_ALLOWED_ORIGINS = ["http://localhost:5173"]
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
-        "rest_framework_simplejwt.authentication.JWTAuthentication",
+        "tracker.authentication.SupabaseAuthentication",
         "rest_framework.authentication.SessionAuthentication",
     )
 }
 
 AUTH_USER_MODEL = "tracker.User"
+
+SUPABASE_URL = env("SUPABASE_URL")
+SUPABASE_AUDIENCE = env("SUPABASE_AUDIENCE")
