@@ -5,7 +5,7 @@ from django.contrib.auth.models import AbstractUser
 
 class User(AbstractUser):
     supabase_id = models.CharField(max_length=255, unique=True, null=True, blank=True)
-    email = models.EmailField(("email address"), unique=True, blank=True)
+    email = models.EmailField(("email address"), unique=True, null=True, blank=True)
 
 
 # --- Workout Models ---
