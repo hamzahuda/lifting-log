@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Alert, StyleSheet, View, AppState } from "react-native";
 import { supabase } from "../utils/supabase";
 import { Button, Input } from "@rneui/base";
+import { commonStyles } from "../styles/common";
 
 // Tells Supabase Auth to continuously refresh the session automatically if
 // the app is in the foreground. When this is added, you will continue to receive
@@ -50,8 +51,8 @@ export default function Auth() {
     }
 
     return (
-        <View style={styles.container}>
-            <View style={[styles.verticallySpaced, styles.mt20]}>
+        <View style={commonStyles.container}>
+            <View style={[commonStyles.verticallySpaced, commonStyles.mt20]}>
                 <Input
                     label="Email"
                     leftIcon={{ type: "font-awesome", name: "envelope" }}
@@ -61,7 +62,7 @@ export default function Auth() {
                     autoCapitalize={"none"}
                 />
             </View>
-            <View style={styles.verticallySpaced}>
+            <View style={commonStyles.verticallySpaced}>
                 <Input
                     label="Password"
                     leftIcon={{ type: "font-awesome", name: "lock" }}
@@ -72,14 +73,14 @@ export default function Auth() {
                     autoCapitalize={"none"}
                 />
             </View>
-            <View style={[styles.verticallySpaced, styles.mt20]}>
+            <View style={[commonStyles.verticallySpaced, commonStyles.mt20]}>
                 <Button
                     title="Sign in"
                     disabled={loading}
                     onPress={() => signInWithEmail()}
                 />
             </View>
-            <View style={styles.verticallySpaced}>
+            <View style={commonStyles.verticallySpaced}>
                 <Button
                     title="Sign up"
                     disabled={loading}
@@ -89,18 +90,3 @@ export default function Auth() {
         </View>
     );
 }
-
-const styles = StyleSheet.create({
-    container: {
-        marginTop: 40,
-        padding: 12,
-    },
-    verticallySpaced: {
-        paddingTop: 4,
-        paddingBottom: 4,
-        alignSelf: "stretch",
-    },
-    mt20: {
-        marginTop: 20,
-    },
-});
