@@ -87,10 +87,10 @@ class Set(models.Model):
     exercise = models.ForeignKey(
         "Exercise", related_name="sets", on_delete=models.CASCADE
     )
-    reps = models.FloatField()
+    reps = models.FloatField(blank=True, null=True)
     min_reps = models.IntegerField()
     max_reps = models.IntegerField()
-    weight = models.FloatField()
+    weight = models.FloatField(blank=True, null=True)
     notes = models.TextField(blank=True)
 
     def __str__(self):
