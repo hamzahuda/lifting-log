@@ -41,9 +41,11 @@ export default function Auth() {
             password: password,
         });
 
-        if (error) Alert.alert(error.message);
-        if (!session)
+        if (error) {
+            Alert.alert(error.message);
+        } else if (!session) {
             Alert.alert("Please check your inbox for email verification!");
+        }
         setLoading(false);
     }
 
