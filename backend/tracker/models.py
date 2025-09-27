@@ -77,8 +77,6 @@ class Exercise(models.Model):
     )
     name = models.CharField(max_length=100)
     rest_period = models.DurationField()
-    min_reps = models.IntegerField()
-    max_reps = models.IntegerField()
     notes = models.TextField(blank=True)
 
     def __str__(self):
@@ -90,6 +88,8 @@ class Set(models.Model):
         "Exercise", related_name="sets", on_delete=models.CASCADE
     )
     reps = models.FloatField()
+    min_reps = models.IntegerField()
+    max_reps = models.IntegerField()
     weight = models.FloatField()
     notes = models.TextField(blank=True)
 
@@ -143,8 +143,6 @@ class ExerciseTemplate(models.Model):
     )
     name = models.CharField(max_length=100)
     rest_period = models.DurationField()
-    min_reps = models.IntegerField()
-    max_reps = models.IntegerField()
     notes = models.TextField(blank=True)
 
     def __str__(self):
@@ -155,6 +153,8 @@ class SetTemplate(models.Model):
     exercise_template = models.ForeignKey(
         ExerciseTemplate, related_name="set_templates", on_delete=models.CASCADE
     )
+    min_reps = models.IntegerField()
+    max_reps = models.IntegerField()
     notes = models.TextField(blank=True)
 
     def __str__(self):
