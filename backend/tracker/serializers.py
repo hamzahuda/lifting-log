@@ -32,7 +32,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
 class SetSerializer(serializers.ModelSerializer):
     class Meta:
         model = Set
-        fields = ["id", "reps", "weight", "notes"]
+        fields = ["id", "reps", "min_reps", "max_reps", "weight", "notes"]
         extra_kwargs = {
             "reps": {"required": False},
             "weight": {"required": False},
@@ -44,7 +44,7 @@ class ExerciseSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Exercise
-        fields = ["id", "name", "rest_period", "min_reps", "max_reps", "notes", "sets"]
+        fields = ["id", "name", "rest_period", "notes", "sets"]
 
 
 class WorkoutSerializer(serializers.HyperlinkedModelSerializer):
@@ -79,7 +79,7 @@ class WorkoutSerializer(serializers.HyperlinkedModelSerializer):
 class SetTemplateSerializer(serializers.ModelSerializer):
     class Meta:
         model = SetTemplate
-        fields = ["id", "notes"]
+        fields = ["id", "min_reps", "max_reps", "notes"]
 
 
 class ExerciseTemplateSerializer(serializers.ModelSerializer):
@@ -91,8 +91,6 @@ class ExerciseTemplateSerializer(serializers.ModelSerializer):
             "id",
             "name",
             "rest_period",
-            "min_reps",
-            "max_reps",
             "notes",
             "set_templates",
         ]
