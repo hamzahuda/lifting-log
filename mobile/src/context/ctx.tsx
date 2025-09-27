@@ -21,12 +21,6 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        // Fetch the initial session
-        supabase.auth.getSession().then(({ data: { session } }) => {
-            setSession(session);
-            setIsLoading(false);
-        });
-
         // Listen for changes in authentication state
         const {
             data: { subscription },
