@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { Alert, StyleSheet, View, AppState } from "react-native";
 import { supabase } from "../utils/supabase";
 import { Button, Input } from "@rneui/base";
-import { commonStyles } from "../styles/common";
 
 // Tells Supabase Auth to continuously refresh the session automatically if
 // the app is in the foreground. When this is added, you will continue to receive
@@ -51,8 +50,8 @@ export default function Auth() {
     }
 
     return (
-        <View style={commonStyles.container}>
-            <View style={[commonStyles.verticallySpaced, commonStyles.mt20]}>
+        <View>
+            <View>
                 <Input
                     label="Email"
                     leftIcon={{ type: "font-awesome", name: "envelope" }}
@@ -62,7 +61,7 @@ export default function Auth() {
                     autoCapitalize={"none"}
                 />
             </View>
-            <View style={commonStyles.verticallySpaced}>
+            <View>
                 <Input
                     label="Password"
                     leftIcon={{ type: "font-awesome", name: "lock" }}
@@ -73,14 +72,14 @@ export default function Auth() {
                     autoCapitalize={"none"}
                 />
             </View>
-            <View style={[commonStyles.verticallySpaced, commonStyles.mt20]}>
+            <View>
                 <Button
                     title="Sign in"
                     disabled={loading}
                     onPress={() => signInWithEmail()}
                 />
             </View>
-            <View style={commonStyles.verticallySpaced}>
+            <View>
                 <Button
                     title="Sign up"
                     disabled={loading}
