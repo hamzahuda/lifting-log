@@ -62,5 +62,10 @@ class SupabaseAuthentication(authentication.BaseAuthentication):
                     )
                     return (user, token)
 
+        except jwt.ExpiredSignatureError:
+            raise exceptions.AuthenticationFailed("Token has expired.")
+        except jwt.InvalidTokenError as e:
+            raise exceptions.AuthenticationFailed(f"Invalid token: {str(e)}")
         except Exception as e:
-            raise Exception(f"An error occurred during authentication: {str(e)}")
+            print(str(e))  # For debugging purposes
+            raise exceptions.AuthenticationFailed("Could not authenticate token.")
