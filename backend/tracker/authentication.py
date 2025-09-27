@@ -46,21 +46,13 @@ class SupabaseAuthentication(authentication.BaseAuthentication):
 
             User = get_user_model()
             email = payload.get("email")
-            try:
-                user = User.objects.get(supabase_id=supabase_id)
-                return (user, token)
-            except User.DoesNotExist:
-                try:
-                    user = User.objects.get(email=email)
-                    user.supabase_id = supabase_id
-                    user.save()
-                    return (user, token)
-                except User.DoesNotExist:
-                    user = User.objects.create(
-                        supabase_id=supabase_id,
-                        email=email,
-                    )
-                    return (user, token)
+
+            user, created = User.objects.get_or_create(
+                supabase_id=supabase_id,
+                defaults={"email": email},
+            )
+
+            return (user, token)
 
         except jwt.ExpiredSignatureError:
             raise exceptions.AuthenticationFailed("Token has expired.")
