@@ -49,7 +49,10 @@ class SupabaseAuthentication(authentication.BaseAuthentication):
 
             user, created = User.objects.get_or_create(
                 supabase_id=supabase_id,
-                defaults={"email": email},
+                defaults={
+                    "email": email,
+                    "username": email,
+                },
             )
 
             return (user, token)
