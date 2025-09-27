@@ -4,7 +4,6 @@ from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from .permissions import *
 from .serializers import *
-import datetime
 
 
 class UserViewSet(viewsets.ModelViewSet):
