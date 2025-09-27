@@ -9,13 +9,7 @@ import {
 import { useRouter } from "expo-router";
 import api from "@/utils/api";
 import { useFocusEffect } from "@react-navigation/native";
-
-interface Workout {
-    id: number;
-    name: string;
-    date: string;
-    notes: string;
-}
+import { Workout } from "@/types";
 
 export default function HomeScreen() {
     const [workouts, setWorkouts] = useState<Workout[]>([]);
