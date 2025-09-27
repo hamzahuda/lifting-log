@@ -26,6 +26,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
             data: { subscription },
         } = supabase.auth.onAuthStateChange((_event, session) => {
             setSession(session);
+            setIsLoading(false);
         });
 
         // Clean up the subscription on unmount
