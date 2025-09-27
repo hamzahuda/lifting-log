@@ -38,4 +38,4 @@ class WorkoutViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
-        return Workout.objects.filter(user=user)
+        return Workout.objects.filter(user=user).order_by("-date")
