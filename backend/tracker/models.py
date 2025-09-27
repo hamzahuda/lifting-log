@@ -36,15 +36,13 @@ class Workout(models.Model):
             new_exercise = new_workout.exercises.create(
                 name=exercise_template.name,
                 rest_period=exercise_template.rest_period,
-                min_reps=exercise_template.min_reps,
-                max_reps=exercise_template.max_reps,
                 notes=exercise_template.notes,
             )
             for set_template in exercise_template.set_templates.all():
                 new_exercise.sets.create(
-                    reps=0,
-                    weight=0,
                     notes=set_template.notes,
+                    min_reps=set_template.min_reps,
+                    max_reps=set_template.max_reps,
                 )
         return new_workout
 
