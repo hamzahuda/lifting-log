@@ -1,37 +1,32 @@
 import { supabase } from "../../utils/supabase";
-import { StyleSheet, View, Alert } from "react-native";
-import { Button, Input } from "@rneui/base";
+import { View, Text } from "react-native";
+import { Button } from "@rneui/base";
 import { useSession } from "../../context/ctx";
+import {} from "react-native-safe-area-context";
 
 export default function Account() {
     const { session } = useSession();
 
     return (
-        <View style={styles.container}>
-            <View style={[styles.verticallySpaced, styles.mt20]}>
-                <Input label="Email" value={session?.user?.email} disabled />
-            </View>
-            <View style={styles.verticallySpaced}>
+        <View className="flex-1 bg-background p-5">
+            <View className="flex-1 justify-center">
+                <Text className="text-white text-lg mb-2">Email</Text>
+                <View className="bg-gray-700 p-4 rounded-lg mb-8">
+                    <Text className="text-white text-lg">
+                        {session?.user?.email}
+                    </Text>
+                </View>
                 <Button
                     title="Sign Out"
+                    buttonStyle={{
+                        backgroundColor: "#3B82F6",
+                        paddingVertical: 15,
+                        borderRadius: 10,
+                    }}
+                    titleStyle={{ fontWeight: "bold", fontSize: 18 }}
                     onPress={() => supabase.auth.signOut()}
                 />
             </View>
         </View>
     );
 }
-
-const styles = StyleSheet.create({
-    container: {
-        marginTop: 40,
-        padding: 12,
-    },
-    verticallySpaced: {
-        paddingTop: 4,
-        paddingBottom: 4,
-        alignSelf: "stretch",
-    },
-    mt20: {
-        marginTop: 20,
-    },
-});
