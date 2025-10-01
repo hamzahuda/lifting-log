@@ -6,16 +6,10 @@ import { Picker } from "@react-native-picker/picker";
 import DateTimePicker, {
     DateTimePickerEvent,
 } from "@react-native-community/datetimepicker";
-
-interface Template {
-    id: number;
-    url: string;
-    name: string;
-    notes: string;
-}
+import { WorkoutTemplate } from "@/types";
 
 export default function CreateWorkoutScreen() {
-    const [templates, setTemplates] = useState<Template[]>([]);
+    const [templates, setTemplates] = useState<WorkoutTemplate[]>([]);
     const [selectedTemplate, setSelectedTemplate] = useState<string | null>(
         null
     );
@@ -25,7 +19,7 @@ export default function CreateWorkoutScreen() {
     const router = useRouter();
 
     useEffect(() => {
-        api.get<Template[]>("/workout-templates/")
+        api.get<WorkoutTemplate[]>("/workout-templates/")
             .then((res) => {
                 setTemplates(res.data);
                 console.log(res.data);
