@@ -18,6 +18,19 @@ export default function TemplatesLayout() {
                     fontSize: 26,
                 },
             }}
-        />
+        >
+            <Stack.Screen
+                name="index"
+                options={{ headerTitle: "Workout Templates" }}
+            />
+            <Stack.Screen
+                name="create"
+                options={{ headerTitle: "Create Template" }}
+            />
+            <Stack.Screen
+                name="[id]"
+                options={{ headerTitle: "Edit Template" }}
+            />
+        </Stack>
     );
 }
