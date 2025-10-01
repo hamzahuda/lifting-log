@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { View, Text, TouchableOpacity, Alert, Platform } from "react-native";
-import { useNavigation, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 import api from "@/utils/api";
 import { Picker } from "@react-native-picker/picker";
 import DateTimePicker, {
@@ -23,11 +23,6 @@ export default function CreateWorkoutScreen() {
     const [showDatePicker, setShowDatePicker] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const router = useRouter();
-    const navigation = useNavigation();
-
-    useEffect(() => {
-        navigation.setOptions({ headerTitle: "Create Workout" });
-    }, [navigation]);
 
     useEffect(() => {
         api.get<Template[]>("/workout-templates/")
