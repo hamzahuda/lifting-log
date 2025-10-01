@@ -27,13 +27,12 @@ export default function WorkoutDetailScreen() {
         setLoading(true);
         api.get(`/workouts/${id}/`)
             .then((res) => {
-                const fetchedWorkout = res.data;
-                setWorkout(fetchedWorkout);
-                setOriginalWorkout(structuredClone(fetchedWorkout));
+                setWorkout(res.data);
+                setOriginalWorkout(structuredClone(res.data));
             })
             .catch((err) => {
-                console.error("Failed to fetch workout:", err);
                 Alert.alert("Error", "Could not load workout details.");
+                console.error(err);
             })
             .finally(() => {
                 setLoading(false);
