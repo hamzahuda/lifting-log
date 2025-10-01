@@ -1,5 +1,5 @@
 export interface Set {
-    id: number;
+    readonly id: number;
     reps: number | null;
     weight: number | null;
     min_reps: number;
@@ -8,14 +8,15 @@ export interface Set {
 }
 
 export interface Exercise {
-    id: number;
+    readonly id: number;
     name: string;
+    rest_period: string;
     notes: string;
     sets: Set[];
 }
 
 export interface Workout {
-    id: number;
+    readonly id: number;
     name: string;
     date: string;
     notes: string;
@@ -23,14 +24,14 @@ export interface Workout {
 }
 
 export interface SetTemplate {
-    id: string;
+    readonly id: string;
     notes: string;
     min_reps: number;
     max_reps: number;
 }
 
 export interface ExerciseTemplate {
-    id: string;
+    readonly id: string;
     name: string;
     rest_period: string;
     notes: string;
@@ -38,9 +39,11 @@ export interface ExerciseTemplate {
 }
 
 export interface WorkoutTemplate {
-    id: number;
-    date: string;
+    readonly id: number;
+    readonly url: string;
     name: string;
     notes: string;
     exercise_templates: ExerciseTemplate[];
 }
+
+export type NewWorkoutTemplate = Omit<WorkoutTemplate, "id" | "url">;
