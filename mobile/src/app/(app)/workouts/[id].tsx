@@ -7,7 +7,7 @@ import {
     Alert,
     TouchableOpacity,
 } from "react-native";
-import { useLocalSearchParams, useNavigation } from "expo-router";
+import { useLocalSearchParams } from "expo-router";
 import api from "@/utils/api";
 import ExerciseCard from "./_components/ExerciseCard";
 import { Workout } from "@/types";
@@ -21,12 +21,6 @@ export default function WorkoutDetailScreen() {
     );
     const [loading, setLoading] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
-
-    const navigation = useNavigation();
-
-    useEffect(() => {
-        navigation.setOptions({ headerShown: false });
-    }, [navigation]);
 
     useEffect(() => {
         if (!id) return;
