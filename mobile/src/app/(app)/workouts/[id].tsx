@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import api from "@/utils/api";
-import ExerciseCard from "./ExerciseCard";
+import ExerciseCard from "./_components/ExerciseCard";
 import { Workout } from "@/types";
 import { SafeAreaView } from "react-native-safe-area-context";
 
