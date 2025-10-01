@@ -22,7 +22,6 @@ export default function CreateWorkoutScreen() {
         api.get<WorkoutTemplate[]>("/workout-templates/")
             .then((res) => {
                 setTemplates(res.data);
-                console.log(res.data);
                 if (res.data && res.data.length > 0) {
                     setSelectedTemplate(res.data[0].url);
                 }
