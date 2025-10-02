@@ -46,4 +46,4 @@ export interface WorkoutTemplate {
     exercise_templates: ExerciseTemplate[];
 }
 
-export type NewWorkoutTemplate = Omit<WorkoutTemplate, "id" | "url">;
+export type WorkoutTemplateFormData = Omit<WorkoutTemplate, "id" | "url">;
