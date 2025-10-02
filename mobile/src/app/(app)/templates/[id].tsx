@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import api from "@/utils/api";
-import { NewWorkoutTemplate, WorkoutTemplate } from "@/types";
+import { WorkoutTemplate, WorkoutTemplateFormData } from "@/types";
 import TemplateForm from "./_components/TemplateForm";
 
 export default function TemplateDetailScreen() {
@@ -34,8 +34,8 @@ export default function TemplateDetailScreen() {
         getTemplate();
     }, [id]);
 
-    const handleUpdateSubmit = (templateData: NewWorkoutTemplate) => {
-        api.put(`/workout-templates/${id}/`, templateData)
+    const handleUpdateSubmit = (formData: WorkoutTemplateFormData) => {
+        api.put(`/workout-templates/${id}/`, formData)
             .then((res) => {
                 if (res.status === 200) {
                     Alert.alert("Success", "Template updated successfully!");
@@ -98,9 +98,9 @@ export default function TemplateDetailScreen() {
         <View className="flex-1 bg-background">
             <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
                 <TemplateForm
-                    initialData={template}
+                    initialFormData={template}
                     onSubmit={handleUpdateSubmit}
-                    buttonTitle="Save Changes"
+                    submitButtonText="Update Template"
                 />
                 <TouchableOpacity
                     className="py-3 px-6 rounded-xl bg-red-600 flex-1 mx-5"

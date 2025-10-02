@@ -1,10 +1,10 @@
 import { View, Alert } from "react-native";
 import { useRouter } from "expo-router";
 import api from "@/utils/api";
-import { NewWorkoutTemplate } from "@/types";
+import { WorkoutTemplateFormData } from "@/types";
 import TemplateForm from "./_components/TemplateForm";
 
-const BLANK_TEMPLATE: NewWorkoutTemplate = {
+const BLANK_TEMPLATE: WorkoutTemplateFormData = {
     name: "",
     notes: "",
     exercise_templates: [],
@@ -13,7 +13,7 @@ const BLANK_TEMPLATE: NewWorkoutTemplate = {
 export default function CreateTemplateScreen() {
     const router = useRouter();
 
-    const handleCreateSubmit = async (formData: NewWorkoutTemplate) => {
+    const handleCreateSubmit = async (formData: WorkoutTemplateFormData) => {
         try {
             const res = await api.post("/workout-templates/", formData);
             if (res.status === 201) {
@@ -32,9 +32,9 @@ export default function CreateTemplateScreen() {
     return (
         <View className="flex-1 bg-background">
             <TemplateForm
-                initialData={BLANK_TEMPLATE}
+                initialFormData={BLANK_TEMPLATE}
                 onSubmit={handleCreateSubmit}
-                buttonTitle="Create Template"
+                submitButtonText="Create Template"
             />
         </View>
     );
