@@ -1,4 +1,4 @@
-import { View, Alert } from "react-native";
+import { View, Alert, ScrollView } from "react-native";
 import { useRouter } from "expo-router";
 import api from "@/utils/api";
 import { WorkoutTemplateFormData } from "@/types";
@@ -31,11 +31,13 @@ export default function CreateTemplateScreen() {
 
     return (
         <View className="flex-1 bg-background">
-            <TemplateForm
-                initialFormData={BLANK_TEMPLATE}
-                onSubmit={handleCreateSubmit}
-                submitButtonText="Create Template"
-            />
+            <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
+                <TemplateForm
+                    initialFormData={BLANK_TEMPLATE}
+                    onSubmit={handleCreateSubmit}
+                    submitButtonText="Create Template"
+                />
+            </ScrollView>
         </View>
     );
 }
