@@ -24,14 +24,14 @@ export interface Workout {
 }
 
 export interface SetTemplate {
-    readonly id: string;
+    readonly id: number;
     notes: string;
     min_reps: number;
     max_reps: number;
 }
 
 export interface ExerciseTemplate {
-    readonly id: string;
+    readonly id: number;
     name: string;
     rest_period: string;
     notes: string;
