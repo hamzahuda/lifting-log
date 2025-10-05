@@ -1,7 +1,8 @@
-import React, { useState } from "react";
-import { Alert, StyleSheet, View, AppState } from "react-native";
+import { useState } from "react";
+import { Alert, AppState, TouchableOpacity, Text } from "react-native";
 import { supabase } from "../utils/supabase";
-import { Button, Input } from "@rneui/base";
+import { Input } from "@rneui/base";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 // Tells Supabase Auth to continuously refresh the session automatically if
 // the app is in the foreground. When this is added, you will continue to receive
@@ -50,42 +51,39 @@ export default function Auth() {
     }
 
     return (
-        <View>
-            <View>
-                <Input
-                    label="Email"
-                    leftIcon={{ type: "font-awesome", name: "envelope" }}
-                    onChangeText={(text: string) => setEmail(text)}
-                    value={email}
-                    placeholder="email@address.com"
-                    autoCapitalize={"none"}
-                />
-            </View>
-            <View>
-                <Input
-                    label="Password"
-                    leftIcon={{ type: "font-awesome", name: "lock" }}
-                    onChangeText={(text: string) => setPassword(text)}
-                    value={password}
-                    secureTextEntry={true}
-                    placeholder="Password"
-                    autoCapitalize={"none"}
-                />
-            </View>
-            <View>
-                <Button
-                    title="Sign in"
-                    disabled={loading}
-                    onPress={() => signInWithEmail()}
-                />
-            </View>
-            <View>
-                <Button
-                    title="Sign up"
-                    disabled={loading}
-                    onPress={() => signUpWithEmail()}
-                />
-            </View>
-        </View>
+        <SafeAreaView className="mx-5 my-10">
+            <Input
+                label="Email"
+                leftIcon={{ type: "font-awesome", name: "envelope" }}
+                onChangeText={(text: string) => setEmail(text)}
+                value={email}
+                placeholder="email@address.com"
+                autoCapitalize={"none"}
+            />
+            <Input
+                label="Password"
+                leftIcon={{ type: "font-awesome", name: "lock" }}
+                onChangeText={(text: string) => setPassword(text)}
+                value={password}
+                secureTextEntry={true}
+                placeholder="Password"
+                autoCapitalize={"none"}
+            />
+            <TouchableOpacity
+                className="bg-blue-500 rounded-md h-12 items-center justify-center"
+                disabled={loading}
+                onPress={() => signInWithEmail()}
+            >
+                <Text className="text-white text-lg">Sign In</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+                className="bg-blue-500 rounded-md h-12 items-center justify-center mt-5"
+                disabled={loading}
+                onPress={() => signUpWithEmail()}
+            >
+                <Text className="text-white text-lg">Sign Up</Text>
+            </TouchableOpacity>
+        </SafeAreaView>
     );
 }
