@@ -49,23 +49,23 @@ export default function HomeScreen() {
                         {workouts.map((workout, index) => (
                             <TouchableOpacity
                                 key={workout.id}
-                                className="bg-primary rounded-2xl p-4 mb-4 shadow-sm shadow-black"
+                                className="bg-primary rounded-2xl p-4 mb-4 shadow-sm"
                                 onPress={() =>
                                     router.push(`/(app)/workouts/${workout.id}`)
                                 }
                             >
                                 <View className="flex-row justify-between items-center mt-1">
-                                    <Text className="text-white font-bold text-xl mb-1">
+                                    <Text className="text-t-primary font-bold text-xl mb-1">
                                         {`${workouts.length - index} - ${workout.name}`}
                                     </Text>
-                                    <Text className="text-white font-semibold text-lg mb-1">
+                                    <Text className="text-t-primary font-semibold text-lg mb-1">
                                         {new Date(
                                             workout.date
                                         ).toLocaleDateString("en-GB")}
                                     </Text>
                                 </View>
 
-                                <Text className="text-gray-400 flex-1 mr-2">
+                                <Text className="text-t-secondary flex-1 mr-2">
                                     {workout.notes || ""}
                                 </Text>
                             </TouchableOpacity>
@@ -75,7 +75,7 @@ export default function HomeScreen() {
             )}
 
             <TouchableOpacity
-                className="absolute bottom-4 right-4 w-16 h-16 bg-blue-500 rounded-2xl justify-center items-center shadow-lg"
+                className="absolute bottom-4 right-4 w-16 h-16 bg-accent rounded-2xl justify-center items-center shadow-lg shadow-black"
                 onPress={() => router.push("/(app)/workouts/create")}
             >
                 <Text className="text-white text-3xl">+</Text>

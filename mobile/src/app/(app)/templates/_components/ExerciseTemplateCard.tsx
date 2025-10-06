@@ -77,9 +77,9 @@ export default function ExerciseTemplateCard({
     };
 
     return (
-        <View className="bg-primary rounded-2xl pt-5 px-8 pb-4 mb-5 shadow-md shadow-black mx-5">
+        <View className="bg-primary rounded-2xl pt-5 px-8 pb-4 mb-5 shadow-md  mx-5">
             <TextInput
-                className="text-white font-extrabold text-2xl bg-gray-700 bg-size rounded-md px-3 py-1 mb-2 mt-5"
+                className="text-t-primary font-extrabold text-2xl bg-secondary bg-size rounded-md px-3 py-1 mb-2 mt-5"
                 value={data.name}
                 onChangeText={(value) =>
                     onEdit(data.id, { ...data, name: value })
@@ -88,7 +88,7 @@ export default function ExerciseTemplateCard({
                 placeholderTextColor="gray"
             />
             <TextInput
-                className="text-gray-400 text-sm align-middle bg-gray-700 bg-size rounded-md px-3 py-1 mb-2"
+                className="text-t-secondary text-sm align-middle bg-secondary bg-size rounded-md px-3 py-1 mb-2"
                 value={data.notes}
                 onChangeText={(value) =>
                     onEdit(data.id, { ...data, notes: value })
@@ -110,7 +110,7 @@ export default function ExerciseTemplateCard({
                                 -
                             </Text>
                         </TouchableOpacity>
-                        <Text className="text-gray-400 text-lg font-semibold mx-3">
+                        <Text className="text-t-secondary text-lg font-semibold mx-3">
                             Sets
                         </Text>
                         <TouchableOpacity
@@ -122,19 +122,19 @@ export default function ExerciseTemplateCard({
                             </Text>
                         </TouchableOpacity>
                     </View>
-                    <Text className="flex-1 text-gray-400 text-center text-lg font-semibold">
+                    <Text className="flex-1 text-t-secondary text-center text-lg font-semibold">
                         Reps
                     </Text>
                 </View>
 
                 {data.set_templates?.map((set, setIndex) => (
                     <View key={set.id} className="flex-row py-1">
-                        <Text className="flex-none w-40 text-gray-200 text-lg text-center align-middle">
+                        <Text className="flex-none w-40 text-t-tertiary text-lg text-center align-middle">
                             {setIndex + 1}
                         </Text>
                         <View className="flex-1 flex-row items-center justify-center">
                             <TextInput
-                                className="text-gray-200 text-lg text-center w-12 py-0 bg-gray-700 rounded-md"
+                                className="text-t-tertiary text-lg text-center w-12 py-0 bg-secondary rounded-md"
                                 value={set.min_reps.toString()}
                                 onChangeText={(value) =>
                                     handleMinOrMaxRepsChange(
@@ -147,11 +147,11 @@ export default function ExerciseTemplateCard({
                                 placeholder="--"
                                 placeholderTextColor="#9CA3AF"
                             />
-                            <Text className="text-gray-400 text-lg mx-2">
+                            <Text className="text-t-secondary text-lg mx-2">
                                 -
                             </Text>
                             <TextInput
-                                className="text-gray-200 text-lg text-center w-12 py-0 bg-gray-700 rounded-md"
+                                className="text-t-tertiary text-lg text-center w-12 py-0 bg-secondary rounded-md"
                                 value={set.max_reps.toString()}
                                 onChangeText={(value) =>
                                     handleMinOrMaxRepsChange(
@@ -170,26 +170,26 @@ export default function ExerciseTemplateCard({
             </View>
 
             <View className="flex-row justify-between items-center mt-1 pt-2 border-t border-gray-700">
-                <Text className="text-gray-400 text-lg font-semibold">
+                <Text className="text-t-secondary text-lg font-semibold">
                     Rest Period
                 </Text>
                 <View className="flex-row items-center">
                     <TouchableOpacity
                         onPress={() => handleRestPeriodChange(-15)}
-                        className="bg-gray-700 rounded-md px-2 py-1"
+                        className="bg-secondary rounded-md px-2 py-1"
                     >
-                        <Text className="text-white text-sm">-15s</Text>
+                        <Text className="text-t-primary text-sm">-15s</Text>
                     </TouchableOpacity>
 
-                    <Text className="text-xl text-white font-bold mx-4">
+                    <Text className="text-xl text-t-primary font-bold mx-4">
                         {data.rest_period.substring(3)}
                     </Text>
 
                     <TouchableOpacity
                         onPress={() => handleRestPeriodChange(15)}
-                        className="bg-gray-700 rounded-md px-2 py-1"
+                        className="bg-secondary rounded-md px-2 py-1"
                     >
-                        <Text className="text-white text-sm">+15s</Text>
+                        <Text className="text-t-primary text-sm">+15s</Text>
                     </TouchableOpacity>
                 </View>
             </View>

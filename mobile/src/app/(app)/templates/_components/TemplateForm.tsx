@@ -59,7 +59,7 @@ export default function TemplateForm({
     return (
         <View>
             <TextInput
-                className="text-4xl text-white font-bold m-4 bg-gray-700 rounded-md px-3 py-3"
+                className="text-4xl text-t-primary font-bold m-4 bg-secondary rounded-md px-3 py-3"
                 onChangeText={(value) => {
                     setWorkoutTemplateFormData((workoutTemplateFormData) => ({
                         ...workoutTemplateFormData,
@@ -71,7 +71,7 @@ export default function TemplateForm({
                 placeholderTextColor="gray"
             />
             <TextInput
-                className="text-md text-gray-400 mb-5 mx-4 bg-gray-700 rounded-md px-3 py-1"
+                className="text-md text-t-secondary mb-5 mx-4 bg-secondary rounded-md px-3 py-1"
                 value={workoutTemplateFormData.notes || ""}
                 onChangeText={(value) => {
                     setWorkoutTemplateFormData((workoutTemplateFormData) => ({
@@ -94,7 +94,7 @@ export default function TemplateForm({
                 )
             )}
             <TouchableOpacity
-                className="bg-blue-700 p-2 rounded-md w-40 self-center mb-5"
+                className="bg-accent p-2 rounded-md w-40 self-center mb-5"
                 onPress={handleExerciseCreate}
             >
                 <Text className="text-white text-center">Add Exercise</Text>
@@ -104,7 +104,7 @@ export default function TemplateForm({
                 className="py-3 px-6 rounded-xl bg-green-600 flex-1 mx-5 my-10"
                 onPress={() => onSubmit(workoutTemplateFormData)}
             >
-                <Text className="text-white text-center font-bold text-base">
+                <Text className="text-white text-center font-bold">
                     {submitButtonText}
                 </Text>
             </TouchableOpacity>
