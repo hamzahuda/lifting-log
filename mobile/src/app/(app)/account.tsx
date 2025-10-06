@@ -10,9 +10,9 @@ export default function Account() {
     return (
         <View className="flex-1 bg-background p-5">
             <View className="flex-1 justify-center">
-                <Text className="text-white text-lg mb-2">Email</Text>
-                <View className="bg-gray-700 p-4 rounded-lg mb-8">
-                    <Text className="text-white text-lg">
+                <Text className="text-t-primary text-lg mb-2">Email</Text>
+                <View className="bg-secondary p-4 rounded-lg mb-8">
+                    <Text className="text-t-primary text-lg">
                         {session?.user?.email}
                     </Text>
                 </View>

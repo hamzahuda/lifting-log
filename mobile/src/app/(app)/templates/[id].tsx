@@ -89,7 +89,7 @@ export default function TemplateDetailScreen() {
     if (!template) {
         return (
             <View className="flex-1 justify-center items-center bg-background">
-                <Text className="text-white">Template not found.</Text>
+                <Text className="text-t-primary">Template not found.</Text>
             </View>
         );
     }
@@ -106,7 +106,7 @@ export default function TemplateDetailScreen() {
                     className="py-3 px-6 rounded-xl bg-red-600 flex-1 mx-5"
                     onPress={handleDeleteTemplate}
                 >
-                    <Text className="text-white text-center font-bold text-base">
+                    <Text className="text-white text-center font-bold">
                         Delete Template
                     </Text>
                 </TouchableOpacity>

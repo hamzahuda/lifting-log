@@ -43,8 +43,8 @@ const ExerciseCard = ({
     }));
 
     return (
-        <View className="bg-primary rounded-2xl p-4 mb-5 shadow-md shadow-black">
-            <Text className="text-white font-extrabold text-3xl">
+        <View className="bg-primary rounded-2xl p-4 mb-5 shadow-md ">
+            <Text className="text-t-primary font-extrabold text-3xl">
                 {exercise.name.toUpperCase()}
             </Text>
             {exercise.notes && (
@@ -53,10 +53,10 @@ const ExerciseCard = ({
                 </Text>
             )}
 
-            <View className="h-2.5 w-full bg-gray-700 rounded-full overflow-hidden my-3">
+            <View className="h-2.5 w-full bg-secondary rounded-full overflow-hidden my-3">
                 <Animated.View
                     style={animatedProgressBar}
-                    className="h-full w-80 rounded-full bg-blue-500"
+                    className="h-full w-80 rounded-full bg-accent"
                 />
             </View>
 
@@ -64,7 +64,7 @@ const ExerciseCard = ({
                 {headers.map((header) => (
                     <Text
                         key={header}
-                        className="flex-1 text-gray-400 text-center text-lg font-semibold"
+                        className="flex-1 text-t-secondary text-center text-lg font-semibold"
                     >
                         {header}
                     </Text>
@@ -73,15 +73,15 @@ const ExerciseCard = ({
 
             {exercise.sets.map((set, setIndex) => (
                 <View key={set.id} className="flex-row py-1 items-center">
-                    <Text className="flex-1 text-gray-200 text-lg text-center">
+                    <Text className="flex-1 text-t-tertiary text-lg text-center">
                         {setIndex + 1}
                     </Text>
-                    <Text className="flex-1 text-gray-200 text-lg text-center">
+                    <Text className="flex-1 text-t-tertiary text-lg text-center">
                         {set.min_reps}-{set.max_reps}
                     </Text>
                     <View className="flex-1 items-center">
                         <TextInput
-                            className="text-gray-200 text-lg text-center w-16 py-1 bg-gray-700 rounded-md"
+                            className="text-t-tertiary text-lg text-center w-16 py-1 bg-secondary rounded-md"
                             value={set.weight?.toString() ?? ""}
                             onChangeText={(value) =>
                                 onSetUpdate(
@@ -98,7 +98,7 @@ const ExerciseCard = ({
                     </View>
                     <View className="flex-1 items-center">
                         <TextInput
-                            className="text-gray-200 text-lg text-center w-16 py-1 bg-gray-700 rounded-md"
+                            className="text-t-tertiary text-lg text-center w-16 py-1 bg-secondary rounded-md"
                             value={set.reps?.toString() ?? ""}
                             onChangeText={(value) =>
                                 onSetUpdate(

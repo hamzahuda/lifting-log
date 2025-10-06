@@ -70,19 +70,19 @@ export default function Auth() {
                 autoCapitalize={"none"}
             />
             <TouchableOpacity
-                className="bg-blue-500 rounded-md h-12 items-center justify-center"
+                className="bg-accent rounded-md h-12 items-center justify-center"
                 disabled={loading}
                 onPress={() => signInWithEmail()}
             >
-                <Text className="text-white text-lg">Sign In</Text>
+                <Text className="text-t-primary text-lg">Sign In</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
-                className="bg-blue-500 rounded-md h-12 items-center justify-center mt-5"
+                className="bg-accent rounded-md h-12 items-center justify-center mt-5"
                 disabled={loading}
                 onPress={() => signUpWithEmail()}
             >
-                <Text className="text-white text-lg">Sign Up</Text>
+                <Text className="text-t-primary text-lg">Sign Up</Text>
             </TouchableOpacity>
         </SafeAreaView>
     );

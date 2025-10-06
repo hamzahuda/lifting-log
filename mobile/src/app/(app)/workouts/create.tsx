@@ -72,8 +72,8 @@ export default function CreateWorkoutScreen() {
 
     return (
         <View className="flex-1 bg-background p-5 pt-6">
-            <Text className="text-gray-400 text-lg mb-2">Template:</Text>
-            <View className="bg-gray-700 rounded-lg mb-6 pl-2">
+            <Text className="text-t-secondary text-lg mb-2">Template:</Text>
+            <View className="bg-secondary rounded-lg mb-6 pl-2">
                 <Picker
                     selectedValue={selectedTemplate}
                     onValueChange={(itemValue) =>
@@ -92,12 +92,12 @@ export default function CreateWorkoutScreen() {
                 </Picker>
             </View>
 
-            <Text className="text-gray-400 text-lg mb-2">Date:</Text>
+            <Text className="text-t-secondary text-lg mb-2">Date:</Text>
             <TouchableOpacity
                 onPress={() => setShowDatePicker(true)}
-                className="bg-gray-700 p-4 rounded-lg items-center mb-8"
+                className="bg-secondary p-4 rounded-lg items-center mb-8"
             >
-                <Text className="text-white text-lg">{formattedDate}</Text>
+                <Text className="text-t-primary text-lg">{formattedDate}</Text>
             </TouchableOpacity>
 
             {showDatePicker && (
@@ -110,11 +110,11 @@ export default function CreateWorkoutScreen() {
             )}
 
             <TouchableOpacity
-                className={`py-4 rounded-xl ${isSubmitting ? "bg-gray-500" : "bg-blue-600"}`}
+                className={`py-4 rounded-xl ${isSubmitting ? "bg-gray-500" : "bg-accent"}`}
                 onPress={handleSubmit}
                 disabled={isSubmitting}
             >
-                <Text className="text-white text-center font-bold text-lg">
+                <Text className="text-t-primary text-center font-bold text-lg">
                     {isSubmitting ? "Creating..." : "Create Workout"}
                 </Text>
             </TouchableOpacity>

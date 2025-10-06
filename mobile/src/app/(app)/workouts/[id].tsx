@@ -100,7 +100,7 @@ export default function WorkoutDetailScreen() {
                 edges={["left", "right", "top"]}
                 className="flex-1 justify-center items-center bg-background"
             >
-                <Text className="text-white">Workout not found.</Text>
+                <Text className="text-t-primary">Workout not found.</Text>
             </SafeAreaView>
         );
     }
@@ -126,10 +126,10 @@ export default function WorkoutDetailScreen() {
                 className="p-5"
                 contentContainerStyle={{ paddingBottom: 100 }}
             >
-                <Text className="text-4xl text-white font-bold text-center mb-1">
+                <Text className="text-4xl text-t-primary font-bold text-center mb-1">
                     {workout.name}
                 </Text>
-                <Text className="text-lg text-center text-gray-400 font-bold">
+                <Text className="text-lg text-center text-t-secondary font-bold">
                     {workoutDate}
                 </Text>
                 {workout.notes && (
@@ -156,7 +156,7 @@ export default function WorkoutDetailScreen() {
                         accessibilityLabel="Save workout changes"
                         accessibilityRole="button"
                         className={`py-4 rounded-xl ${
-                            isSaving ? "bg-gray-500" : "bg-blue-600"
+                            isSaving ? "bg-gray-500" : "bg-accent"
                         }`}
                     >
                         {isSaving ? (
