@@ -55,6 +55,32 @@ export default function Auth() {
         setLoading(false);
     }
 
+    // Google Sign-In
+    async function loginWithGoogle() {
+        try {
+            await GoogleSignin.hasPlayServices();
+            const userInfo = await GoogleSignin.signIn();
+            if (userInfo.data?.idToken) {
+                await supabase.auth.signInWithIdToken({
+                    provider: "google",
+                    token: userInfo.data.idToken,
+                });
+            } else {
+                throw new Error("no ID token present!");
+            }
+        } catch (error: any) {
+            if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+                console.error("sign in cancelled");
+            } else if (error.code === statusCodes.IN_PROGRESS) {
+                console.error(error);
+            } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+                console.error("play services not available: " + error);
+            } else {
+                console.error(error);
+            }
+        }
+    }
+
     GoogleSignin.configure({
         webClientId: process.env.EXPO_PUBLIC_GOOGLE_OAUTH_WEB_CLIENT_ID,
     });
@@ -97,39 +123,7 @@ export default function Auth() {
                 <GoogleSigninButton
                     size={GoogleSigninButton.Size.Wide}
                     color={GoogleSigninButton.Color.Dark}
-                    onPress={async () => {
-                        try {
-                            await GoogleSignin.hasPlayServices();
-                            const userInfo = await GoogleSignin.signIn();
-                            if (userInfo.data?.idToken) {
-                                const { data, error } =
-                                    await supabase.auth.signInWithIdToken({
-                                        provider: "google",
-                                        token: userInfo.data.idToken,
-                                    });
-                                console.log(error, data);
-                            } else {
-                                throw new Error("no ID token present!");
-                            }
-                        } catch (error: any) {
-                            if (error.code === statusCodes.SIGN_IN_CANCELLED) {
-                                console.log("sign in cancelled");
-                                // user cancelled the login flow
-                            } else if (error.code === statusCodes.IN_PROGRESS) {
-                                // operation (e.g. sign in) is in progress already
-                                console.log("operation in progress");
-                            } else if (
-                                error.code ===
-                                statusCodes.PLAY_SERVICES_NOT_AVAILABLE
-                            ) {
-                                console.log("play services not available");
-                                // play services not available or outdated
-                            } else {
-                                console.log("some other error", error);
-                                // some other error happened
-                            }
-                        }
-                    }}
+                    onPress={loginWithGoogle}
                 />
             </View>
         </SafeAreaView>
