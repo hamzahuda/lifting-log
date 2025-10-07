@@ -1,7 +1,7 @@
-import { supabase } from "../../utils/supabase";
+import { supabase } from "@/utils/supabase";
 import { View, Text } from "react-native";
 import { Button } from "@rneui/base";
-import { useSession } from "../../context/ctx";
+import { useSession } from "@/context/ctx";
 import {} from "react-native-safe-area-context";
 
 export default function Account() {
