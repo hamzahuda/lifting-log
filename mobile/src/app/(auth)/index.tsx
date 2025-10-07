@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Alert, AppState, TouchableOpacity, Text } from "react-native";
-import { supabase } from "../utils/supabase";
+import { supabase } from "@/utils/supabase";
 import { Input } from "@rneui/base";
 import { SafeAreaView } from "react-native-safe-area-context";
 
