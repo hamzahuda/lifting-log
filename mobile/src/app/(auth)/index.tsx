@@ -56,9 +56,7 @@ export default function Auth() {
     }
 
     GoogleSignin.configure({
-        scopes: ["https://www.googleapis.com/auth/drive.readonly"],
-        webClientId:
-            "47471637371-kmifq5fhlujqjpsdvosmd3dcra7rig6e.apps.googleusercontent.com",
+        webClientId: process.env.EXPO_PUBLIC_GOOGLE_OAUTH_WEB_CLIENT_ID,
     });
 
     return (
@@ -115,15 +113,19 @@ export default function Auth() {
                             }
                         } catch (error: any) {
                             if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+                                console.log("sign in cancelled");
                                 // user cancelled the login flow
                             } else if (error.code === statusCodes.IN_PROGRESS) {
                                 // operation (e.g. sign in) is in progress already
+                                console.log("operation in progress");
                             } else if (
                                 error.code ===
                                 statusCodes.PLAY_SERVICES_NOT_AVAILABLE
                             ) {
+                                console.log("play services not available");
                                 // play services not available or outdated
                             } else {
+                                console.log("some other error", error);
                                 // some other error happened
                             }
                         }
