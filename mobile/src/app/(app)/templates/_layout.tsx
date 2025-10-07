@@ -1,15 +1,12 @@
 import { Stack } from "expo-router";
-import resolveConfig from "tailwindcss/resolveConfig";
-import tailwindConfig from "@/../tailwind.config.js";
-
-const fullConfig = resolveConfig(tailwindConfig);
+const colors = require("@/styles/colors");
 
 export default function TemplatesLayout() {
     return (
         <Stack
             screenOptions={{
                 headerStyle: {
-                    backgroundColor: fullConfig.theme.colors.blue[900],
+                    backgroundColor: colors.header,
                 },
                 headerTitle: "Workout Templates",
                 headerTintColor: "#fff",

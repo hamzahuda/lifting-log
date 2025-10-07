@@ -1,4 +1,5 @@
 module.exports = {
+    header: "#2760b7",
     background: "rgb(247, 247, 247)",
     primary: "#ffffff",
     secondary: "#e9e9e9",
