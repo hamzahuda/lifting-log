@@ -1,11 +1,11 @@
 {
     "expo": {
-        "name": "mobile",
-        "slug": "mobile",
+        "name": "Lifting Log",
+        "slug": "liftinglog",
         "version": "1.0.0",
         "orientation": "portrait",
         "icon": "./assets/images/icon.png",
-        "scheme": "mobile",
+        "scheme": "liftinglog",
         "userInterfaceStyle": "automatic",
         "newArchEnabled": true,
         "ios": {
@@ -17,7 +17,7 @@
                 "backgroundColor": "#ffffff"
             },
             "edgeToEdgeEnabled": true,
-            "package": "com.anonymous.mobile"
+            "package": "com.hamzahuda.liftinglog"
         },
         "web": {
             "bundler": "metro",
