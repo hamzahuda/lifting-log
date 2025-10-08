@@ -8,6 +8,7 @@ from .serializers import *
 
 class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
+    lookup_field = "supabase_id"
 
     def get_queryset(self):
         user = self.request.user
