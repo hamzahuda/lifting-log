@@ -1,4 +1,5 @@
 from .models import *
+from django.contrib.auth import get_user_model
 from rest_framework import viewsets
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from .permissions import *
@@ -10,6 +11,7 @@ class UserViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
+        User = get_user_model()
         if user.is_authenticated:
             return User.objects.filter(pk=user.pk)
         return User.objects.none()
