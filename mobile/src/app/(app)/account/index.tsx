@@ -1,32 +1,70 @@
 import { supabase } from "@/utils/supabase";
-import { View, Text } from "react-native";
-import { Button } from "@rneui/base";
+import api from "@/utils/api";
+import { View, Text, TouchableOpacity, Alert } from "react-native";
 import { useSession } from "@/context/ctx";
-import {} from "react-native-safe-area-context";
 
 export default function Account() {
     const { session } = useSession();
 
+    const deleteAccount = async () => {
+        await api
+            .delete(`/users/${session?.user?.id}/`)
+            .then((response) => {
+                Alert.alert("Account deleted");
+                supabase.auth.signOut();
+                console.log(response.data);
+            })
+            .catch((error) => {
+                Alert.alert("Error", "Failed to delete account.");
+                console.error(error);
+            });
+    };
+
+    const confirmAccountDeletion = () => {
+        Alert.alert(
+            "Delete Account",
+            "Are you sure you want to delete your account?",
+            [
+                {
+                    text: "Cancel",
+                    style: "cancel",
+                },
+                {
+                    text: "Delete",
+                    onPress: () => deleteAccount(),
+                    style: "destructive",
+                },
+            ],
+            { cancelable: true }
+        );
+    };
+
     return (
-        <View className="flex-1 bg-background p-5">
-            <View className="flex-1 justify-center">
-                <Text className="text-t-primary text-lg mb-2">Email</Text>
-                <View className="bg-secondary p-4 rounded-lg mb-8">
-                    <Text className="text-t-primary text-lg">
-                        {session?.user?.email}
-                    </Text>
-                </View>
-                <Button
-                    title="Sign Out"
-                    buttonStyle={{
-                        backgroundColor: "#3B82F6",
-                        paddingVertical: 15,
-                        borderRadius: 10,
-                    }}
-                    titleStyle={{ fontWeight: "bold", fontSize: 18 }}
-                    onPress={() => supabase.auth.signOut()}
-                />
+        <View className="flex-1 flex-col justify-start bg-background p-5">
+            <Text className="text-t-primary text-lg mb-2">Email</Text>
+            <View className="bg-secondary p-4 rounded-lg mb-8">
+                <Text className="text-t-primary text-lg">
+                    {session?.user?.email}
+                </Text>
             </View>
+
+            <TouchableOpacity
+                className="bg-accent p-4 rounded-lg"
+                onPress={() => supabase.auth.signOut()}
+            >
+                <Text className="text-white text-center text-lg font-bold">
+                    Sign Out
+                </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+                className="mt-auto bg-danger p-4 mb-10 rounded-lg"
+                onPress={confirmAccountDeletion}
+            >
+                <Text className="text-white text-center text-lg font-bold">
+                    Delete Account
+                </Text>
+            </TouchableOpacity>
         </View>
     );
 }
