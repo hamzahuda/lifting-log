@@ -4,6 +4,7 @@ module.exports = {
     primary: "#ffffff",
     secondary: "#e9e9e9",
     accent: "#437ace",
+    danger: "rgb(255, 59, 48)",
     "t-primary": "#000000",
     "t-secondary": "#5a5a5a",
     "t-tertiary": "#5a5a5a",
