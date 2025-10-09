@@ -1,7 +1,7 @@
 import { Stack, SplashScreen } from "expo-router";
 import { SessionProvider, useSession } from "../context/ctx";
 import { SplashScreenController } from "../splash";
-import "../styles/global.css";
+import "../global.css";
 import { useState, useEffect } from "react";
 import { PortalHost } from "@rn-primitives/portal";
 SplashScreen.preventAutoHideAsync();
