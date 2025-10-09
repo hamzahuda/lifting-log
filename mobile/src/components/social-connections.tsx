@@ -1,7 +1,12 @@
 import { cn } from "@/rn-reusables/utils";
 import { Button } from "@/components/ui/button";
 import { useColorScheme } from "nativewind";
-import { Image, Platform, View } from "react-native";
+import { Alert, Image, Platform, View } from "react-native";
+import {
+    GoogleSignin,
+    statusCodes,
+} from "@react-native-google-signin/google-signin";
+import { supabase } from "@/services/supabase";
 
 const SOCIAL_CONNECTION_STRATEGIES = [
     {
@@ -14,15 +19,38 @@ const SOCIAL_CONNECTION_STRATEGIES = [
         source: { uri: "https://img.clerk.com/static/google.png?width=160" },
         useTint: false,
     },
-    {
-        type: "oauth_github",
-        source: { uri: "https://img.clerk.com/static/github.png?width=160" },
-        useTint: true,
-    },
 ];
 
 export function SocialConnections() {
     const { colorScheme } = useColorScheme();
+
+    GoogleSignin.configure({
+        webClientId: process.env.EXPO_PUBLIC_GOOGLE_OAUTH_WEB_CLIENT_ID,
+    });
+    async function loginWithGoogle() {
+        try {
+            await GoogleSignin.hasPlayServices();
+            const userInfo = await GoogleSignin.signIn();
+            if (userInfo.data?.idToken) {
+                await supabase.auth.signInWithIdToken({
+                    provider: "google",
+                    token: userInfo.data.idToken,
+                });
+            } else {
+                throw new Error("no ID token present!");
+            }
+        } catch (error: any) {
+            if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+                console.error("sign in cancelled");
+            } else if (error.code === statusCodes.IN_PROGRESS) {
+                console.error(error);
+            } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+                console.error("play services not available: " + error);
+            } else {
+                console.error(error);
+            }
+        }
+    }
 
     return (
         <View className="gap-2 sm:flex-row sm:gap-3">
@@ -34,7 +62,11 @@ export function SocialConnections() {
                         size="sm"
                         className="sm:flex-1"
                         onPress={() => {
-                            // TODO: Authenticate with social provider and navigate to protected screen if successful
+                            if (strategy.type === "oauth_google") {
+                                loginWithGoogle();
+                            } else {
+                                Alert.alert("Not implemented yet.");
+                            }
                         }}
                     >
                         <Image
