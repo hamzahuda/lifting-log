@@ -1,4 +1,4 @@
-import { cn } from "@/rnr/utils";
+import { cn } from "@/rn-reusables/utils";
 import * as LabelPrimitive from "@rn-primitives/label";
 import { Platform } from "react-native";
 

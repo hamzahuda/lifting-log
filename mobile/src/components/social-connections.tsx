@@ -1,4 +1,4 @@
-import { cn } from "@/rnr/utils";
+import { cn } from "@/rn-reusables/utils";
 import { Button } from "@/components/ui/button";
 import { useColorScheme } from "nativewind";
 import { Image, Platform, View } from "react-native";
