@@ -4,7 +4,21 @@ import { SplashScreenController } from "../splash";
 import "../global.css";
 import { useState, useEffect } from "react";
 import { PortalHost } from "@rn-primitives/portal";
+import { AppState } from "react-native";
+import { supabase } from "@/services/supabase";
 SplashScreen.preventAutoHideAsync();
+
+// Tells Supabase Auth to continuously refresh the session automatically if
+// the app is in the foreground. When this is added, you will continue to receive
+// `onAuthStateChange` events with the `TOKEN_REFRESHED` or `SIGNED_OUT` event
+// if the user's session is terminated. This should only be registered once.
+AppState.addEventListener("change", (state) => {
+    if (state === "active") {
+        supabase.auth.startAutoRefresh();
+    } else {
+        supabase.auth.stopAutoRefresh();
+    }
+});
 
 export default function Root() {
     return (
@@ -49,7 +63,7 @@ function RootNavigator() {
 
             <Stack.Protected guard={!session}>
                 <Stack.Screen
-                    name="(auth)/index"
+                    name="(auth)/sign-in"
                     options={{ headerShown: false }}
                 />
             </Stack.Protected>
