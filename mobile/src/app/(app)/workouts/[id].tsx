@@ -8,7 +8,7 @@ import {
     TouchableOpacity,
 } from "react-native";
 import { useLocalSearchParams } from "expo-router";
-import api from "@/utils/api";
+import api from "@/services/api";
 import ExerciseCard from "./_components/ExerciseCard";
 import { Workout } from "@/types";
 import { SafeAreaView } from "react-native-safe-area-context";

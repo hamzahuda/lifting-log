@@ -8,7 +8,7 @@ import {
     ActivityIndicator,
 } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import api from "@/utils/api";
+import api from "@/services/api";
 import { WorkoutTemplate, WorkoutTemplateFormData } from "@/types";
 import TemplateForm from "./_components/TemplateForm";
 

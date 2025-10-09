@@ -1,5 +1,5 @@
-import { supabase } from "@/utils/supabase";
-import api from "@/utils/api";
+import { supabase } from "@/services/supabase";
+import api from "@/services/api";
 import { View, Text, TouchableOpacity, Alert } from "react-native";
 import { useSession } from "@/context/ctx";
 
