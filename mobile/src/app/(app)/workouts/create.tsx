@@ -7,7 +7,7 @@ import DateTimePicker, {
     DateTimePickerEvent,
 } from "@react-native-community/datetimepicker";
 import { WorkoutTemplate } from "@/types";
-import colors from "@/styles/colors";
+const colors = require("@/styles/colors");
 
 export default function CreateWorkoutScreen() {
     const [templates, setTemplates] = useState<WorkoutTemplate[]>([]);
@@ -55,7 +55,7 @@ export default function CreateWorkoutScreen() {
         try {
             const res = await api.post("/workouts/", payload);
             if (res.status === 201) {
-                router.push(`/(app)/workouts/${res.data.id}`);
+                router.replace(`/(app)/workouts/${res.data.id}`);
             }
         } catch (err) {
             Alert.alert("Error", "Failed to create workout. Please try again.");
