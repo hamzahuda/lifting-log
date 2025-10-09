@@ -7,7 +7,7 @@ import {
     TouchableOpacity,
 } from "react-native";
 import { useRouter } from "expo-router";
-import api from "@/utils/api";
+import api from "@/services/api";
 import { useFocusEffect } from "@react-navigation/native";
 import { Workout } from "@/types";
 

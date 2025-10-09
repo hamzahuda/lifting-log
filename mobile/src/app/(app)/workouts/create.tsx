@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { View, Text, TouchableOpacity, Alert, Platform } from "react-native";
 import { useRouter } from "expo-router";
-import api from "@/utils/api";
+import api from "@/services/api";
 import { Picker } from "@react-native-picker/picker";
 import DateTimePicker, {
     DateTimePickerEvent,

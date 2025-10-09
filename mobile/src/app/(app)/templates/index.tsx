@@ -6,7 +6,7 @@ import {
     TouchableOpacity,
     ActivityIndicator,
 } from "react-native";
-import api from "@/utils/api";
+import api from "@/services/api";
 import { useRouter } from "expo-router";
 import { useFocusEffect } from "@react-navigation/native";
 import { WorkoutTemplate } from "@/types";

@@ -1,6 +1,6 @@
 import { View, Alert, ScrollView } from "react-native";
 import { useRouter } from "expo-router";
-import api from "@/utils/api";
+import api from "@/services/api";
 import { WorkoutTemplateFormData } from "@/types";
 import TemplateForm from "./_components/TemplateForm";
 
