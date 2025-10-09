@@ -7,6 +7,7 @@ import DateTimePicker, {
     DateTimePickerEvent,
 } from "@react-native-community/datetimepicker";
 import { WorkoutTemplate } from "@/types";
+import colors from "@/styles/colors";
 
 export default function CreateWorkoutScreen() {
     const [templates, setTemplates] = useState<WorkoutTemplate[]>([]);
@@ -79,8 +80,8 @@ export default function CreateWorkoutScreen() {
                     onValueChange={(itemValue) =>
                         setSelectedTemplate(itemValue)
                     }
-                    style={{ color: "white" }}
-                    dropdownIconColor={"#FFFFFF"}
+                    style={{ color: colors.textPrimary }}
+                    dropdownIconColor={colors.textPrimary}
                 >
                     {templates.map((template) => (
                         <Picker.Item
@@ -114,7 +115,7 @@ export default function CreateWorkoutScreen() {
                 onPress={handleSubmit}
                 disabled={isSubmitting}
             >
-                <Text className="text-t-primary text-center font-bold text-lg">
+                <Text className="text-white text-center font-bold text-lg">
                     {isSubmitting ? "Creating..." : "Create Workout"}
                 </Text>
             </TouchableOpacity>
