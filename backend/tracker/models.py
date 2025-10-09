@@ -1,11 +1,37 @@
 from django.conf import settings
 from django.db import models, transaction
 from django.contrib.auth.models import AbstractUser
+from supabase import create_client, Client
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class User(AbstractUser):
     supabase_id = models.CharField(max_length=255, unique=True, null=True, blank=True)
     email = models.EmailField(("email address"), unique=True, null=True, blank=True)
+
+    def delete(self, *args, **kwargs):
+        """
+        Overrides the default delete method to also delete the user from Supabase.
+        """
+        if self.supabase_id:
+            try:
+                supabaseAdmin = create_client(
+                    settings.SUPABASE_URL, settings.SUPABASE_SECRET_KEY
+                )
+
+                supabaseAdmin.auth.admin.delete_user(self.supabase_id)
+
+                logger.info(
+                    f"Successfully deleted user {self.supabase_id} from Supabase."
+                )
+            except Exception as e:
+                logger.error(
+                    f"Failed to delete user {self.supabase_id} from Supabase: {e}"
+                )
+
+        super().delete(*args, **kwargs)
 
 
 # --- Workout Models ---
