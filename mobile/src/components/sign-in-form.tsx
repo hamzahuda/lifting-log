@@ -78,7 +78,7 @@ export function SignInForm() {
                                     size="sm"
                                     className="web:h-fit ml-auto h-4 px-1 py-0 sm:h-4"
                                     onPress={() => {
-                                        // TODO: Navigate to forgot password screen
+                                        router.push("/forgot-password");
                                     }}
                                 >
                                     <Text className="font-normal leading-4">
