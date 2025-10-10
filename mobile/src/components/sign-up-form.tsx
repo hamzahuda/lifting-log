@@ -13,9 +13,11 @@ import { Separator } from "@/components/ui/separator";
 import { Text } from "@/components/ui/text";
 import { supabase } from "@/services/supabase";
 import React, { useState } from "react";
-import { Pressable, TextInput, View, Alert } from "react-native";
+import { TouchableOpacity, TextInput, View, Alert } from "react-native";
+import { useRouter } from "expo-router";
 
 export function SignUpForm() {
+    const router = useRouter();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
@@ -83,18 +85,17 @@ export function SignUpForm() {
                             <Text>Continue</Text>
                         </Button>
                     </View>
-                    <Text className="text-center text-sm">
-                        Already have an account?{" "}
-                        <Pressable
-                            onPress={() => {
-                                // TODO: Navigate to sign in screen
-                            }}
-                        >
+                    <TouchableOpacity
+                        className="flex-row justify-center gap-1"
+                        onPress={() => router.back()}
+                    >
+                        <Text className="text-center text-sm">
+                            Already have an account?{" "}
                             <Text className="text-sm underline underline-offset-4">
                                 Sign in
                             </Text>
-                        </Pressable>
-                    </Text>
+                        </Text>
+                    </TouchableOpacity>
                     <View className="flex-row items-center">
                         <Separator className="flex-1" />
                         <Text className="text-muted-foreground px-4 text-sm">
