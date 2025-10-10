@@ -103,12 +103,16 @@ export function SignInForm() {
                         </Button>
                     </View>
                     <TouchableOpacity
+                        className="flex-row justify-center gap-1"
                         onPress={() => {
-                            router.push("/(auth)/sign-up");
+                            router.push("/sign-up");
                         }}
                     >
-                        <Text className="text-center text-sm underline underline-offset-4">
-                            Don&apos;t have an account? Sign up
+                        <Text className="text-center text-sm">
+                            Don&apos;t have an account?{" "}
+                            <Text className="text-sm underline underline-offset-4">
+                                Sign up
+                            </Text>
                         </Text>
                     </TouchableOpacity>
                     <View className="flex-row items-center">
