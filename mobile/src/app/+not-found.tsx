@@ -1,6 +1,8 @@
-import { Text, View } from "react-native";
+import { useRouter } from "expo-router";
+import { Text, View, TouchableOpacity } from "react-native";
 
 export default function NotFound() {
+    const router = useRouter();
     return (
         <View
             style={{
@@ -10,6 +12,9 @@ export default function NotFound() {
             }}
         >
             <Text>Page Not Found</Text>
+            <TouchableOpacity onPress={() => router.replace("/")}>
+                <Text className="underline">Go Home</Text>
+            </TouchableOpacity>
         </View>
     );
 }
