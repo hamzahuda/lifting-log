@@ -9,9 +9,11 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Text } from "@/components/ui/text";
-import { View } from "react-native";
+import { View, TouchableOpacity } from "react-native";
+import { useRouter } from "expo-router";
 
 export function ForgotPasswordForm() {
+    const router = useRouter();
     function onSubmit() {
         // TODO: Submit form and navigate to reset password screen if successful
     }
@@ -45,6 +47,11 @@ export function ForgotPasswordForm() {
                             <Text>Reset your password</Text>
                         </Button>
                     </View>
+                    <TouchableOpacity onPress={() => router.back()}>
+                        <Text className="text-center text-sm text-muted-foreground underline">
+                            Back to Sign In
+                        </Text>
+                    </TouchableOpacity>
                 </CardContent>
             </Card>
         </View>
