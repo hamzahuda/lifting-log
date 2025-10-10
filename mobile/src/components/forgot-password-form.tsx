@@ -11,11 +11,17 @@ import { Label } from "@/components/ui/label";
 import { Text } from "@/components/ui/text";
 import { View, TouchableOpacity } from "react-native";
 import { useRouter } from "expo-router";
+import { supabase } from "@/services/supabase";
+import { useState, useEffect } from "react";
+import * as Linking from "expo-linking";
 
 export function ForgotPasswordForm() {
+    const [email, setEmail] = useState<string>("");
     const router = useRouter();
-    function onSubmit() {
-        // TODO: Submit form and navigate to reset password screen if successful
+
+    async function onSubmit() {
+        const { data, error } =
+            await supabase.auth.resetPasswordForEmail(email);
     }
 
     return (
@@ -41,6 +47,8 @@ export function ForgotPasswordForm() {
                                 autoCapitalize="none"
                                 returnKeyType="send"
                                 onSubmitEditing={onSubmit}
+                                value={email}
+                                onChangeText={setEmail}
                             />
                         </View>
                         <Button className="w-full" onPress={onSubmit}>
