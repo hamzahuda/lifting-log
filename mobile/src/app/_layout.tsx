@@ -6,6 +6,7 @@ import { useState, useEffect } from "react";
 import { PortalHost } from "@rn-primitives/portal";
 import { AppState } from "react-native";
 import { supabase } from "@/services/supabase";
+import { useColorScheme } from "nativewind";
 SplashScreen.preventAutoHideAsync();
 
 // Tells Supabase Auth to continuously refresh the session automatically if
@@ -21,6 +22,11 @@ AppState.addEventListener("change", (state) => {
 });
 
 export default function Root() {
+    const { setColorScheme } = useColorScheme();
+    useEffect(() => {
+        setColorScheme("dark");
+    }, []);
+
     return (
         <SessionProvider>
             <SplashScreenController />
@@ -62,10 +68,7 @@ function RootNavigator() {
             </Stack.Protected>
 
             <Stack.Protected guard={!session}>
-                <Stack.Screen
-                    name="(auth)/sign-in"
-                    options={{ headerShown: false }}
-                />
+                <Stack.Screen name="(auth)" options={{ headerShown: false }} />
             </Stack.Protected>
         </Stack>
     );
