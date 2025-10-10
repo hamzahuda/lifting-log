@@ -62,7 +62,6 @@ export function SignInForm() {
                                 autoCapitalize="none"
                                 value={email}
                                 onChangeText={setEmail}
-                                autoFocus
                                 textContentType="emailAddress"
                                 onSubmitEditing={onEmailSubmitEditing}
                                 returnKeyType="next"
