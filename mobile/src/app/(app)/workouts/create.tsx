@@ -7,7 +7,8 @@ import DateTimePicker, {
     DateTimePickerEvent,
 } from "@react-native-community/datetimepicker";
 import { WorkoutTemplate } from "@/types";
-const colors = require("@/styles/colors");
+import { THEME } from "@/rn-reusables/theme";
+import { useColorScheme } from "nativewind";
 
 export default function CreateWorkoutScreen() {
     const [templates, setTemplates] = useState<WorkoutTemplate[]>([]);
@@ -80,8 +81,13 @@ export default function CreateWorkoutScreen() {
                     onValueChange={(itemValue) =>
                         setSelectedTemplate(itemValue)
                     }
-                    style={{ color: colors.textPrimary }}
-                    dropdownIconColor={colors.textPrimary}
+                    style={{
+                        color: THEME[useColorScheme().colorScheme ?? "dark"]
+                            .foreground,
+                    }}
+                    dropdownIconColor={
+                        THEME[useColorScheme().colorScheme ?? "dark"].foreground
+                    }
                 >
                     {templates.map((template) => (
                         <Picker.Item
