@@ -1,12 +1,15 @@
 import { Stack } from "expo-router";
-const colors = require("@/styles/colors");
+import { THEME } from "@/rn-reusables/theme";
+import { useColorScheme } from "nativewind";
 
 export default function TemplatesLayout() {
     return (
         <Stack
             screenOptions={{
                 headerStyle: {
-                    backgroundColor: colors.header,
+                    backgroundColor:
+                        THEME[useColorScheme().colorScheme ?? "dark"]
+                            .foreground,
                 },
                 headerTitle: "Workout Templates",
                 headerTintColor: "#fff",
