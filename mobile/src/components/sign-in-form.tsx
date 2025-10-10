@@ -11,15 +11,17 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Text } from "@/components/ui/text";
-import * as React from "react";
-import { Pressable, type TextInput, View, Alert } from "react-native";
+import { useState, useRef } from "react";
+import { type TextInput, View, Alert, TouchableOpacity } from "react-native";
 import { supabase } from "@/services/supabase";
+import { useRouter } from "expo-router";
 
 export function SignInForm() {
-    const [email, setEmail] = React.useState("");
-    const [password, setPassword] = React.useState("");
+    const router = useRouter();
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
 
-    const passwordInputRef = React.useRef<TextInput>(null);
+    const passwordInputRef = useRef<TextInput>(null);
     function onEmailSubmitEditing() {
         passwordInputRef.current?.focus();
     }
@@ -44,7 +46,7 @@ export function SignInForm() {
             <Card className="border-border/0 sm:border-border shadow-none sm:shadow-sm sm:shadow-black/5">
                 <CardHeader>
                     <CardTitle className="text-center text-xl sm:text-left">
-                        Sign in to your app
+                        Sign in to Lifting Log
                     </CardTitle>
                     <CardDescription className="text-center sm:text-left">
                         Welcome back! Please sign in to continue
@@ -100,18 +102,15 @@ export function SignInForm() {
                             <Text>Continue</Text>
                         </Button>
                     </View>
-                    <Text className="text-center text-sm">
-                        Don&apos;t have an account?{" "}
-                        <Pressable
-                            onPress={() => {
-                                // TODO: Navigate to sign up screen
-                            }}
-                        >
-                            <Text className="text-sm underline underline-offset-4">
-                                Sign up
-                            </Text>
-                        </Pressable>
-                    </Text>
+                    <TouchableOpacity
+                        onPress={() => {
+                            router.push("/(auth)/sign-up");
+                        }}
+                    >
+                        <Text className="text-center text-sm underline underline-offset-4">
+                            Don&apos;t have an account? Sign up
+                        </Text>
+                    </TouchableOpacity>
                     <View className="flex-row items-center">
                         <Separator className="flex-1" />
                         <Text className="text-muted-foreground px-4 text-sm">
