@@ -11,7 +11,7 @@ import api from "@/services/api";
 import { useFocusEffect } from "@react-navigation/native";
 import { Workout } from "@/types";
 
-export default function HomeScreen() {
+export default function WorkoutListScreen() {
     const [workouts, setWorkouts] = useState<Workout[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const router = useRouter();
