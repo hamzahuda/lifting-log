@@ -12,7 +12,7 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Text } from "@/components/ui/text";
 import { supabase } from "@/services/supabase";
-import React, { useState } from "react";
+import { useRef, useState } from "react";
 import { TouchableOpacity, TextInput, View, Alert } from "react-native";
 import { useRouter } from "expo-router";
 
@@ -20,14 +20,29 @@ export function SignUpForm() {
     const router = useRouter();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
 
-    const passwordInputRef = React.useRef<TextInput>(null);
+    const passwordInputRef = useRef<TextInput>(null);
+    const confirmPasswordInputRef = useRef<TextInput>(null);
 
     function onEmailSubmitEditing() {
         passwordInputRef.current?.focus();
     }
+    function onPasswordSubmitEditing() {
+        confirmPasswordInputRef.current?.focus();
+    }
 
     async function onSubmit() {
+        if (!email || !password || !confirmPassword) {
+            Alert.alert("Please fill in all fields.");
+            return;
+        }
+
+        if (password !== confirmPassword) {
+            Alert.alert("Passwords do not match.");
+            return;
+        }
+
         const {
             data: { session },
             error,
@@ -60,13 +75,15 @@ export function SignUpForm() {
                             <Label htmlFor="email">Email</Label>
                             <Input
                                 id="email"
-                                placeholder="m@example.com"
+                                placeholder="john@example.com"
                                 keyboardType="email-address"
                                 autoComplete="email"
                                 autoCapitalize="none"
                                 onSubmitEditing={onEmailSubmitEditing}
                                 returnKeyType="next"
                                 submitBehavior="submit"
+                                value={email}
+                                onChangeText={setEmail}
                             />
                         </View>
                         <View className="gap-1.5">
@@ -77,12 +94,32 @@ export function SignUpForm() {
                                 ref={passwordInputRef}
                                 id="password"
                                 secureTextEntry
+                                placeholder="********"
+                                returnKeyType="next"
+                                onSubmitEditing={onPasswordSubmitEditing}
+                                value={password}
+                                onChangeText={setPassword}
+                            />
+                        </View>
+                        <View className="gap-1.5">
+                            <View className="flex-row items-center">
+                                <Label htmlFor="confirm-password">
+                                    Confirm Password
+                                </Label>
+                            </View>
+                            <Input
+                                ref={confirmPasswordInputRef}
+                                id="confirm-password"
+                                secureTextEntry
+                                placeholder="********"
                                 returnKeyType="send"
                                 onSubmitEditing={onSubmit}
+                                value={confirmPassword}
+                                onChangeText={setConfirmPassword}
                             />
                         </View>
                         <Button className="w-full" onPress={onSubmit}>
-                            <Text>Continue</Text>
+                            <Text>Sign Up</Text>
                         </Button>
                     </View>
                     <TouchableOpacity
