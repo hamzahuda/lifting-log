@@ -23,15 +23,12 @@ AppState.addEventListener("change", (state) => {
     }
 });
 
-export default function Root() {
-    SystemUI.setBackgroundColorAsync(
-        THEME[useColorScheme().colorScheme || "dark"].background
-    );
-    const { setColorScheme } = useColorScheme();
-    useEffect(() => {
-        setColorScheme("dark");
-    }, []);
+const { setColorScheme } = useColorScheme();
+const { colorScheme } = useColorScheme();
+SystemUI.setBackgroundColorAsync(THEME[colorScheme || "dark"].background);
+setColorScheme("dark");
 
+export default function Root() {
     return (
         <SessionProvider>
             <SplashScreenController />
