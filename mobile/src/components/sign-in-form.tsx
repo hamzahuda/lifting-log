@@ -58,7 +58,7 @@ export function SignInForm() {
                             <Label htmlFor="email">Email</Label>
                             <Input
                                 id="email"
-                                placeholder="john@example.com"
+                                placeholder="liftinglog@example.com"
                                 keyboardType="email-address"
                                 autoComplete="email"
                                 autoCapitalize="none"
