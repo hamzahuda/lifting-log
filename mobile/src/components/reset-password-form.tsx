@@ -27,9 +27,11 @@ export function ResetPasswordForm() {
     <View className="gap-6">
       <Card className="border-border/0 sm:border-border shadow-none sm:shadow-sm sm:shadow-black/5">
         <CardHeader>
-          <CardTitle className="text-center text-xl sm:text-left">Reset password</CardTitle>
+                    <CardTitle className="text-center text-xl sm:text-left">
+                        Reset password
+                    </CardTitle>
           <CardDescription className="text-center sm:text-left">
-            Enter the code sent to your email and set a new password
+                        Enter your new password below.
           </CardDescription>
         </CardHeader>
         <CardContent className="gap-6">
@@ -44,18 +46,24 @@ export function ResetPasswordForm() {
                 returnKeyType="next"
                 submitBehavior="submit"
                 onSubmitEditing={onPasswordSubmitEditing}
+                                value={password}
+                                onChangeText={setPassword}
               />
             </View>
             <View className="gap-1.5">
-              <Label htmlFor="code">Verification code</Label>
+                            <View className="flex-row items-center">
+                                <Label htmlFor="confirm-password">
+                                    Confirm new password
+                                </Label>
+                            </View>
               <Input
-                id="code"
-                autoCapitalize="none"
+                                ref={confirmPasswordInputRef}
+                                id="confirm-password"
+                                secureTextEntry
                 returnKeyType="send"
-                keyboardType="numeric"
-                autoComplete="sms-otp"
-                textContentType="oneTimeCode"
                 onSubmitEditing={onSubmit}
+                                value={confirmPassword}
+                                onChangeText={setConfirmPassword}
               />
             </View>
             <Button className="w-full" onPress={onSubmit}>
