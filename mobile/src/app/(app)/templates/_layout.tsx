@@ -1,22 +1,12 @@
 import { Stack } from "expo-router";
-import { THEME } from "@/utils/theme";
-import { useColorScheme } from "nativewind";
+import { useSharedHeaderOptions } from "../_utils/useSharedHeaderOptions";
 
 export default function TemplatesLayout() {
     return (
         <Stack
             screenOptions={{
-                headerStyle: {
-                    backgroundColor:
-                        THEME[useColorScheme().colorScheme ?? "dark"]
-                            .foreground,
-                },
                 headerTitle: "Workout Templates",
-                headerTintColor: "#fff",
-                headerTitleStyle: {
-                    fontWeight: "bold",
-                    fontSize: 26,
-                },
+                ...useSharedHeaderOptions(),
             }}
         >
             <Stack.Screen
