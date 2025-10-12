@@ -54,7 +54,6 @@ export function SocialConnections() {
             }
         }
         setLoading(false);
-        console.log(loading);
     }
 
     return loading ? (
