@@ -1,5 +1,5 @@
 import { Stack } from "expo-router";
-import { useSharedHeaderOptions } from "../_utils/useSharedHeaderOptions";
+import useSharedHeaderOptions from "@/hooks/useSharedHeaderOptions";
 
 export default function WorkoutsLayout() {
     return (
