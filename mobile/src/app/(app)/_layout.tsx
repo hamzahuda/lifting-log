@@ -6,6 +6,7 @@ import {
 } from "@expo/vector-icons";
 import { useColorScheme } from "nativewind";
 import { THEME } from "@/utils/theme";
+import { View } from "react-native";
 
 export default function AppLayout() {
     const { colorScheme } = useColorScheme();
@@ -16,17 +17,29 @@ export default function AppLayout() {
         <Tabs
             screenOptions={{
                 headerShown: false,
-                tabBarStyle: {
-                    height: 90,
-                    paddingTop: 14,
-                    backgroundColor: themeColors.background,
-                },
-
                 tabBarActiveTintColor: themeColors.foreground,
                 tabBarInactiveTintColor: themeColors.mutedForeground,
-
+                tabBarStyle: {
+                    height: 100,
+                    paddingTop: 14,
+                    borderTopWidth: 0,
+                },
                 tabBarLabelStyle: {
                     fontSize: 12,
+                },
+                tabBarBackground() {
+                    return (
+                        <View
+                            style={{
+                                flex: 1,
+                                borderRadius: 50,
+                                backgroundColor: themeColors.background,
+                                borderWidth: 1,
+                                borderColor: themeColors.border,
+                                borderBottomColor: "transparent",
+                            }}
+                        />
+                    );
                 },
             }}
         >
