@@ -1,5 +1,5 @@
 import { Text, TextClassContext } from "@/components/ui/text";
-import { cn } from "@/rn-reusables/utils";
+import { cn } from "@/utils/utils";
 import { View, type ViewProps } from "react-native";
 
 function Card({ className, ...props }: ViewProps & React.RefAttributes<View>) {

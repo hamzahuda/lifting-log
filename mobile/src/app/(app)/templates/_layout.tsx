@@ -1,5 +1,5 @@
 import { Stack } from "expo-router";
-import { THEME } from "@/rn-reusables/theme";
+import { THEME } from "@/utils/theme";
 import { useColorScheme } from "nativewind";
 
 export default function TemplatesLayout() {

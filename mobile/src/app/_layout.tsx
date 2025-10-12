@@ -8,7 +8,7 @@ import { AppState } from "react-native";
 import { supabase } from "@/services/supabase";
 import { useColorScheme } from "nativewind";
 import * as SystemUI from "expo-system-ui";
-import { THEME } from "@/rn-reusables/theme";
+import { THEME } from "@/utils/theme";
 SplashScreen.preventAutoHideAsync();
 
 // Tells Supabase Auth to continuously refresh the session automatically if

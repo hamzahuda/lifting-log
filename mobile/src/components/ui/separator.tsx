@@ -1,4 +1,4 @@
-import { cn } from "@/rn-reusables/utils";
+import { cn } from "@/utils/utils";
 import * as SeparatorPrimitive from "@rn-primitives/separator";
 
 function Separator({
