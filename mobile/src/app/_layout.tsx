@@ -8,7 +8,9 @@ import { AppState } from "react-native";
 import { supabase } from "@/services/supabase";
 import { useColorScheme } from "nativewind";
 import * as SystemUI from "expo-system-ui";
-import { THEME } from "@/utils/theme";
+import { THEME, NAV_THEME } from "@/utils/theme"; // Import NAV_THEME
+import { ThemeProvider } from "@react-navigation/native"; // Import ThemeProvider
+
 SplashScreen.preventAutoHideAsync();
 
 // Tells Supabase Auth to continuously refresh the session automatically if
@@ -26,18 +28,22 @@ AppState.addEventListener("change", (state) => {
 SystemUI.setBackgroundColorAsync(THEME["dark"].background);
 
 export default function Root() {
-    const { setColorScheme } = useColorScheme();
+    const { colorScheme, setColorScheme } = useColorScheme();
 
     useEffect(() => {
         setColorScheme("dark");
     }, []);
 
+    const navTheme = colorScheme === "dark" ? NAV_THEME.dark : NAV_THEME.light;
+
     return (
-        <SessionProvider>
-            <SplashScreenController />
-            <RootNavigator />
-            <PortalHost />
-        </SessionProvider>
+        <ThemeProvider value={navTheme}>
+            <SessionProvider>
+                <SplashScreenController />
+                <RootNavigator />
+                <PortalHost />
+            </SessionProvider>
+        </ThemeProvider>
     );
 }
 
