@@ -1,12 +1,13 @@
 import { cn } from "@/rn-reusables/utils";
 import { Button } from "@/components/ui/button";
 import { useColorScheme } from "nativewind";
-import { Alert, Image, Platform, View } from "react-native";
+import { Alert, Image, Platform, View, ActivityIndicator } from "react-native";
 import {
     GoogleSignin,
     statusCodes,
 } from "@react-native-google-signin/google-signin";
 import { supabase } from "@/services/supabase";
+import { useState } from "react";
 
 const SOCIAL_CONNECTION_STRATEGIES = [
     {
@@ -23,11 +24,13 @@ const SOCIAL_CONNECTION_STRATEGIES = [
 
 export function SocialConnections() {
     const { colorScheme } = useColorScheme();
+    const [loading, setLoading] = useState(false);
 
     GoogleSignin.configure({
         webClientId: process.env.EXPO_PUBLIC_GOOGLE_OAUTH_WEB_CLIENT_ID,
     });
     async function loginWithGoogle() {
+        setLoading(true);
         try {
             await GoogleSignin.hasPlayServices();
             const userInfo = await GoogleSignin.signIn();
@@ -50,9 +53,13 @@ export function SocialConnections() {
                 console.error(error);
             }
         }
+        setLoading(false);
+        console.log(loading);
     }
 
-    return (
+    return loading ? (
+        <ActivityIndicator className="text-foreground" size="large" />
+    ) : (
         <View className="gap-2 sm:flex-row sm:gap-3">
             {SOCIAL_CONNECTION_STRATEGIES.map((strategy) => {
                 return (
