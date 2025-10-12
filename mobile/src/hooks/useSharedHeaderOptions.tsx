@@ -1,7 +1,7 @@
 import { useColorScheme } from "nativewind";
 import { THEME } from "@/utils/theme";
 
-export const useSharedHeaderOptions = () => {
+export default function useSharedHeaderOptions() {
     const { colorScheme } = useColorScheme();
     const themeColors =
         colorScheme === undefined ? THEME.dark : THEME[colorScheme];
@@ -14,5 +14,6 @@ export const useSharedHeaderOptions = () => {
         headerTitleStyle: {
             fontSize: 26,
         },
+        headerTitleAlign: "center" as const,
     };
-};
+}
