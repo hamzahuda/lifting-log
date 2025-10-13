@@ -20,7 +20,7 @@ export default function AppLayout() {
                 tabBarActiveTintColor: themeColors.foreground,
                 tabBarInactiveTintColor: themeColors.mutedForeground,
                 tabBarStyle: {
-                    height: 90,
+                    height: 94,
                     paddingTop: 14,
                     borderTopWidth: 0,
                     backgroundColor: "transparent",
