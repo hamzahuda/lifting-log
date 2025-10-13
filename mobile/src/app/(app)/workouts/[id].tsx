@@ -126,10 +126,10 @@ export default function WorkoutDetailScreen() {
                 className="p-5"
                 contentContainerStyle={{ paddingBottom: 100 }}
             >
-                <Text className="text-4xl text-t-primary font-bold text-center mb-1">
+                <Text className="text-4xl text-foreground font-bold text-center mb-1">
                     {workout.name}
                 </Text>
-                <Text className="text-lg text-center text-t-secondary font-bold">
+                <Text className="text-lg text-center text-muted-foreground font-bold">
                     {workoutDate}
                 </Text>
                 {workout.notes && (
