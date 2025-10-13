@@ -66,7 +66,7 @@ export default function TemplateScreen() {
                 )}
             </View>
             <TouchableOpacity
-                className="absolute bottom-4 right-4 w-16 h-16 bg-accent rounded-2xl justify-center items-center shadow-lg shadow-black"
+                className="absolute bottom-28 right-4 w-16 h-16 bg-accent rounded-2xl justify-center items-center shadow-lg shadow-black"
                 onPress={() => router.push("/(app)/templates/create")}
             >
                 <Text className="text-white text-3xl">+</Text>
