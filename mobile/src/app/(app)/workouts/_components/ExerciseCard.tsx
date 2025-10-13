@@ -1,11 +1,20 @@
 import { View, Text, TextInput } from "react-native";
-import Animated, {
-    useAnimatedStyle,
-    useSharedValue,
-    withSpring,
-} from "react-native-reanimated";
 import { Exercise } from "@/types";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
+import {
+    Accordion,
+    AccordionContent,
+    AccordionItem,
+    AccordionTrigger,
+} from "@/components/ui/accordion";
 
 interface ExerciseCardProps {
     exercise: Exercise;
@@ -24,7 +33,7 @@ const ExerciseCard = ({
     exerciseIndex,
 }: ExerciseCardProps) => {
     const headers = ["Set", "Rep Range", "Weight (kg)", "Reps"];
-    const progress = useSharedValue(0);
+    const [progress, setProgress] = useState<number>(0);
 
     useEffect(() => {
         const completedFields = exercise.sets.reduce((accumulator, set) => {
@@ -35,87 +44,90 @@ const ExerciseCard = ({
             );
         }, 0);
         const totalFields = exercise.sets.length * 2;
-        progress.value = totalFields > 0 ? completedFields / totalFields : 0;
+        setProgress(
+            (totalFields > 0 ? completedFields / totalFields : 0) * 100
+        );
     }, [exercise]);
 
-    const animatedProgressBar = useAnimatedStyle(() => ({
-        width: withSpring(`${progress.value * 100}%`),
-    }));
-
     return (
-        <View className="bg-primary rounded-2xl p-4 mb-5 shadow-md ">
-            <Text className="text-t-primary font-extrabold text-3xl">
-                {exercise.name.toUpperCase()}
-            </Text>
-            {exercise.notes && (
-                <Text className="text-gray-500 text-sm align-top mb-2">
-                    ({exercise.notes})
-                </Text>
-            )}
-
-            <View className="h-2.5 w-full bg-secondary rounded-full overflow-hidden my-3">
-                <Animated.View
-                    style={animatedProgressBar}
-                    className="h-full w-80 rounded-full bg-accent"
-                />
-            </View>
-
-            <View className="flex-row border-b pb-2 mb-2 border-gray-500">
-                {headers.map((header) => (
-                    <Text
-                        key={header}
-                        className="flex-1 text-t-secondary text-center text-lg font-semibold"
-                    >
-                        {header}
-                    </Text>
-                ))}
-            </View>
-
-            {exercise.sets.map((set, setIndex) => (
-                <View key={set.id} className="flex-row py-1 items-center">
-                    <Text className="flex-1 text-t-tertiary text-lg text-center">
-                        {setIndex + 1}
-                    </Text>
-                    <Text className="flex-1 text-t-tertiary text-lg text-center">
-                        {set.min_reps}-{set.max_reps}
-                    </Text>
-                    <View className="flex-1 items-center">
-                        <TextInput
-                            className="text-t-tertiary text-lg text-center w-16 py-1 bg-secondary rounded-md"
-                            value={set.weight?.toString() ?? ""}
-                            onChangeText={(value) =>
-                                onSetUpdate(
-                                    exerciseIndex,
-                                    setIndex,
-                                    "weight",
-                                    value
-                                )
-                            }
-                            keyboardType="numeric"
-                            placeholder="--"
-                            placeholderTextColor="#9CA3AF"
-                        />
+        <Accordion type="single" collapsible>
+            <AccordionItem value="item-1">
+                <AccordionTrigger>
+                    <View className="flex-1">
+                        <Text className="text-card-foreground font-extrabold text-3xl">
+                            {exercise.name.toUpperCase()}
+                        </Text>
+                        {exercise.notes && (
+                            <Text className="text-muted-foreground text-sm align-top">
+                                ({exercise.notes})
+                            </Text>
+                        )}
                     </View>
-                    <View className="flex-1 items-center">
-                        <TextInput
-                            className="text-t-tertiary text-lg text-center w-16 py-1 bg-secondary rounded-md"
-                            value={set.reps?.toString() ?? ""}
-                            onChangeText={(value) =>
-                                onSetUpdate(
-                                    exerciseIndex,
-                                    setIndex,
-                                    "reps",
-                                    value
-                                )
-                            }
-                            keyboardType="numeric"
-                            placeholder="--"
-                            placeholderTextColor="#9CA3AF"
-                        />
+                </AccordionTrigger>
+                <AccordionContent>
+                    <Progress value={progress} className="" />
+
+                    <View className="flex-row border-b pb-2 mb-2 border-gray-500">
+                        {headers.map((header) => (
+                            <Text
+                                key={header}
+                                className="flex-1 text-muted-foreground text-center text-lg font-semibold"
+                            >
+                                {header}
+                            </Text>
+                        ))}
                     </View>
-                </View>
-            ))}
-        </View>
+
+                    {exercise.sets.map((set, setIndex) => (
+                        <View
+                            key={set.id}
+                            className="flex-row py-1 items-center"
+                        >
+                            <Text className="flex-1 text-foreground text-lg text-center">
+                                {setIndex + 1}
+                            </Text>
+                            <Text className="flex-1 text-foreground text-lg text-center">
+                                {set.min_reps}-{set.max_reps}
+                            </Text>
+                            <View className="flex-1 items-center">
+                                <TextInput
+                                    className="text-foreground text-lg text-center w-16 py-1 bg-secondary rounded-md"
+                                    value={set.weight?.toString() ?? ""}
+                                    onChangeText={(value) =>
+                                        onSetUpdate(
+                                            exerciseIndex,
+                                            setIndex,
+                                            "weight",
+                                            value
+                                        )
+                                    }
+                                    keyboardType="numeric"
+                                    placeholder="--"
+                                    placeholderTextColor="#9CA3AF"
+                                />
+                            </View>
+                            <View className="flex-1 items-center">
+                                <TextInput
+                                    className="text-foreground text-lg text-center w-16 py-1 bg-secondary rounded-md"
+                                    value={set.reps?.toString() ?? ""}
+                                    onChangeText={(value) =>
+                                        onSetUpdate(
+                                            exerciseIndex,
+                                            setIndex,
+                                            "reps",
+                                            value
+                                        )
+                                    }
+                                    keyboardType="numeric"
+                                    placeholder="--"
+                                    placeholderTextColor="#9CA3AF"
+                                />
+                            </View>
+                        </View>
+                    ))}
+                </AccordionContent>
+            </AccordionItem>
+        </Accordion>
     );
 };
 
