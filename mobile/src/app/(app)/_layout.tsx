@@ -37,7 +37,7 @@ export default function AppLayout() {
                                 flex: 1,
                                 borderRadius: 50,
                                 backgroundColor: themeColors.background,
-                                borderWidth: 1,
+                                borderWidth: 2,
                                 borderColor: themeColors.border,
                                 borderBottomColor: "transparent",
                             }}
