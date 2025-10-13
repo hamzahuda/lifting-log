@@ -1,7 +1,8 @@
 import { useColorScheme } from "nativewind";
 import { THEME } from "@/utils/theme";
+import { ExtendedStackNavigationOptions } from "expo-router/build/layouts/StackClient";
 
-export default function useSharedHeaderOptions() {
+export default function useSharedHeaderOptions(): ExtendedStackNavigationOptions {
     const { colorScheme } = useColorScheme();
     const themeColors =
         colorScheme === undefined ? THEME.dark : THEME[colorScheme];
