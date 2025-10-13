@@ -57,8 +57,8 @@ export default function WorkoutListScreen() {
                                     }
                                 >
                                     <View className="flex-row items-center mt-1">
-                                        <Text className="text-foreground font-bold text-xl mb-1 ml-2 mr-5">
-                                            {`${workouts.length - index} `}
+                                        <Text className="text-foreground font-bold text-xl ml-1 mr-6">
+                                            {`${workouts.length - index}`}
                                         </Text>
                                         <View className="flex-col">
                                             <Text className="text-foreground font-bold text-xl">
@@ -69,7 +69,7 @@ export default function WorkoutListScreen() {
                                             </Text>
                                         </View>
 
-                                        <Text className="text-muted-foreground ml-auto font-semibold text-lg mb-auto">
+                                        <Text className="text-muted-foreground ml-auto font-semibold text-md mb-auto">
                                             {new Date(
                                                 workout.date
                                             ).toLocaleDateString("en-GB")}
