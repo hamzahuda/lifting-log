@@ -2,19 +2,12 @@ import { View, Text, TextInput } from "react-native";
 import { Exercise } from "@/types";
 import { useEffect, useState } from "react";
 import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
-import {
     Accordion,
     AccordionContent,
     AccordionItem,
     AccordionTrigger,
 } from "@/components/ui/accordion";
+import { Progress } from "@/components/ui/progress";
 
 interface ExerciseCardProps {
     exercise: Exercise;
@@ -25,12 +18,14 @@ interface ExerciseCardProps {
         value: string
     ) => void;
     exerciseIndex: number;
+    isLast?: boolean;
 }
 
 const ExerciseCard = ({
     exercise,
     onSetUpdate,
     exerciseIndex,
+    isLast,
 }: ExerciseCardProps) => {
     const headers = ["Set", "Rep Range", "Weight (kg)", "Reps"];
     const [progress, setProgress] = useState<number>(0);
@@ -51,7 +46,10 @@ const ExerciseCard = ({
 
     return (
         <Accordion type="single" collapsible>
-            <AccordionItem value="item-1">
+            <AccordionItem
+                value="item-1"
+                className={isLast ? "border-b-0" : ""}
+            >
                 <AccordionTrigger>
                     <View className="flex-1">
                         <Text className="text-card-foreground font-extrabold text-2xl">
