@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
     ScrollView,
     View,
@@ -22,6 +22,8 @@ export default function WorkoutDetailScreen() {
     );
     const [loading, setLoading] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
+    const scrollViewRef = useRef<ScrollView>(null);
+    const itemLayouts = useRef<{ [key: number]: number }>({});
 
     useEffect(() => {
         if (!id) return;
@@ -87,6 +89,13 @@ export default function WorkoutDetailScreen() {
             });
     };
 
+    const handleExercisePress = (index: number) => {
+        const y = itemLayouts.current[index];
+        if (scrollViewRef.current && y !== undefined) {
+            scrollViewRef.current.scrollTo({ y: y, animated: true });
+        }
+    };
+
     if (loading) {
         return (
             <SafeAreaView className="flex-1 justify-center items-center bg-background">
@@ -124,8 +133,12 @@ export default function WorkoutDetailScreen() {
             className="flex-1 bg-background"
         >
             <ScrollView
+                ref={scrollViewRef}
                 className="py-5 px-2"
-                contentContainerStyle={{ paddingBottom: 150 }}
+                contentContainerStyle={{
+                    paddingBottom: 150,
+                }}
+                showsVerticalScrollIndicator={false}
             >
                 <Text className="text-4xl text-foreground font-bold text-center mb-1">
                     {workout.name}
@@ -140,13 +153,21 @@ export default function WorkoutDetailScreen() {
                 )}
                 <Card className="py-0 gap-0 px-4">
                     {workout.exercises.map((exercise, index) => (
-                        <ExerciseCard
+                        <View
                             key={exercise.id}
-                            exercise={exercise}
-                            exerciseIndex={index}
-                            onSetUpdate={handleSetUpdate}
-                            isLast={index === workout.exercises.length - 1}
-                        />
+                            onLayout={(event) => {
+                                itemLayouts.current[index] =
+                                    event.nativeEvent.layout.y;
+                            }}
+                        >
+                            <ExerciseCard
+                                exercise={exercise}
+                                exerciseIndex={index}
+                                onSetUpdate={handleSetUpdate}
+                                isLast={index === workout.exercises.length - 1}
+                                onPress={() => handleExercisePress(index)}
+                            />
+                        </View>
                     ))}
                 </Card>
             </ScrollView>
