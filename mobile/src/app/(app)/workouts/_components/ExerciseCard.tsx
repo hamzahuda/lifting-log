@@ -19,6 +19,7 @@ interface ExerciseCardProps {
     ) => void;
     exerciseIndex: number;
     isLast?: boolean;
+    onPress: () => void;
 }
 
 const ExerciseCard = ({
@@ -26,6 +27,7 @@ const ExerciseCard = ({
     onSetUpdate,
     exerciseIndex,
     isLast,
+    onPress,
 }: ExerciseCardProps) => {
     const headers = ["Set", "Rep Range", "Weight (kg)", "Reps"];
     const [progress, setProgress] = useState<number>(0);
@@ -50,7 +52,7 @@ const ExerciseCard = ({
                 value="item-1"
                 className={isLast ? "border-b-0" : ""}
             >
-                <AccordionTrigger>
+                <AccordionTrigger onPress={onPress}>
                     <View className="flex-1">
                         <Text className="text-card-foreground font-extrabold text-2xl">
                             {exercise.name.toUpperCase()}
