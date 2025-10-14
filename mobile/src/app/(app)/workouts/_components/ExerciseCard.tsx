@@ -54,7 +54,7 @@ const ExerciseCard = ({
             <AccordionItem value="item-1">
                 <AccordionTrigger>
                     <View className="flex-1">
-                        <Text className="text-card-foreground font-extrabold text-3xl">
+                        <Text className="text-card-foreground font-extrabold text-2xl">
                             {exercise.name.toUpperCase()}
                         </Text>
                         {exercise.notes && (
@@ -62,11 +62,10 @@ const ExerciseCard = ({
                                 ({exercise.notes})
                             </Text>
                         )}
+                        <Progress value={progress} className="mt-1" />
                     </View>
                 </AccordionTrigger>
                 <AccordionContent>
-                    <Progress value={progress} className="" />
-
                     <View className="flex-row border-b pb-2 mb-2 border-gray-500">
                         {headers.map((header) => (
                             <Text
