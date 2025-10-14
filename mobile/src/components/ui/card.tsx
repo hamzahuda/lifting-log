@@ -1,11 +1,13 @@
 import { Text, TextClassContext } from "@/components/ui/text";
 import { cn } from "@/utils/utils";
 import { View, type ViewProps } from "react-native";
+import Animated, { LinearTransition } from "react-native-reanimated";
 
 function Card({ className, ...props }: ViewProps & React.RefAttributes<View>) {
     return (
         <TextClassContext.Provider value="text-card-foreground">
-            <View
+            <Animated.View
+                layout={LinearTransition.duration(200)}
                 className={cn(
                     "bg-card border-border flex flex-col gap-6 rounded-xl border py-6 shadow-sm shadow-black/5",
                     className
