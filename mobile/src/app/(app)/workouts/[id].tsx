@@ -12,6 +12,7 @@ import api from "@/services/api";
 import ExerciseCard from "./_components/ExerciseCard";
 import { Workout } from "@/types";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { Card } from "@/components/ui/card";
 
 export default function WorkoutDetailScreen() {
     const { id } = useLocalSearchParams<{ id: string }>();
@@ -123,8 +124,8 @@ export default function WorkoutDetailScreen() {
             className="flex-1 bg-background"
         >
             <ScrollView
-                className="p-5"
-                contentContainerStyle={{ paddingBottom: 100 }}
+                className="py-5 px-2"
+                contentContainerStyle={{ paddingBottom: 150 }}
             >
                 <Text className="text-4xl text-foreground font-bold text-center mb-1">
                     {workout.name}
@@ -137,15 +138,17 @@ export default function WorkoutDetailScreen() {
                         ({workout.notes})
                     </Text>
                 )}
-
-                {workout.exercises.map((exercise, index) => (
-                    <ExerciseCard
-                        key={exercise.id}
-                        exercise={exercise}
-                        exerciseIndex={index}
-                        onSetUpdate={handleSetUpdate}
-                    />
-                ))}
+                <Card className="py-0 gap-0 px-4">
+                    {workout.exercises.map((exercise, index) => (
+                        <ExerciseCard
+                            key={exercise.id}
+                            exercise={exercise}
+                            exerciseIndex={index}
+                            onSetUpdate={handleSetUpdate}
+                            isLast={index === workout.exercises.length - 1}
+                        />
+                    ))}
+                </Card>
             </ScrollView>
 
             {hasChanges && (
