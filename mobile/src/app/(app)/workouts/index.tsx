@@ -48,7 +48,7 @@ export default function WorkoutListScreen() {
                 >
                     <View>
                         {workouts.map((workout, index) => (
-                            <Card key={workout.id} className="pr-4 py-3 mb-1">
+                            <Card key={workout.id} className="pr-4 py-3 mb-3">
                                 <TouchableOpacity
                                     onPress={() =>
                                         router.push(
