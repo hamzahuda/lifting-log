@@ -48,7 +48,7 @@ export default function WorkoutListScreen() {
                 >
                     <View>
                         {workouts.map((workout, index) => (
-                            <Card key={workout.id} className="p-4 mb-4">
+                            <Card key={workout.id} className="pr-4 py-3 mb-1">
                                 <TouchableOpacity
                                     onPress={() =>
                                         router.push(
@@ -56,24 +56,27 @@ export default function WorkoutListScreen() {
                                         )
                                     }
                                 >
-                                    <View className="flex-row items-center mt-1">
-                                        <Text className="text-foreground font-bold text-xl ml-1 mr-6">
+                                    <View className="flex-row items-center">
+                                        <Text className="text-foreground font-bold text-center text-2xl px-6">
                                             {`${workouts.length - index}`}
                                         </Text>
-                                        <View className="flex-col">
-                                            <Text className="text-foreground font-bold text-xl">
-                                                {workout.name}
-                                            </Text>
-                                            <Text className="text-muted-foreground flex-1 mr-2">
+                                        <View className="flex-col flex-1">
+                                            <View className="flex-row items-center">
+                                                <Text className="text-foreground font-bold text-2xl flex-1">
+                                                    {workout.name}
+                                                </Text>
+                                                <Text className="text-foreground font-semibold text-lg">
+                                                    {new Date(
+                                                        workout.date
+                                                    ).toLocaleDateString(
+                                                        "en-GB"
+                                                    )}
+                                                </Text>
+                                            </View>
+                                            <Text className="text-muted-foreground flex-1">
                                                 {workout.notes || ""}
                                             </Text>
                                         </View>
-
-                                        <Text className="text-muted-foreground ml-auto font-semibold text-md mb-auto">
-                                            {new Date(
-                                                workout.date
-                                            ).toLocaleDateString("en-GB")}
-                                        </Text>
                                     </View>
                                 </TouchableOpacity>
                             </Card>
