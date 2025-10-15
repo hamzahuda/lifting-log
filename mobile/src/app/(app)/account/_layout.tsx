@@ -1,12 +1,13 @@
 import { Stack } from "expo-router";
-import useSharedHeaderOptions from "@/hooks/useSharedHeaderOptions";
+import { Header } from "@/components/header";
 
 export default function AccountLayout() {
     return (
         <Stack
             screenOptions={{
-                headerTitle: "Account",
-                ...useSharedHeaderOptions(),
+                headerTitle: (props) => {
+                    return <Header title={props.children} />;
+                },
             }}
         >
             <Stack.Screen name="index" options={{ headerTitle: "Account" }} />
