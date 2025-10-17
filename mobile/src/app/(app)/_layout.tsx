@@ -35,11 +35,12 @@ export default function AppLayout() {
                         <View
                             style={{
                                 flex: 1,
-                                borderRadius: 50,
                                 backgroundColor: themeColors.background,
                                 borderWidth: 2,
                                 borderColor: themeColors.border,
                                 borderBottomColor: "transparent",
+                                borderLeftColor: "transparent",
+                                borderRightColor: "transparent",
                             }}
                         />
                     );
