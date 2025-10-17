@@ -1,12 +1,12 @@
 import { Stack } from "expo-router";
-import useSharedHeaderOptions from "@/hooks/useSharedHeaderOptions";
-
+import { HeaderTitle } from "@/components/header-title";
 export default function TemplatesLayout() {
     return (
         <Stack
             screenOptions={{
-                headerTitle: "Workout Templates",
-                ...useSharedHeaderOptions(),
+                headerTitle: (props) => {
+                    return <HeaderTitle title={props.children} />;
+                },
             }}
         >
             <Stack.Screen
