@@ -16,16 +16,13 @@ export default function TemplatesLayout() {
         >
             <Stack.Screen
                 name="index"
-                options={{ headerTitle: "Workout Templates" }}
+                options={{ title: "Workout Templates" }}
             />
             <Stack.Screen
                 name="create"
-                options={{ headerTitle: "Create Template" }}
+                options={{ title: "Create Template" }}
             />
-            <Stack.Screen
-                name="[id]"
-                options={{ headerTitle: "Edit Template" }}
-            />
+            <Stack.Screen name="[id]" options={{ title: "Edit Template" }} />
         </Stack>
     );
 }
