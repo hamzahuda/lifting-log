@@ -11,10 +11,6 @@ export default function useSharedHeaderOptions(): ExtendedStackNavigationOptions
         headerStyle: {
             backgroundColor: themeColors.background,
         },
-        headerTintColor: themeColors.foreground,
-        headerTitleStyle: {
-            fontSize: 26,
-        },
-        headerTitleAlign: "center" as const,
+        headerTitleAlign: "center",
     };
 }
