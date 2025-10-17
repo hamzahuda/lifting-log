@@ -13,7 +13,7 @@ export default function AccountLayout() {
                 ...sharedHeaderOptions,
             }}
         >
-            <Stack.Screen name="index" options={{ headerTitle: "Account" }} />
+            <Stack.Screen name="index" options={{ title: "Account" }} />
         </Stack>
     );
 }
