@@ -31,7 +31,23 @@ export default function AccountScreen() {
                 },
                 {
                     text: "Delete",
-                    onPress: () => deleteAccount(),
+                    onPress: () => {
+                        Alert.alert(
+                            "Final Confirmation",
+                            "This action is permanent and cannot be undone. Are you absolutely sure?",
+                            [
+                                {
+                                    text: "Cancel",
+                                    style: "cancel",
+                                },
+                                {
+                                    text: "Yes, Delete My Account",
+                                    onPress: () => deleteAccount(),
+                                    style: "destructive",
+                                },
+                            ]
+                        );
+                    },
                     style: "destructive",
                 },
             ],
