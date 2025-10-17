@@ -48,16 +48,16 @@ export default function TemplateScreen() {
                     templates.map((template) => (
                         <TouchableOpacity
                             key={template.id}
-                            className="bg-primary rounded-2xl p-4 mb-4 shadow-md "
+                            className="bg-background rounded-2xl p-4 mb-4 shadow-md border border-border"
                             onPress={() =>
                                 router.push(`/templates/${template.id}`)
                             }
                         >
-                            <Text className="text-t-primary font-bold text-xl">
+                            <Text className="text-foreground font-bold text-xl">
                                 {template.name}
                             </Text>
                             {template.notes && (
-                                <Text className="text-t-secondary mt-1">
+                                <Text className="text-muted-foreground mt-1">
                                     Notes: {template.notes}
                                 </Text>
                             )}
