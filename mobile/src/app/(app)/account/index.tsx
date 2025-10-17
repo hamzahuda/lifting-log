@@ -41,24 +41,23 @@ export default function AccountScreen() {
 
     return (
         <View className="flex-1 flex-col justify-start bg-background p-5">
-            <Text className="text-t-primary text-lg mb-2">Email</Text>
             <View className="bg-secondary p-4 rounded-lg mb-8">
-                <Text className="text-t-primary text-lg">
+                <Text className="text-secondary-foreground text-lg">
                     {session?.user?.email}
                 </Text>
             </View>
 
             <TouchableOpacity
-                className="bg-accent p-4 rounded-lg"
+                className="bg-background border border-border p-4 rounded-lg"
                 onPress={() => supabase.auth.signOut()}
             >
-                <Text className="text-white text-center text-lg font-bold">
+                <Text className="text-foreground text-center text-lg font-bold">
                     Sign Out
                 </Text>
             </TouchableOpacity>
 
             <TouchableOpacity
-                className="mt-auto bg-danger p-4 mb-10 rounded-lg"
+                className="mt-auto mb-24 bg-red-600 p-4 rounded-lg"
                 onPress={confirmAccountDeletion}
             >
                 <Text className="text-white text-center text-lg font-bold">
