@@ -58,7 +58,7 @@ export default function TemplateScreen() {
                             </Text>
                             {template.notes && (
                                 <Text className="text-muted-foreground mt-1">
-                                    Notes: {template.notes}
+                                    {template.notes}
                                 </Text>
                             )}
                         </TouchableOpacity>
