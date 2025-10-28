@@ -8,8 +8,9 @@ import { AppState } from "react-native";
 import { supabase } from "@/services/supabase";
 import { useColorScheme } from "nativewind";
 import * as SystemUI from "expo-system-ui";
-import { THEME, NAV_THEME } from "@/utils/theme"; // Import NAV_THEME
-import { ThemeProvider } from "@react-navigation/native"; // Import ThemeProvider
+import { THEME, NAV_THEME } from "@/utils/theme";
+import { ThemeProvider } from "@react-navigation/native";
+import { initialiseDatabase } from "@/services/localDatabase";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -29,12 +30,29 @@ SystemUI.setBackgroundColorAsync(THEME["dark"].background);
 
 export default function Root() {
     const { colorScheme, setColorScheme } = useColorScheme();
+    const navTheme = colorScheme === "dark" ? NAV_THEME.dark : NAV_THEME.light;
+    const [dbInitialised, setDbInitialised] = useState(false);
 
     useEffect(() => {
         setColorScheme("dark");
+
+        async function loadDatabase() {
+            try {
+                await initialiseDatabase();
+            } catch (e) {
+                console.warn(e);
+            } finally {
+                setDbInitialised(true);
+                SplashScreen.hideAsync();
+            }
+        }
+
+        loadDatabase();
     }, []);
 
-    const navTheme = colorScheme === "dark" ? NAV_THEME.dark : NAV_THEME.light;
+    if (!dbInitialised) {
+        return null;
+    }
 
     return (
         <ThemeProvider value={navTheme}>
