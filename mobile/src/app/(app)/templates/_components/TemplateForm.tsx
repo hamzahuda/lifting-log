@@ -59,7 +59,7 @@ export default function TemplateForm({
     return (
         <View>
             <TextInput
-                className="text-4xl text-t-primary font-bold m-4 bg-secondary rounded-md px-3 py-3"
+                className="text-4xl text-foreground font-bold m-4 bg-secondary rounded-md px-3 py-3"
                 onChangeText={(value) => {
                     setWorkoutTemplateFormData((workoutTemplateFormData) => ({
                         ...workoutTemplateFormData,
@@ -71,7 +71,7 @@ export default function TemplateForm({
                 placeholderTextColor="gray"
             />
             <TextInput
-                className="text-md text-t-secondary mb-5 mx-4 bg-secondary rounded-md px-3 py-1"
+                className="text-md text-foreground mb-5 mx-4 bg-secondary rounded-md px-3 py-2"
                 value={workoutTemplateFormData.notes || ""}
                 onChangeText={(value) => {
                     setWorkoutTemplateFormData((workoutTemplateFormData) => ({
