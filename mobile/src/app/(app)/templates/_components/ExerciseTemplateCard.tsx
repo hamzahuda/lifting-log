@@ -1,20 +1,7 @@
 import { ExerciseTemplate, SetTemplate } from "@/types";
-import {
-    View,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    Touchable,
-} from "react-native";
+import { View, Text, TextInput, TouchableOpacity } from "react-native";
 import { HHMMSStoSeconds, secondsToHHMMSS } from "@/utils/time-converter";
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardFooter,
-    CardHeader,
-    CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 
 type ExerciseTemplateCardProps = {
     data: ExerciseTemplate;
