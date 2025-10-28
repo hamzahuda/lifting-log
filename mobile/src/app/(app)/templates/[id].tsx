@@ -100,10 +100,10 @@ export default function TemplateDetailScreen() {
                 <TemplateForm
                     initialFormData={template}
                     onSubmit={handleUpdateSubmit}
-                    submitButtonText="Update Template"
+                    submitButtonText="Save Changes"
                 />
                 <TouchableOpacity
-                    className="py-3 px-6 rounded-xl bg-red-600 flex-1 mx-5"
+                    className="py-3 px-6 rounded-xl bg-red-600 flex-1 m-5"
                     onPress={handleDeleteTemplate}
                 >
                     <Text className="text-white text-center font-bold">
