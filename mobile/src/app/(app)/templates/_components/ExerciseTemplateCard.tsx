@@ -7,6 +7,14 @@ import {
     Touchable,
 } from "react-native";
 import { HHMMSStoSeconds, secondsToHHMMSS } from "@/utils/time-converter";
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardFooter,
+    CardHeader,
+    CardTitle,
+} from "@/components/ui/card";
 
 type ExerciseTemplateCardProps = {
     data: ExerciseTemplate;
@@ -77,129 +85,137 @@ export default function ExerciseTemplateCard({
     };
 
     return (
-        <View className="bg-primary rounded-2xl pt-5 px-8 pb-4 mb-5 shadow-md  mx-5">
-            <TextInput
-                className="text-t-primary font-extrabold text-2xl bg-secondary bg-size rounded-md px-3 py-1 mb-2 mt-5"
-                value={data.name}
-                onChangeText={(value) =>
-                    onEdit(data.id, { ...data, name: value })
-                }
-                placeholder="Exercise Name"
-                placeholderTextColor="gray"
-            />
-            <TextInput
-                className="text-t-secondary text-sm align-middle bg-secondary bg-size rounded-md px-3 py-1 mb-2"
-                value={data.notes}
-                onChangeText={(value) =>
-                    onEdit(data.id, { ...data, notes: value })
-                }
-                placeholder="Notes"
-                placeholderTextColor="gray"
-                multiline
-            />
+        <Card className="mx-5 mb-5">
+            <CardHeader>
+                <TextInput
+                    className="text-foreground font-extrabold text-2xl bg-secondary bg-size rounded-md px-3 py-1 mb-2 mt-5"
+                    value={data.name}
+                    onChangeText={(value) =>
+                        onEdit(data.id, { ...data, name: value })
+                    }
+                    placeholder="Exercise Name"
+                    placeholderTextColor="gray"
+                />
+                <TextInput
+                    className="text-foreground text-sm align-middle bg-secondary bg-size rounded-md px-3 py-1 mb-2"
+                    value={data.notes}
+                    onChangeText={(value) =>
+                        onEdit(data.id, { ...data, notes: value })
+                    }
+                    placeholder="Notes"
+                    placeholderTextColor="gray"
+                    multiline
+                />
+            </CardHeader>
 
-            {/* Set Templates Section */}
-            <View className="flex-col p-2">
-                <View className="flex-row">
-                    <View className="flex-none w-40 flex-row items-center justify-center">
-                        <TouchableOpacity
-                            onPress={handleDeleteSet}
-                            className="bg-red-600 w-5 h-5 rounded-full"
-                        >
-                            <Text className="text-white font-bold text-sm text-center">
-                                -
+            <CardContent>
+                {/* Set Templates Section */}
+                <View className="flex-col p-2">
+                    <View className="flex-row">
+                        <View className="flex-none w-40 flex-row items-center justify-center">
+                            <TouchableOpacity
+                                onPress={handleDeleteSet}
+                                className="bg-red-600 w-5 h-5 rounded-full"
+                            >
+                                <Text className="text-foreground font-bold text-sm text-center">
+                                    -
+                                </Text>
+                            </TouchableOpacity>
+                            <Text className="text-foreground text-lg font-semibold mx-3">
+                                Sets
                             </Text>
-                        </TouchableOpacity>
-                        <Text className="text-t-secondary text-lg font-semibold mx-3">
-                            Sets
-                        </Text>
-                        <TouchableOpacity
-                            onPress={handleAddSet}
-                            className="bg-green-600 w-5 h-5 rounded-full"
-                        >
-                            <Text className="text-white font-bold text-sm text-center">
-                                +
-                            </Text>
-                        </TouchableOpacity>
-                    </View>
-                    <Text className="flex-1 text-t-secondary text-center text-lg font-semibold">
-                        Reps
-                    </Text>
-                </View>
-
-                {data.set_templates?.map((set, setIndex) => (
-                    <View key={set.id} className="flex-row py-1">
-                        <Text className="flex-none w-40 text-t-tertiary text-lg text-center align-middle">
-                            {setIndex + 1}
-                        </Text>
-                        <View className="flex-1 flex-row items-center justify-center">
-                            <TextInput
-                                className="text-t-tertiary text-lg text-center w-12 py-0 bg-secondary rounded-md"
-                                value={set.min_reps.toString()}
-                                onChangeText={(value) =>
-                                    handleMinOrMaxRepsChange(
-                                        set.id,
-                                        "min_reps",
-                                        value
-                                    )
-                                }
-                                keyboardType="numeric"
-                                placeholder="--"
-                                placeholderTextColor="#9CA3AF"
-                            />
-                            <Text className="text-t-secondary text-lg mx-2">
-                                -
-                            </Text>
-                            <TextInput
-                                className="text-t-tertiary text-lg text-center w-12 py-0 bg-secondary rounded-md"
-                                value={set.max_reps.toString()}
-                                onChangeText={(value) =>
-                                    handleMinOrMaxRepsChange(
-                                        set.id,
-                                        "max_reps",
-                                        value
-                                    )
-                                }
-                                keyboardType="numeric"
-                                placeholder="--"
-                                placeholderTextColor="#9CA3AF"
-                            />
+                            <TouchableOpacity
+                                onPress={handleAddSet}
+                                className="bg-green-600 w-5 h-5 rounded-full"
+                            >
+                                <Text className="text-foreground font-bold text-sm text-center">
+                                    +
+                                </Text>
+                            </TouchableOpacity>
                         </View>
+                        <Text className="flex-1 text-foreground text-center text-lg font-semibold">
+                            Reps
+                        </Text>
                     </View>
-                ))}
-            </View>
 
-            <View className="flex-row justify-between items-center mt-1 pt-2 border-t border-gray-700">
-                <Text className="text-t-secondary text-lg font-semibold">
-                    Rest Period
-                </Text>
-                <View className="flex-row items-center">
-                    <TouchableOpacity
-                        onPress={() => handleRestPeriodChange(-15)}
-                        className="bg-secondary rounded-md px-2 py-1"
-                    >
-                        <Text className="text-t-primary text-sm">-15s</Text>
-                    </TouchableOpacity>
-
-                    <Text className="text-xl text-t-primary font-bold mx-4">
-                        {data.rest_period.substring(3)}
-                    </Text>
-
-                    <TouchableOpacity
-                        onPress={() => handleRestPeriodChange(15)}
-                        className="bg-secondary rounded-md px-2 py-1"
-                    >
-                        <Text className="text-t-primary text-sm">+15s</Text>
-                    </TouchableOpacity>
+                    {data.set_templates?.map((set, setIndex) => (
+                        <View key={set.id} className="flex-row py-1">
+                            <Text className="flex-none w-40 text-foreground text-lg text-center align-middle">
+                                {setIndex + 1}
+                            </Text>
+                            <View className="flex-1 flex-row items-center justify-center">
+                                <TextInput
+                                    className="text-foreground text-lg text-center w-12 py-0 bg-secondary rounded-md"
+                                    value={set.min_reps.toString()}
+                                    onChangeText={(value) =>
+                                        handleMinOrMaxRepsChange(
+                                            set.id,
+                                            "min_reps",
+                                            value
+                                        )
+                                    }
+                                    keyboardType="numeric"
+                                    placeholder="--"
+                                    placeholderTextColor="#9CA3AF"
+                                />
+                                <Text className="text-foreground text-lg mx-2">
+                                    -
+                                </Text>
+                                <TextInput
+                                    className="text-foreground text-lg text-center w-12 py-0 bg-secondary rounded-md"
+                                    value={set.max_reps.toString()}
+                                    onChangeText={(value) =>
+                                        handleMinOrMaxRepsChange(
+                                            set.id,
+                                            "max_reps",
+                                            value
+                                        )
+                                    }
+                                    keyboardType="numeric"
+                                    placeholder="--"
+                                    placeholderTextColor="#9CA3AF"
+                                />
+                            </View>
+                        </View>
+                    ))}
                 </View>
-            </View>
+
+                <View className="flex-row justify-between items-center mt-1 pt-2 border-t border-gray-700">
+                    <Text className="text-foreground text-lg font-semibold">
+                        Rest Period
+                    </Text>
+                    <View className="flex-row items-center">
+                        <TouchableOpacity
+                            onPress={() => handleRestPeriodChange(-15)}
+                            className="bg-secondary rounded-md px-2 py-1"
+                        >
+                            <Text className="text-foreground text-sm">
+                                -15s
+                            </Text>
+                        </TouchableOpacity>
+
+                        <Text className="text-xl text-foreground font-bold mx-4">
+                            {data.rest_period.substring(3)}
+                        </Text>
+
+                        <TouchableOpacity
+                            onPress={() => handleRestPeriodChange(15)}
+                            className="bg-secondary rounded-md px-2 py-1"
+                        >
+                            <Text className="text-foreground text-sm">
+                                +15s
+                            </Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </CardContent>
 
             <TouchableOpacity
                 onPress={() => onDelete(data.id)}
                 className="absolute top-2 right-2 bg-red-600 rounded-full w-6 h-6 items-center justify-center"
             >
-                <Text className="text-white font-bold text-sm">x</Text>
+                <Text className="text-foreground font-bold text-sm">x</Text>
             </TouchableOpacity>
-        </View>
+        </Card>
     );
 }
