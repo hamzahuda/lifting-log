@@ -28,6 +28,19 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
         return instance
 
 
+# Custom Exercise Name Serializers
+
+
+class CustomExerciseNameSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomExerciseName
+        fields = ["id", "name"]
+
+    def create(self, validated_data):
+        user = self.context["request"].user
+        return CustomExerciseName.objects.create(user=user, **validated_data)
+
+
 # --- Workout Serializers ---
 class SetSerializer(serializers.ModelSerializer):
     class Meta:
