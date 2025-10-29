@@ -41,3 +41,12 @@ class WorkoutViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         user = self.request.user
         return Workout.objects.filter(user=user).order_by("-date")
+
+
+class CustomExerciseNameViewSet(viewsets.ModelViewSet):
+    serializer_class = CustomExerciseNameSerializer
+    permission_classes = [IsAuthenticated, IsObjectOwner]
+
+    def get_queryset(self):
+        user = self.request.user
+        return CustomExerciseName.objects.filter(user=user)
