@@ -96,7 +96,10 @@ export default function TemplateDetailScreen() {
 
     return (
         <View className="flex-1 bg-background">
-            <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
+            <ScrollView
+                keyboardShouldPersistTaps="handled"
+                contentContainerStyle={{ paddingBottom: 100 }}
+            >
                 <TemplateForm
                     initialFormData={template}
                     onSubmit={handleUpdateSubmit}
