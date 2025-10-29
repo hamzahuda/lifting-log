@@ -1,7 +1,18 @@
 import { ExerciseTemplate, SetTemplate } from "@/types";
-import { View, Text, TextInput, TouchableOpacity } from "react-native";
+import {
+    View,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    Modal,
+    FlatList,
+} from "react-native";
 import { HHMMSStoSeconds, secondsToHHMMSS } from "@/utils/time-converter";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { useState, useEffect, useRef } from "react";
+import * as SQLite from "expo-sqlite";
+import { searchExercises, addCustomExercise } from "@/services/localDatabase";
+import { ActivityIndicator } from "react-native";
 
 type ExerciseTemplateCardProps = {
     data: ExerciseTemplate;
@@ -14,6 +25,60 @@ export default function ExerciseTemplateCard({
     onEdit,
     onDelete,
 }: ExerciseTemplateCardProps) {
+    const [modalVisible, setModalVisible] = useState(false);
+    const [searchQuery, setSearchQuery] = useState("");
+    const [searchResults, setSearchResults] = useState<string[]>([]);
+    const [isLoadingSearch, setIsLoadingSearch] = useState(false);
+    const inputRef = useRef<TextInput>(null);
+    const db = SQLite.useSQLiteContext();
+
+    useEffect(() => {
+        const searchDatabase = async () => {
+            if (searchQuery.trim() === "") {
+                setSearchResults([]);
+                return;
+            }
+            setIsLoadingSearch(true);
+            try {
+                const results = await searchExercises(db, searchQuery);
+                setSearchResults(results);
+            } catch (error) {
+                console.error("Error searching exercises:", error);
+                setSearchResults([]);
+            } finally {
+                setIsLoadingSearch(false);
+            }
+        };
+
+        const timerId = setTimeout(() => {
+            searchDatabase();
+        }, 100);
+
+        return () => clearTimeout(timerId);
+    }, [searchQuery]);
+
+    const handleSearchChange = (text: string) => {
+        setSearchQuery(text);
+    };
+
+    const handleSelectExercise = (item: string) => {
+        onEdit(data.id, { ...data, name: item });
+        resetAndCloseModal();
+    };
+
+    const handleCreateNewExercise = async () => {
+        const newName = searchQuery.trim();
+        if (!newName) return;
+
+        try {
+            await addCustomExercise(db, newName);
+            onEdit(data.id, { ...data, name: newName });
+            resetAndCloseModal();
+        } catch (error) {
+            console.error("Error creating new exercise:", error);
+        }
+    };
+
     const handleMinOrMaxRepsChange = (
         setID: number,
         field: keyof SetTemplate,
@@ -71,18 +136,25 @@ export default function ExerciseTemplateCard({
         });
     };
 
+    const resetAndCloseModal = () => {
+        setModalVisible(false);
+        setSearchQuery("");
+        setSearchResults([]);
+    };
+
     return (
-        <Card className="mx-5 mb-5">
+        <Card className="mx-5 mb-5 gap-0">
             <CardHeader>
-                <TextInput
-                    className="text-foreground font-extrabold text-2xl bg-secondary bg-size rounded-md px-3 py-1 mb-2 mt-5"
-                    value={data.name}
-                    onChangeText={(value) =>
-                        onEdit(data.id, { ...data, name: value })
-                    }
-                    placeholder="Exercise Name"
-                    placeholderTextColor="gray"
-                />
+                <TouchableOpacity
+                    onPress={() => {
+                        setModalVisible(true);
+                    }}
+                >
+                    <Text className="text-foreground font-extrabold text-2xl bg-secondary bg-size rounded-md px-3 py-2 mb-2 mt-5">
+                        {data.name ? data.name : "Exercise Name"}
+                    </Text>
+                </TouchableOpacity>
+
                 <TextInput
                     className="text-foreground text-sm align-middle bg-secondary bg-size rounded-md px-3 py-1 mb-2"
                     value={data.notes}
@@ -96,7 +168,6 @@ export default function ExerciseTemplateCard({
             </CardHeader>
 
             <CardContent>
-                {/* Set Templates Section */}
                 <View className="flex-col p-2">
                     <View className="flex-row">
                         <View className="flex-none w-40 flex-row items-center justify-center">
@@ -203,6 +274,110 @@ export default function ExerciseTemplateCard({
             >
                 <Text className="text-foreground font-bold text-sm">x</Text>
             </TouchableOpacity>
+
+            <Modal
+                animationType="fade"
+                transparent={true}
+                visible={modalVisible}
+                onRequestClose={resetAndCloseModal}
+                // This is to get focus on open plus keyboard open
+                onShow={() => {
+                    setTimeout(() => {
+                        inputRef?.current?.focus();
+                    }, 50);
+                }}
+            >
+                <TouchableOpacity
+                    className="flex-1 justify-start pt-28 items-center bg-black/60"
+                    activeOpacity={1}
+                    onPress={resetAndCloseModal}
+                >
+                    <TouchableOpacity
+                        activeOpacity={1}
+                        className="w-full px-5"
+                        onPress={() => {}}
+                    >
+                        <Card className="gap-0">
+                            <CardHeader>
+                                <Text className="text-xl font-bold mb-4 text-foreground text-center">
+                                    Search Exercises
+                                </Text>
+                            </CardHeader>
+                            <CardContent>
+                                <TextInput
+                                    className="text-foreground text-lg bg-secondary rounded-md px-4 py-3 mb-4"
+                                    placeholder="Start typing to search..."
+                                    placeholderTextColor="gray"
+                                    value={searchQuery}
+                                    onChangeText={handleSearchChange}
+                                    ref={inputRef}
+                                />
+                                <FlatList
+                                    className="max-h-60 mb-4 border border-border rounded-md"
+                                    keyboardShouldPersistTaps="handled"
+                                    data={searchResults}
+                                    renderItem={({ item }) => (
+                                        <TouchableOpacity
+                                            className="py-3 px-3 border-b-2 border-border"
+                                            onPress={() =>
+                                                handleSelectExercise(item)
+                                            }
+                                        >
+                                            <Text className="text-foreground text-lg">
+                                                {item}
+                                            </Text>
+                                        </TouchableOpacity>
+                                    )}
+                                    ListEmptyComponent={
+                                        <View className="p-4 items-center">
+                                            {isLoadingSearch ? (
+                                                <ActivityIndicator
+                                                    size="small"
+                                                    color="white"
+                                                />
+                                            ) : (
+                                                <Text className="text-muted-foreground text-center">
+                                                    {searchQuery
+                                                        ? "No results found."
+                                                        : "Type to search exercises."}
+                                                </Text>
+                                            )}
+                                        </View>
+                                    }
+                                />
+                                <TouchableOpacity
+                                    className={`py-3 rounded-md items-center ${
+                                        searchQuery.trim()
+                                            ? "bg-primary"
+                                            : "bg-secondary"
+                                    }`}
+                                    onPress={handleCreateNewExercise}
+                                    disabled={!searchQuery.trim()}
+                                >
+                                    <Text
+                                        className={`font-bold text-center ${
+                                            searchQuery.trim()
+                                                ? "text-primary-foreground"
+                                                : "text-muted-foreground"
+                                        }`}
+                                    >
+                                        Create "
+                                        {searchQuery.trim() || "New Exercise"}"
+                                    </Text>
+                                </TouchableOpacity>
+                            </CardContent>
+                            <TouchableOpacity
+                                className="absolute top-2 right-2 bg-red-600 rounded-full w-6 h-6 items-center justify-center"
+                                onPress={resetAndCloseModal}
+                            >
+                                <Text className="text-foreground font-bold text-sm">
+                                    x
+                                </Text>
+                            </TouchableOpacity>
+                        </Card>
+                    </TouchableOpacity>
+                </TouchableOpacity>
+            </Modal>
         </Card>
     );
 }
