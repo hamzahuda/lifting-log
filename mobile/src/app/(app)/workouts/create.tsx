@@ -7,8 +7,6 @@ import DateTimePicker, {
     DateTimePickerEvent,
 } from "@react-native-community/datetimepicker";
 import { WorkoutTemplate } from "@/types";
-import { THEME } from "@/utils/theme";
-import { useColorScheme } from "nativewind";
 
 export default function CreateWorkoutScreen() {
     const [templates, setTemplates] = useState<WorkoutTemplate[]>([]);
@@ -17,6 +15,7 @@ export default function CreateWorkoutScreen() {
     );
     const [date, setDate] = useState(new Date());
     const [showDatePicker, setShowDatePicker] = useState(false);
+    const [showTimePicker, setShowTimePicker] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const router = useRouter();
 
@@ -36,7 +35,23 @@ export default function CreateWorkoutScreen() {
     const onChangeDate = (event: DateTimePickerEvent, selectedDate?: Date) => {
         const currentDate = selectedDate || date;
         setShowDatePicker(Platform.OS === "ios");
-        setDate(currentDate);
+        if (Platform.OS === "android") {
+            setShowDatePicker(false);
+        }
+        if (event.type === "set") {
+            setDate(currentDate);
+        }
+    };
+
+    const onChangeTime = (event: DateTimePickerEvent, selectedTime?: Date) => {
+        const currentTime = selectedTime || date;
+        setShowTimePicker(Platform.OS === "ios");
+        if (Platform.OS === "android") {
+            setShowTimePicker(false);
+        }
+        if (event.type === "set") {
+            setDate(currentTime);
+        }
     };
 
     const handleSubmit = async () => {
@@ -50,7 +65,7 @@ export default function CreateWorkoutScreen() {
 
         const payload = {
             template: selectedTemplate,
-            date: date.toISOString().split("T")[0],
+            date: date.toISOString(),
         };
 
         try {
@@ -72,23 +87,17 @@ export default function CreateWorkoutScreen() {
         year: "numeric",
     });
 
+    const formattedTime = date.toLocaleTimeString("en-GB", {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false,
+    });
+
     return (
         <View className="flex-1 bg-background p-5 pt-6">
             <Text className="text-t-secondary text-lg mb-2">Template:</Text>
             <View className="bg-secondary rounded-lg mb-6 pl-2">
-                <Picker
-                    selectedValue={selectedTemplate}
-                    onValueChange={(itemValue) =>
-                        setSelectedTemplate(itemValue)
-                    }
-                    style={{
-                        color: THEME[useColorScheme().colorScheme ?? "dark"]
-                            .foreground,
-                    }}
-                    dropdownIconColor={
-                        THEME[useColorScheme().colorScheme ?? "dark"].foreground
-                    }
-                >
+                <Picker>
                     {templates.map((template) => (
                         <Picker.Item
                             key={template.id}
@@ -99,12 +108,20 @@ export default function CreateWorkoutScreen() {
                 </Picker>
             </View>
 
-            <Text className="text-t-secondary text-lg mb-2">Date:</Text>
+            <Text className="text-foreground text-lg mb-2">Date:</Text>
             <TouchableOpacity
                 onPress={() => setShowDatePicker(true)}
+                className="bg-secondary p-4 rounded-lg items-center mb-4"
+            >
+                <Text className="text-foreground text-lg">{formattedDate}</Text>
+            </TouchableOpacity>
+
+            <Text className="text-foreground text-lg mb-2">Time:</Text>
+            <TouchableOpacity
+                onPress={() => setShowTimePicker(true)}
                 className="bg-secondary p-4 rounded-lg items-center mb-8"
             >
-                <Text className="text-t-primary text-lg">{formattedDate}</Text>
+                <Text className="text-foreground text-lg">{formattedTime}</Text>
             </TouchableOpacity>
 
             {showDatePicker && (
@@ -116,12 +133,21 @@ export default function CreateWorkoutScreen() {
                 />
             )}
 
+            {showTimePicker && (
+                <DateTimePicker
+                    value={date}
+                    mode="time"
+                    display="default"
+                    onChange={onChangeTime}
+                />
+            )}
+
             <TouchableOpacity
-                className={`py-4 rounded-xl ${isSubmitting ? "bg-gray-500" : "bg-accent"}`}
+                className="py-3 px-6 rounded-xl bg-green-600 absolute bottom-28 mb-1 left-5 right-5"
                 onPress={handleSubmit}
                 disabled={isSubmitting}
             >
-                <Text className="text-white text-center font-bold text-lg">
+                <Text className="text-foreground text-center font-bold text-lg">
                     {isSubmitting ? "Creating..." : "Create Workout"}
                 </Text>
             </TouchableOpacity>
