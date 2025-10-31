@@ -13,6 +13,7 @@ import ExerciseCard from "./_components/ExerciseCard";
 import { Workout } from "@/types";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Card } from "@/components/ui/card";
+import useDebounce from "@/hooks/useDebounce";
 
 export default function WorkoutDetailScreen() {
     const { id } = useLocalSearchParams<{ id: string }>();
@@ -24,6 +25,8 @@ export default function WorkoutDetailScreen() {
     const [isSaving, setIsSaving] = useState(false);
     const scrollViewRef = useRef<ScrollView>(null);
     const itemLayouts = useRef<{ [key: number]: number }>({});
+    const isInitialLoad = useRef(true);
+    const debouncedWorkout = useDebounce(workout, 500);
 
     useEffect(() => {
         if (!id) return;
@@ -41,6 +44,20 @@ export default function WorkoutDetailScreen() {
                 setLoading(false);
             });
     }, [id]);
+
+    useEffect(() => {
+        if (isInitialLoad.current) {
+            isInitialLoad.current = false;
+            return;
+        }
+
+        const hasChanges =
+            JSON.stringify(workout) !== JSON.stringify(originalWorkout);
+
+        if (workout && hasChanges) {
+            handleSaveChanges();
+        }
+    }, [debouncedWorkout]);
 
     const handleSetUpdate = (
         exerciseIndex: number,
@@ -69,7 +86,7 @@ export default function WorkoutDetailScreen() {
     };
 
     const handleSaveChanges = () => {
-        if (!workout) return;
+        if (!workout || isSaving) return;
 
         setIsSaving(true);
 
@@ -114,9 +131,6 @@ export default function WorkoutDetailScreen() {
             </SafeAreaView>
         );
     }
-
-    const hasChanges =
-        JSON.stringify(workout) !== JSON.stringify(originalWorkout);
 
     const workoutDate = new Date(workout.date + "T00:00:00").toLocaleDateString(
         "en-UK",
@@ -172,28 +186,6 @@ export default function WorkoutDetailScreen() {
                     ))}
                 </Card>
             </ScrollView>
-
-            {hasChanges && (
-                <View className="absolute bottom-0 left-0 right-0 p-5 bg-background border-t border-gray-700">
-                    <TouchableOpacity
-                        onPress={handleSaveChanges}
-                        disabled={isSaving}
-                        accessibilityLabel="Save workout changes"
-                        accessibilityRole="button"
-                        className={`py-4 rounded-xl ${
-                            isSaving ? "bg-gray-500" : "bg-accent"
-                        }`}
-                    >
-                        {isSaving ? (
-                            <ActivityIndicator color="#FFFFFF" />
-                        ) : (
-                            <Text className="text-white text-center font-bold text-lg">
-                                Save Changes
-                            </Text>
-                        )}
-                    </TouchableOpacity>
-                </View>
-            )}
         </SafeAreaView>
     );
 }
