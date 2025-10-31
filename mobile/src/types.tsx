@@ -13,6 +13,7 @@ export type Exercise = {
     rest_period: string;
     notes: string;
     sets: Set[];
+    date: string;
 };
 
 export type Workout = {
