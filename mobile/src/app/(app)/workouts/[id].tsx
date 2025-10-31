@@ -163,6 +163,7 @@ export default function WorkoutDetailScreen() {
                             <ExerciseCard
                                 exercise={exercise}
                                 exerciseIndex={index}
+                                workoutId={workout.id}
                                 onSetUpdate={handleSetUpdate}
                                 isLast={index === workout.exercises.length - 1}
                                 onPress={() => handleExercisePress(index)}
