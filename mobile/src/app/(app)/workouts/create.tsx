@@ -95,7 +95,7 @@ export default function CreateWorkoutScreen() {
 
     return (
         <View className="flex-1 bg-background p-5 pt-6">
-            <Text className="text-t-secondary text-lg mb-2">Template:</Text>
+            <Text className="text-foreground text-lg mb-2">Template:</Text>
             <View className="bg-secondary rounded-lg mb-6 pl-2">
                 <Picker>
                     {templates.map((template) => (
