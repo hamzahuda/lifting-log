@@ -12,7 +12,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { useState, useEffect, useRef } from "react";
 import * as SQLite from "expo-sqlite";
 import { searchExercises, addCustomExercise } from "@/services/localDatabase";
-import { ActivityIndicator } from "react-native";
+import { ActivityIndicator, Alert } from "react-native";
 
 type ExerciseTemplateCardProps = {
     data: ExerciseTemplate;
@@ -71,9 +71,22 @@ export default function ExerciseTemplateCard({
         if (!newName) return;
 
         try {
-            await addCustomExercise(db, newName);
-            onEdit(data.id, { ...data, name: newName });
-            resetAndCloseModal();
+            Alert.alert(
+                "Create New Custom Exercise",
+                "You are creating a new custom exercise. Only do this if you're sure it doesn't exist already.",
+                [
+                    { text: "Cancel", style: "cancel" },
+                    {
+                        text: "Create",
+                        style: "default",
+                        onPress: async () => {
+                            await addCustomExercise(db, newName);
+                            onEdit(data.id, { ...data, name: newName });
+                            resetAndCloseModal();
+                        },
+                    },
+                ]
+            );
         } catch (error) {
             console.error("Error creating new exercise:", error);
         }
