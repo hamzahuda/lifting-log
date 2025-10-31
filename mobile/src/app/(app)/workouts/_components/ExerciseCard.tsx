@@ -1,4 +1,4 @@
-import { View, Text, TextInput } from "react-native";
+import { View, Text, TextInput, ActivityIndicator } from "react-native";
 import { Exercise } from "@/types";
 import { useEffect, useState } from "react";
 import {
@@ -8,6 +8,7 @@ import {
     AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Progress } from "@/components/ui/progress";
+import api from "@/services/api";
 
 interface ExerciseCardProps {
     exercise: Exercise;
@@ -18,6 +19,7 @@ interface ExerciseCardProps {
         value: string
     ) => void;
     exerciseIndex: number;
+    workoutId: number;
     isLast?: boolean;
     onPress: () => void;
 }
@@ -26,11 +28,17 @@ const ExerciseCard = ({
     exercise,
     onSetUpdate,
     exerciseIndex,
+    workoutId,
     isLast,
     onPress,
 }: ExerciseCardProps) => {
     const headers = ["Set", "Rep Range", "Weight (kg)", "Reps"];
     const [progress, setProgress] = useState<number>(0);
+    const [lastPerformance, setLastPerformance] = useState<Exercise | null>(
+        null
+    );
+    const [isLoadingLastPerformance, setIsLoadingLastPerformance] =
+        useState<boolean>(true);
 
     useEffect(() => {
         const completedFields = exercise.sets.reduce((accumulator, set) => {
@@ -45,6 +53,67 @@ const ExerciseCard = ({
             (totalFields > 0 ? completedFields / totalFields : 0) * 100
         );
     }, [exercise]);
+
+    useEffect(() => {
+        const fetchLastPerformance = async () => {
+            if (!workoutId || !exercise.name) return;
+            try {
+                setIsLoadingLastPerformance(true);
+                const response = await api.get<Exercise | null>(
+                    "/exercises/last-performance/",
+                    {
+                        params: {
+                            name: exercise.name,
+                            workout_id: workoutId,
+                        },
+                    }
+                );
+                setLastPerformance(response.data);
+            } catch (error) {
+                console.error("Failed to fetch last performance:", error);
+            } finally {
+                setIsLoadingLastPerformance(false);
+            }
+        };
+
+        fetchLastPerformance();
+    }, []);
+
+    const renderLastPerformance = () => {
+        if (isLoadingLastPerformance) {
+            return <ActivityIndicator size="small" className="mb-2" />;
+        }
+        if (!lastPerformance) {
+            return (
+                <Text className="text-muted-foreground text-center mb-2 italic">
+                    No previous data for {exercise.name}.
+                </Text>
+            );
+        }
+
+        const setsString = lastPerformance.sets
+            .map((set) => `${set.weight ?? 0}kg x ${set.reps ?? 0}`)
+            .join(", ");
+
+        const formattedDate = new Date(lastPerformance.date).toLocaleDateString(
+            undefined,
+            {
+                day: "numeric",
+                month: "numeric",
+                year: "numeric",
+            }
+        );
+
+        return (
+            <View className="">
+                <View className="flex-row flex-wrap">
+                    <Text className="text-muted-foreground text-base">
+                        {`${formattedDate}:  ${setsString}`}
+                    </Text>
+                </View>
+            </View>
+        );
+    };
 
     return (
         <Accordion type="single" collapsible>
@@ -80,7 +149,7 @@ const ExerciseCard = ({
                     {exercise.sets.map((set, setIndex) => (
                         <View
                             key={set.id}
-                            className="flex-row py-1 items-center"
+                            className="flex-row py-1 mb-2 items-center"
                         >
                             <Text className="flex-1 text-foreground text-lg text-center">
                                 {setIndex + 1}
@@ -124,6 +193,7 @@ const ExerciseCard = ({
                             </View>
                         </View>
                     ))}
+                    {renderLastPerformance()}
                 </AccordionContent>
             </AccordionItem>
         </Accordion>
