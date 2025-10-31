@@ -2,6 +2,8 @@ from .models import *
 from django.contrib.auth import get_user_model
 from rest_framework import viewsets
 from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.decorators import action
 from .permissions import *
 from .serializers import *
 
@@ -41,6 +43,49 @@ class WorkoutViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         user = self.request.user
         return Workout.objects.filter(user=user).order_by("-date")
+
+
+class ExerciseViewSet(viewsets.ReadOnlyModelViewSet):
+    serializer_class = ExerciseSerializer
+    permission_classes = [IsAuthenticated, IsObjectOwner]
+
+    def get_queryset(self):
+        user = self.request.user
+        return Exercise.objects.filter(workout__user=user)
+
+    @action(detail=False, methods=["get"], url_path="last-performance")
+    def last_performance(self, request):
+        exercise_name = request.query_params.get("name")
+        current_workout_id = request.query_params.get("workout_id")
+
+        if not exercise_name or not current_workout_id:
+            return Response(
+                {"error": "Missing 'name' or 'workout_id' query parameters"}, status=400
+            )
+
+        try:
+            # Get the workout currently being viewed
+            current_workout = Workout.objects.get(
+                id=current_workout_id, user=request.user
+            )
+        except Workout.DoesNotExist:
+            return Response({"error": "Workout not found"}, status=404)
+
+        last_exercise = (
+            Exercise.objects.filter(
+                workout__user=request.user,
+                name=exercise_name,
+                workout__date__lt=current_workout.date,
+            )
+            .order_by("-workout__date")
+            .first()
+        )
+
+        if last_exercise:
+            serializer = self.get_serializer(last_exercise)
+            return Response(serializer.data)
+        else:
+            return Response(None)
 
 
 class CustomExerciseNameViewSet(viewsets.ModelViewSet):
