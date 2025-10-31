@@ -1,5 +1,5 @@
 import axios, { InternalAxiosRequestConfig } from "axios";
-import { supabase } from "./supabase"; // Import the supabase client
+import { supabase } from "./supabase";
 
 const api = axios.create({
     baseURL: process.env.EXPO_PUBLIC_API_URL,
