@@ -2,6 +2,7 @@ from rest_framework import serializers
 from .models import *
 from django.contrib.auth.models import User
 import datetime
+from django.utils import timezone
 
 
 # User Serializer
@@ -54,7 +55,7 @@ class SetSerializer(serializers.ModelSerializer):
 
 class ExerciseSerializer(serializers.ModelSerializer):
     sets = SetSerializer(many=True)
-    date = serializers.DateField(source="workout.date", read_only=True)
+    date = serializers.DateTimeField(source="workout.date", read_only=True)
 
     class Meta:
         model = Exercise
@@ -76,7 +77,7 @@ class WorkoutSerializer(serializers.HyperlinkedModelSerializer):
     def create(self, validated_data):
         user = self.context["request"].user
         template = validated_data.get("template")
-        date = validated_data.get("date", datetime.date.today())
+        date = validated_data.get("date", timezone.now())
 
         if template.user != user:
             raise serializers.ValidationError(

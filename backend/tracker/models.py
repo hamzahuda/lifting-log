@@ -50,7 +50,7 @@ class CustomExerciseName(models.Model):
 class Workout(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
-    date = models.DateField()
+    date = models.DateTimeField()
     notes = models.TextField(blank=True)
     template = models.ForeignKey(
         "WorkoutTemplate", on_delete=models.SET_NULL, null=True, blank=True
