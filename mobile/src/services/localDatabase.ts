@@ -4,7 +4,7 @@ import defaultExercises from "@/../assets/data/defaultExercises.json";
 import api from "./api";
 
 const DB_VERSION_KEY = "@default_exercises_version";
-const LATEST_DEFAULT_EXERCISES_VERSION = 2;
+const LATEST_DEFAULT_EXERCISES_VERSION = 1;
 
 // ====================================================================
 //  INITIALISATION
@@ -26,9 +26,9 @@ export async function initialiseDatabase(db: SQLite.SQLiteDatabase) {
                     `CREATE VIRTUAL TABLE IF NOT EXISTS exercise_names USING fts5(
                         name,
                         is_custom UNINDEXED,
-                        backend_id NULLABLE UNINDEXED,
-                        needs_sync INTEGER DEFAULT 0 NOT NULL UNINDEXED,
-                        is_deleted INTEGER DEFAULT 0 NOT NULL UNINDEXED
+                        backend_id UNINDEXED,
+                        needs_sync UNINDEXED,
+                        is_deleted UNINDEXED
                     );`
                 );
 
@@ -244,7 +244,7 @@ interface RemoteCustomExercise {
 async function pullCustomExercisesFromBackend(db: SQLite.SQLiteDatabase) {
     try {
         const remoteExercises: RemoteCustomExercise[] = await api
-            .get("/api/custom-exercise-names/")
+            .get("/custom-exercise-names/")
             .then((response) => response.data);
 
         const localExercises = new Map(
