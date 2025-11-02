@@ -38,8 +38,8 @@ export default function TemplateScreen() {
     );
 
     return (
-        <View className="flex-1 bg-background">
-            <View className="flex-1 p-5">
+        <View className="flex-1 bg-background p-2">
+            <View className="flex-1">
                 {loading ? (
                     <View className="flex-1 justify-center items-center">
                         <ActivityIndicator size="large" color="#3B82F6" />

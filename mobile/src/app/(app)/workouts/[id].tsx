@@ -138,10 +138,9 @@ export default function WorkoutDetailScreen() {
     }
 
     return (
-        <View className="flex-1 bg-background">
+        <View className="flex-1 bg-background px-2">
             <ScrollView
                 ref={scrollViewRef}
-                className="py-5 px-2"
                 contentContainerStyle={{
                     paddingBottom: 150,
                 }}
