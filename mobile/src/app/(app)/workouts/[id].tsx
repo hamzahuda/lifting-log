@@ -1,12 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import {
-    ScrollView,
-    View,
-    Text,
-    ActivityIndicator,
-    Alert,
-    TouchableOpacity,
-} from "react-native";
+import { ScrollView, View, Text, ActivityIndicator, Alert } from "react-native";
 import { useLocalSearchParams } from "expo-router";
 import api from "@/services/api";
 import ExerciseCard from "./_components/ExerciseCard";
@@ -132,14 +125,11 @@ export default function WorkoutDetailScreen() {
         );
     }
 
-    const workoutDate = new Date(workout.date + "T00:00:00").toLocaleDateString(
-        "en-UK",
-        {
-            year: "numeric",
-            month: "short",
-            day: "2-digit",
-        }
-    );
+    const workoutDate = new Date(workout.date).toLocaleDateString("en-GB", {
+        year: "2-digit",
+        month: "2-digit",
+        day: "2-digit",
+    });
 
     return (
         <SafeAreaView
@@ -180,7 +170,6 @@ export default function WorkoutDetailScreen() {
                                 workoutId={workout.id}
                                 onSetUpdate={handleSetUpdate}
                                 isLast={index === workout.exercises.length - 1}
-                                onPress={() => handleExercisePress(index)}
                             />
                         </View>
                     ))}

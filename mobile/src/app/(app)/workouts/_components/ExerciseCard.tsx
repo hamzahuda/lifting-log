@@ -88,11 +88,11 @@ const ExerciseCard = ({
             .join(", ");
 
         const formattedDate = new Date(lastPerformance.date).toLocaleDateString(
-            undefined,
+            "en-GB",
             {
-                day: "numeric",
-                month: "numeric",
-                year: "numeric",
+                day: "2-digit",
+                month: "2-digit",
+                year: "2-digit",
             }
         );
 
