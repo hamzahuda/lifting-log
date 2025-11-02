@@ -44,6 +44,11 @@ class WorkoutViewSet(viewsets.ModelViewSet):
         user = self.request.user
         return Workout.objects.filter(user=user).order_by("-date")
 
+    def get_serializer_class(self):
+        if self.action == "list":
+            return WorkoutListSerializer
+        return self.serializer_class
+
 
 class ExerciseViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = ExerciseSerializer

@@ -90,6 +90,17 @@ class WorkoutSerializer(serializers.HyperlinkedModelSerializer):
         return instance.update_with_exercises(validated_data)
 
 
+class WorkoutListSerializer(serializers.HyperlinkedModelSerializer):
+    user = serializers.ReadOnlyField(source="user.username")
+
+    class Meta:
+        model = Workout
+        fields = ("id", "url", "user", "name", "date", "notes", "template")
+        extra_kwargs = {
+            "name": {"required": False},
+        }
+
+
 # --- Template Serializers ---
 class SetTemplateSerializer(serializers.ModelSerializer):
     class Meta:
