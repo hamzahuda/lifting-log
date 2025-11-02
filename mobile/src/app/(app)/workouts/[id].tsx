@@ -44,6 +44,22 @@ export default function WorkoutDetailScreen() {
             });
     }, [id]);
 
+    useLayoutEffect(() => {
+        if (workout) {
+            const workoutDate = new Date(workout.date).toLocaleDateString(
+                "en-GB",
+                {
+                    year: "2-digit",
+                    month: "2-digit",
+                    day: "2-digit",
+                }
+            );
+            navigation.setOptions({
+                title: `${workout.name} - ${workoutDate}`,
+            });
+        }
+    }, [navigation, workout]);
+
     useEffect(() => {
         if (isInitialLoad.current) {
             isInitialLoad.current = false;
@@ -120,14 +136,6 @@ export default function WorkoutDetailScreen() {
             </View>
         );
     }
-
-    const workoutDate = new Date(workout.date).toLocaleDateString("en-GB", {
-        year: "2-digit",
-        month: "2-digit",
-        day: "2-digit",
-    });
-
-    navigation.setOptions({ title: `${workout.name} - ${workoutDate}` });
 
     return (
         <View className="flex-1 bg-background">
