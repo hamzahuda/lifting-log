@@ -1,12 +1,12 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useLayoutEffect } from "react";
 import { ScrollView, View, Text, ActivityIndicator, Alert } from "react-native";
 import { useLocalSearchParams } from "expo-router";
 import api from "@/services/api";
 import ExerciseCard from "./_components/ExerciseCard";
 import { Workout } from "@/types";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { Card } from "@/components/ui/card";
 import useDebounce from "@/hooks/useDebounce";
+import { useNavigation } from "expo-router";
 
 export default function WorkoutDetailScreen() {
     const { id } = useLocalSearchParams<{ id: string }>();
@@ -20,6 +20,12 @@ export default function WorkoutDetailScreen() {
     const itemLayouts = useRef<{ [key: number]: number }>({});
     const isInitialLoad = useRef(true);
     const debouncedWorkout = useDebounce(workout, 500);
+    const navigation = useNavigation();
+
+    // Makes the title blank while it loads
+    useLayoutEffect(() => {
+        navigation.setOptions({ title: "" });
+    }, [navigation]);
 
     useEffect(() => {
         if (!id) return;
@@ -101,20 +107,17 @@ export default function WorkoutDetailScreen() {
 
     if (loading) {
         return (
-            <SafeAreaView className="flex-1 justify-center items-center bg-background">
+            <View className="flex-1 justify-center items-center bg-background">
                 <ActivityIndicator size="large" color="#3B82F6" />
-            </SafeAreaView>
+            </View>
         );
     }
 
     if (!workout) {
         return (
-            <SafeAreaView
-                edges={["left", "right", "top"]}
-                className="flex-1 justify-center items-center bg-background"
-            >
+            <View className="flex-1 justify-center items-center bg-background">
                 <Text className="text-t-primary">Workout not found.</Text>
-            </SafeAreaView>
+            </View>
         );
     }
 
@@ -124,11 +127,10 @@ export default function WorkoutDetailScreen() {
         day: "2-digit",
     });
 
+    navigation.setOptions({ title: `${workout.name} - ${workoutDate}` });
+
     return (
-        <SafeAreaView
-            edges={["left", "right", "top"]}
-            className="flex-1 bg-background"
-        >
+        <View className="flex-1 bg-background">
             <ScrollView
                 ref={scrollViewRef}
                 className="py-5 px-2"
@@ -137,12 +139,6 @@ export default function WorkoutDetailScreen() {
                 }}
                 showsVerticalScrollIndicator={false}
             >
-                <Text className="text-4xl text-foreground font-bold text-center mb-1">
-                    {workout.name}
-                </Text>
-                <Text className="text-lg text-center text-muted-foreground font-bold">
-                    {workoutDate}
-                </Text>
                 {workout.notes && (
                     <Text className="text-gray-500 mb-4 text-center">
                         ({workout.notes})
@@ -168,6 +164,6 @@ export default function WorkoutDetailScreen() {
                     ))}
                 </Card>
             </ScrollView>
-        </SafeAreaView>
+        </View>
     );
 }
