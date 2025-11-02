@@ -38,14 +38,11 @@ export default function WorkoutListScreen() {
     );
 
     return (
-        <View className="flex-1 bg-background">
+        <View className="flex-1 bg-background p-2">
             {loading ? (
                 <ActivityIndicator className="flex-1" size="large" />
             ) : (
-                <ScrollView
-                    className="p-5 pt-6"
-                    contentContainerStyle={{ paddingBottom: 210 }}
-                >
+                <ScrollView contentContainerStyle={{ paddingBottom: 210 }}>
                     <View>
                         {workouts.map((workout, index) => (
                             <Card key={workout.id} className="pr-4 py-3 mb-3">
