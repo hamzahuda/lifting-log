@@ -99,13 +99,6 @@ export default function WorkoutDetailScreen() {
             });
     };
 
-    const handleExercisePress = (index: number) => {
-        const y = itemLayouts.current[index];
-        if (scrollViewRef.current && y !== undefined) {
-            scrollViewRef.current.scrollTo({ y: y, animated: true });
-        }
-    };
-
     if (loading) {
         return (
             <SafeAreaView className="flex-1 justify-center items-center bg-background">
