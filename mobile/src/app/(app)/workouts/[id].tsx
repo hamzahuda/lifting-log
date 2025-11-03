@@ -1,5 +1,13 @@
 import { useState, useEffect, useRef, useLayoutEffect } from "react";
-import { ScrollView, View, Text, ActivityIndicator, Alert } from "react-native";
+import {
+    ScrollView,
+    View,
+    Text,
+    ActivityIndicator,
+    Alert,
+    KeyboardAvoidingView,
+    Platform,
+} from "react-native";
 import { useLocalSearchParams } from "expo-router";
 import api from "@/services/api";
 import ExerciseCard from "./_components/ExerciseCard";
@@ -194,39 +202,48 @@ export default function WorkoutDetailScreen() {
     }
 
     return (
-        <View className="flex-1 bg-background px-2">
-            <ScrollView
-                ref={scrollViewRef}
-                contentContainerStyle={{
-                    paddingBottom: 150,
-                }}
-                showsVerticalScrollIndicator={false}
-            >
-                {workout.notes && (
-                    <Text className="text-gray-500 mb-4 text-center">
-                        ({workout.notes})
-                    </Text>
-                )}
-                <Card className="py-0 gap-0 px-4">
-                    {workout.exercises.map((exercise, index) => (
-                        <View
-                            key={exercise.id}
-                            onLayout={(event) => {
-                                itemLayouts.current[index] =
-                                    event.nativeEvent.layout.y;
-                            }}
-                        >
-                            <ExerciseCard
-                                exercise={exercise}
-                                exerciseIndex={index}
-                                workoutId={workout.id}
-                                onSetUpdate={handleSetUpdate}
-                                isLast={index === workout.exercises.length - 1}
-                            />
-                        </View>
-                    ))}
-                </Card>
-            </ScrollView>
-        </View>
+        <KeyboardAvoidingView
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
+            style={{ flex: 1 }}
+            keyboardVerticalOffset={100}
+        >
+            <View className="flex-1 bg-background px-2">
+                <ScrollView
+                    ref={scrollViewRef}
+                    contentContainerStyle={{
+                        paddingBottom: 150,
+                    }}
+                    showsVerticalScrollIndicator={false}
+                    keyboardDismissMode="on-drag"
+                >
+                    {workout.notes && (
+                        <Text className="text-gray-500 mb-4 text-center">
+                            ({workout.notes})
+                        </Text>
+                    )}
+                    <Card className="py-0 gap-0 px-4">
+                        {workout.exercises.map((exercise, index) => (
+                            <View
+                                key={exercise.id}
+                                onLayout={(event) => {
+                                    itemLayouts.current[index] =
+                                        event.nativeEvent.layout.y;
+                                }}
+                            >
+                                <ExerciseCard
+                                    exercise={exercise}
+                                    exerciseIndex={index}
+                                    workoutId={workout.id}
+                                    onSetUpdate={handleSetUpdate}
+                                    isLast={
+                                        index === workout.exercises.length - 1
+                                    }
+                                />
+                            </View>
+                        ))}
+                    </Card>
+                </ScrollView>
+            </View>
+        </KeyboardAvoidingView>
     );
 }
