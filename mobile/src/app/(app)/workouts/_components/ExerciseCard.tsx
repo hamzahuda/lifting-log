@@ -3,9 +3,19 @@ import { Exercise } from "@/types";
 import { useEffect, useState } from "react";
 import { Progress } from "@/components/ui/progress";
 import api from "@/services/api";
+import { Exercise as ApiExercise, Set as ApiSet } from "@/types";
+
+interface LocalSet extends Omit<ApiSet, "weight" | "reps"> {
+    weight: string | null;
+    reps: string | null;
+}
+
+interface LocalExercise extends Omit<ApiExercise, "sets"> {
+    sets: LocalSet[];
+}
 
 interface ExerciseCardProps {
-    exercise: Exercise;
+    exercise: LocalExercise;
     onSetUpdate: (
         exerciseIndex: number,
         setIndex: number,
