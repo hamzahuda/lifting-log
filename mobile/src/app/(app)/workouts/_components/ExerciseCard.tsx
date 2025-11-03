@@ -44,13 +44,9 @@ const ExerciseCard = ({
 
     useEffect(() => {
         const completedFields = exercise.sets.reduce((accumulator, set) => {
-            return (
-                accumulator +
-                (set.reps !== null ? 1 : 0) +
-                (set.weight !== null ? 1 : 0)
-            );
+            return accumulator + (set.reps !== null ? 1 : 0);
         }, 0);
-        const totalFields = exercise.sets.length * 2;
+        const totalFields = exercise.sets.length;
         setProgress(
             (totalFields > 0 ? completedFields / totalFields : 0) * 100
         );
