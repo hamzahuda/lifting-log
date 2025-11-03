@@ -5,6 +5,7 @@ export type Set = {
     min_reps: number;
     max_reps: number;
     notes: string;
+    isWeightAutofilled?: boolean;
 };
 
 export type Exercise = {
