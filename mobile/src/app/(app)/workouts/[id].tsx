@@ -3,15 +3,32 @@ import { ScrollView, View, Text, ActivityIndicator, Alert } from "react-native";
 import { useLocalSearchParams } from "expo-router";
 import api from "@/services/api";
 import ExerciseCard from "./_components/ExerciseCard";
-import { Workout } from "@/types";
 import { Card } from "@/components/ui/card";
 import useDebounce from "@/hooks/useDebounce";
 import { useNavigation } from "expo-router";
+import {
+    Workout as ApiWorkout,
+    Exercise as ApiExercise,
+    Set as ApiSet,
+} from "@/types";
+
+interface LocalSet extends Omit<ApiSet, "weight" | "reps"> {
+    weight: string | null;
+    reps: string | null;
+}
+
+interface LocalExercise extends Omit<ApiExercise, "sets"> {
+    sets: LocalSet[];
+}
+
+interface LocalWorkout extends Omit<ApiWorkout, "exercises"> {
+    exercises: LocalExercise[];
+}
 
 export default function WorkoutDetailScreen() {
     const { id } = useLocalSearchParams<{ id: string }>();
-    const [workout, setWorkout] = useState<Workout | null>(null);
-    const [originalWorkout, setOriginalWorkout] = useState<Workout | null>(
+    const [workout, setWorkout] = useState<LocalWorkout | null>(null);
+    const [originalWorkout, setOriginalWorkout] = useState<LocalWorkout | null>(
         null
     );
     const [loading, setLoading] = useState(true);
@@ -32,8 +49,22 @@ export default function WorkoutDetailScreen() {
         setLoading(true);
         api.get(`/workouts/${id}/`)
             .then((res) => {
-                setWorkout(res.data);
-                setOriginalWorkout(structuredClone(res.data));
+                const apiData = res.data as ApiWorkout;
+
+                const localData: LocalWorkout = {
+                    ...apiData,
+                    exercises: apiData.exercises.map((exercise) => ({
+                        ...exercise,
+                        sets: exercise.sets.map((set) => ({
+                            ...set,
+                            weight: set.weight?.toString() ?? null,
+                            reps: set.reps?.toString() ?? null,
+                        })),
+                    })),
+                };
+
+                setWorkout(localData);
+                setOriginalWorkout(structuredClone(localData));
             })
             .catch((err) => {
                 Alert.alert("Error", "Could not load workout details.");
@@ -80,22 +111,47 @@ export default function WorkoutDetailScreen() {
         field: "weight" | "reps",
         value: string
     ) => {
-        const numValue = value === "" ? null : parseInt(value);
-        if (numValue !== null && isNaN(numValue)) {
+        // Regex to allow only number.number
+        const validPattern = /^(\d+\.?\d*)?$/;
+
+        if (!validPattern.test(value)) {
             return;
         }
 
         setWorkout((currentWorkout) => {
             if (!currentWorkout) return null;
 
-            const newExercises = [...currentWorkout.exercises];
-            const newSets = [...newExercises[exerciseIndex].sets];
+            const newExercises = currentWorkout.exercises.map(
+                (exercise, exIndex) => {
+                    if (exIndex !== exerciseIndex) {
+                        return exercise;
+                    }
+                    const newSets = exercise.sets.map((set) => ({ ...set }));
+                    const newValue = value === "" ? null : value;
 
-            newSets[setIndex] = { ...newSets[setIndex], [field]: numValue };
-            newExercises[exerciseIndex] = {
-                ...newExercises[exerciseIndex],
-                sets: newSets,
-            };
+                    if (field === "weight") {
+                        newSets[setIndex].weight = newValue;
+                        newSets[setIndex].isWeightAutofilled = false;
+
+                        if (setIndex === 0) {
+                            for (let i = 1; i < newSets.length; i++) {
+                                if (
+                                    newSets[i].weight === null ||
+                                    newSets[i].isWeightAutofilled
+                                ) {
+                                    newSets[i].weight = newValue;
+                                    newSets[i].isWeightAutofilled = true;
+                                }
+                            }
+                        }
+                    } else if (field === "reps") {
+                        newSets[setIndex].reps = newValue;
+                    }
+
+                    return { ...exercise, sets: newSets };
+                }
+            );
+
             return { ...currentWorkout, exercises: newExercises };
         });
     };
