@@ -10,6 +10,8 @@ import { useColorScheme } from "nativewind";
 import * as SystemUI from "expo-system-ui";
 import { THEME, NAV_THEME } from "@/utils/theme";
 import { ThemeProvider } from "@react-navigation/native";
+import { initialiseDatabase } from "@/services/localDatabase";
+import { SQLiteProvider } from "expo-sqlite";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -38,9 +40,14 @@ export default function Root() {
     return (
         <ThemeProvider value={navTheme}>
             <SessionProvider>
-                <SplashScreenController />
-                <RootNavigator />
-                <PortalHost />
+                <SQLiteProvider
+                    databaseName="liftinglog.db"
+                    onInit={initialiseDatabase}
+                >
+                    <SplashScreenController />
+                    <RootNavigator />
+                    <PortalHost />
+                </SQLiteProvider>
             </SessionProvider>
         </ThemeProvider>
     );
