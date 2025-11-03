@@ -232,6 +232,16 @@ export async function updateCustomExercise(
     }
 }
 
+export async function deleteAllCustomExercises(db: SQLite.SQLiteDatabase) {
+    try {
+        await db.runAsync("DELETE FROM exercise_names WHERE is_custom = 1;");
+        console.log("Cleared all custom user data from local database.");
+    } catch (error) {
+        console.error("Error clearing custom exercises:", error);
+        throw error;
+    }
+}
+
 // ====================================================================
 //  PRIVATE - SYNC LOGIC
 // ====================================================================
