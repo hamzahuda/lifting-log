@@ -83,9 +83,17 @@ const ExerciseCard = ({
             );
         }
 
-        const setsString = lastPerformance.sets
-            .map((set) => `${set.weight ?? 0}kg x ${set.reps ?? 0}`)
-            .join(", ");
+        const validSets = lastPerformance.sets
+            .map((set) => {
+                if (set.weight === null || set.reps === null) {
+                    return null;
+                } else {
+                    return `${set.weight ?? 0}x${set.reps ?? 0}`;
+                }
+            })
+            .filter(Boolean);
+
+        if (validSets.length === 0) return null;
 
         const formattedDate = new Date(lastPerformance.date).toLocaleDateString(
             "en-GB",
@@ -96,11 +104,14 @@ const ExerciseCard = ({
             }
         );
 
+        const setsString = validSets.join(", ");
+        const lastPerformanceString = `${formattedDate}: ${setsString}`;
+
         return (
-            <View className="">
+            <View className="pb-3">
                 <View className="flex-row flex-wrap">
                     <Text className="text-muted-foreground text-base">
-                        {`${formattedDate}:  ${setsString}`}
+                        {lastPerformanceString}
                     </Text>
                 </View>
             </View>
@@ -108,7 +119,7 @@ const ExerciseCard = ({
     };
 
     return (
-        <View className={`py-4 ${!isLast ? "border-b border-gray-500" : ""}`}>
+        <View className={`pt-4 ${!isLast ? "border-b border-gray-500" : ""}`}>
             <View className="flex-1">
                 <Text className="text-card-foreground font-extrabold text-2xl">
                     {exercise.name.toUpperCase()}
@@ -146,7 +157,11 @@ const ExerciseCard = ({
                         </Text>
                         <View className="flex-1 items-center">
                             <TextInput
-                                className="text-foreground text-lg text-center w-16 py-1 bg-secondary rounded-md"
+                                className={`text-lg text-center w-16 py-1 bg-secondary rounded-md ${
+                                    set.isWeightAutofilled
+                                        ? "text-muted-foreground"
+                                        : "text-foreground"
+                                }`}
                                 value={set.weight?.toString() ?? ""}
                                 onChangeText={(value) =>
                                     onSetUpdate(
