@@ -109,7 +109,7 @@ export default function ExerciseTemplateCard({
     const handleRestPeriodChange = (adjustment: number) => {
         const currentSeconds = HHMMSStoSeconds(data.rest_period);
         const newSeconds = Math.min(
-            3600,
+            600,
             Math.max(0, currentSeconds + adjustment)
         );
         onEdit(data.id, {
