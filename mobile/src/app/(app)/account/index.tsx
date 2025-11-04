@@ -6,18 +6,18 @@ import { useSession } from "@/context/ctx";
 export default function AccountScreen() {
     const { session } = useSession();
 
-    const deleteAccount = async () => {
+    const handleDeleteAccount = async () => {
         await api
             .delete(`/users/${session?.user?.id}/`)
-            .then((response) => {
-                Alert.alert("Account deleted");
-                supabase.auth.signOut();
-                console.log(response.data);
-            })
+            .then(handleSignOut)
             .catch((error) => {
                 Alert.alert("Error", "Failed to delete account.");
                 console.error(error);
             });
+    };
+
+    const handleSignOut = () => {
+        supabase.auth.signOut();
     };
 
     const confirmAccountDeletion = () => {
@@ -42,7 +42,7 @@ export default function AccountScreen() {
                                 },
                                 {
                                     text: "Yes, Delete My Account",
-                                    onPress: () => deleteAccount(),
+                                    onPress: handleDeleteAccount,
                                     style: "destructive",
                                 },
                             ]
@@ -65,7 +65,7 @@ export default function AccountScreen() {
 
             <TouchableOpacity
                 className="bg-background border border-border p-4 rounded-lg"
-                onPress={() => supabase.auth.signOut()}
+                onPress={handleSignOut}
             >
                 <Text className="text-foreground text-center text-lg font-bold">
                     Sign Out
