@@ -10,8 +10,11 @@ import { useColorScheme } from "nativewind";
 import * as SystemUI from "expo-system-ui";
 import { THEME, NAV_THEME } from "@/utils/theme";
 import { ThemeProvider } from "@react-navigation/native";
-import { initialiseDatabase } from "@/services/localDatabase";
-import { SQLiteProvider } from "expo-sqlite";
+import {
+    deleteAllCustomExercises,
+    initialiseDatabase,
+} from "@/services/localDatabase";
+import { SQLiteProvider, useSQLiteContext } from "expo-sqlite";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -40,10 +43,7 @@ export default function Root() {
     return (
         <ThemeProvider value={navTheme}>
             <SessionProvider>
-                <SQLiteProvider
-                    databaseName="liftinglog.db"
-                    onInit={initialiseDatabase}
-                >
+                <SQLiteProvider databaseName="liftinglog.db">
                     <SplashScreenController />
                     <RootNavigator />
                     <PortalHost />
@@ -57,12 +57,34 @@ function RootNavigator() {
     const { session, isLoading } = useSession();
     const [hasWaited, setHasWaited] = useState(false);
 
+    const db = useSQLiteContext();
+    const [isDbInitialized, setIsDbInitialized] = useState(false);
+
+    // Initialize the database
+    useEffect(() => {
+        const setupDatabase = async () => {
+            if (session && db && hasWaited && !isDbInitialized) {
+                try {
+                    await initialiseDatabase(db);
+                    setIsDbInitialized(true);
+                } catch (e) {
+                    console.error("Failed to initialize database:", e);
+                }
+            } else if (!session) {
+                await deleteAllCustomExercises(db);
+                setIsDbInitialized(false);
+            }
+        };
+
+        setupDatabase();
+    }, [session, db, isDbInitialized, hasWaited]);
+
     useEffect(() => {
         // If user is logged in AND we haven't waited yet
         if (session && !hasWaited) {
             const timer = setTimeout(() => {
                 setHasWaited(true);
-            }, 500);
+            }, 1000);
 
             return () => clearTimeout(timer);
         }
@@ -73,8 +95,7 @@ function RootNavigator() {
         }
     }, [session, hasWaited]);
 
-    // Show a blank screen while loading or if we are waiting for token persistence after login
-    if (isLoading || (session && !hasWaited)) {
+    if (isLoading || (session && (!hasWaited || !isDbInitialized))) {
         return null;
     }
 
