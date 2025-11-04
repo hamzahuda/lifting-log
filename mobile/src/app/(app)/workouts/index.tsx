@@ -41,6 +41,15 @@ export default function WorkoutListScreen() {
         <View className="flex-1 bg-background p-2">
             {loading ? (
                 <ActivityIndicator className="flex-1" size="large" />
+            ) : workouts.length === 0 ? (
+                <View className="flex-1 flex-col justify-center mb-60">
+                    <Text className="text-muted-foreground text-center">
+                        No workouts found,
+                    </Text>
+                    <Text className="text-muted-foreground text-center">
+                        Click the plus button to create one.
+                    </Text>
+                </View>
             ) : (
                 <ScrollView contentContainerStyle={{ paddingBottom: 210 }}>
                     <View>
@@ -86,7 +95,7 @@ export default function WorkoutListScreen() {
                 className="absolute bottom-28 right-4 w-16 h-16 bg-accent rounded-2xl justify-center items-center shadow-lg shadow-black"
                 onPress={() => router.push("/(app)/workouts/create")}
             >
-                <Text className="text-white text-3xl bg-back">+</Text>
+                <Text className="text-white text-3xl">+</Text>
             </TouchableOpacity>
         </View>
     );
