@@ -70,14 +70,22 @@ function RootNavigator() {
                 } catch (e) {
                     console.error("Failed to initialize database:", e);
                 }
-            } else if (!session) {
+            }
+        };
+
+        setupDatabase();
+    }, [session, db, hasWaited, isDbInitialized]);
+
+    useEffect(() => {
+        const cleanupDatabase = async () => {
+            if (!session && db) {
                 await deleteAllCustomExercises(db);
                 setIsDbInitialized(false);
             }
         };
 
-        setupDatabase();
-    }, [session, db, isDbInitialized, hasWaited]);
+        cleanupDatabase();
+    }, [session, db]);
 
     useEffect(() => {
         // If user is logged in AND we haven't waited yet
