@@ -221,7 +221,7 @@ export default function WorkoutDetailScreen() {
                             ({workout.notes})
                         </Text>
                     )}
-                    <Card className="py-0 gap-0 px-4">
+                    <View className="py-0 gap-0 px-4">
                         {workout.exercises.map((exercise, index) => (
                             <View
                                 key={exercise.id}
@@ -241,7 +241,7 @@ export default function WorkoutDetailScreen() {
                                 />
                             </View>
                         ))}
-                    </Card>
+                    </View>
                 </ScrollView>
             </View>
         </KeyboardAvoidingView>
