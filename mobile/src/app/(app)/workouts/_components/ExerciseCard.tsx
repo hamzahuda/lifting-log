@@ -34,7 +34,6 @@ const ExerciseCard = ({
     workoutId,
     isLast,
 }: ExerciseCardProps) => {
-    const headers = ["Set", "Rep Range", "Weight (kg)", "Reps"];
     const [progress, setProgress] = useState<number>(0);
     const [lastPerformance, setLastPerformance] = useState<Exercise | null>(
         null
@@ -43,13 +42,11 @@ const ExerciseCard = ({
         useState<boolean>(true);
 
     useEffect(() => {
-        const completedFields = exercise.sets.reduce((accumulator, set) => {
-            return accumulator + (set.reps !== null ? 1 : 0);
-        }, 0);
-        const totalFields = exercise.sets.length;
-        setProgress(
-            (totalFields > 0 ? completedFields / totalFields : 0) * 100
-        );
+        const completedSets = exercise.sets.filter(
+            (set) => set.reps !== null
+        ).length;
+        const totalSets = exercise.sets.length;
+        setProgress((totalSets > 0 ? completedSets / totalSets : 0) * 100);
     }, [exercise]);
 
     useEffect(() => {
@@ -77,51 +74,15 @@ const ExerciseCard = ({
         fetchLastPerformance();
     }, []);
 
-    const renderLastPerformance = () => {
-        if (isLoadingLastPerformance) {
-            return <ActivityIndicator size="small" className="mb-2" />;
-        }
-        if (!lastPerformance) {
-            return (
-                <Text className="text-muted-foreground text-center mb-2 italic">
-                    No previous data for {exercise.name}.
-                </Text>
-            );
-        }
-
-        const validSets = lastPerformance.sets
-            .map((set) => {
-                if (set.weight === null || set.reps === null) {
-                    return null;
-                } else {
-                    return `${set.weight ?? 0}x${set.reps ?? 0}`;
-                }
-            })
-            .filter(Boolean);
-
-        if (validSets.length === 0) return null;
-
-        const formattedDate = new Date(lastPerformance.date).toLocaleDateString(
-            "en-GB",
-            {
-                day: "2-digit",
-                month: "2-digit",
-                year: "2-digit",
-            }
-        );
-
-        const setsString = validSets.join(", ");
-        const lastPerformanceString = `${formattedDate}: ${setsString}`;
-
-        return (
-            <View className="pb-3">
-                <View className="flex-row flex-wrap">
-                    <Text className="text-muted-foreground text-base">
-                        {lastPerformanceString}
-                    </Text>
-                </View>
-            </View>
-        );
+    const formatLastPerformanceSet = (setIndex: number) => {
+        if (
+            !lastPerformance ||
+            !lastPerformance.sets ||
+            lastPerformance.sets[setIndex].reps === null ||
+            lastPerformance.sets[setIndex].weight === null
+        )
+            return "-";
+        return `${lastPerformance.sets[setIndex].weight} x ${lastPerformance.sets[setIndex].reps}`;
     };
 
     return (
@@ -140,14 +101,18 @@ const ExerciseCard = ({
 
             <View className="mt-4">
                 <View className="flex-row border-b pb-2 mb-2 border-gray-500">
-                    {headers.map((header) => (
-                        <Text
-                            key={header}
-                            className="flex-1 text-muted-foreground text-center text-lg font-semibold"
-                        >
-                            {header}
-                        </Text>
-                    ))}
+                    <Text className="w-12 text-muted-foreground text-center text-lg font-semibold">
+                        SET
+                    </Text>
+                    <Text className="flex-1 text-muted-foreground text-center text-lg font-semibold">
+                        PREVIOUS
+                    </Text>
+                    <Text className="flex-1 text-muted-foreground text-center text-lg font-semibold">
+                        WEIGHT
+                    </Text>
+                    <Text className="flex-1 text-muted-foreground text-center text-lg font-semibold">
+                        REPS
+                    </Text>
                 </View>
 
                 {exercise.sets.map((set, setIndex) => (
@@ -155,11 +120,15 @@ const ExerciseCard = ({
                         key={set.id}
                         className="flex-row py-1 mb-2 items-center"
                     >
-                        <Text className="flex-1 text-foreground text-lg text-center">
+                        <Text className="w-12 text-foreground text-lg text-center">
                             {setIndex + 1}
                         </Text>
-                        <Text className="flex-1 text-foreground text-lg text-center">
-                            {set.min_reps}-{set.max_reps}
+                        <Text className="flex-1 text-muted-foreground text-lg text-center">
+                            {isLoadingLastPerformance ? (
+                                <ActivityIndicator size="small" />
+                            ) : (
+                                formatLastPerformanceSet(setIndex)
+                            )}
                         </Text>
                         <View className="flex-1 items-center">
                             <TextInput
@@ -195,13 +164,12 @@ const ExerciseCard = ({
                                     )
                                 }
                                 keyboardType="numeric"
-                                placeholder="--"
+                                placeholder={`${set.min_reps}-${set.max_reps}`}
                                 placeholderTextColor="#9CA3AF"
                             />
                         </View>
                     </View>
                 ))}
-                {renderLastPerformance()}
             </View>
         </View>
     );
