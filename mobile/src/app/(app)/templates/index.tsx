@@ -44,6 +44,15 @@ export default function TemplateScreen() {
                     <View className="flex-1 justify-center items-center">
                         <ActivityIndicator size="large" color="#3B82F6" />
                     </View>
+                ) : templates.length === 0 ? (
+                    <View className="flex-1 flex-col justify-center mb-60">
+                        <Text className="text-muted-foreground text-center">
+                            No workout templates found,
+                        </Text>
+                        <Text className="text-muted-foreground text-center">
+                            Click the plus button to create one.
+                        </Text>
+                    </View>
                 ) : (
                     templates.map((template) => (
                         <TouchableOpacity
