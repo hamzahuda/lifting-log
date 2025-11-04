@@ -51,7 +51,10 @@ export default function WorkoutListScreen() {
                     </Text>
                 </View>
             ) : (
-                <ScrollView contentContainerStyle={{ paddingBottom: 210 }}>
+                <ScrollView
+                    contentContainerStyle={{ paddingBottom: 210 }}
+                    showsVerticalScrollIndicator={false}
+                >
                     <View>
                         {workouts.map((workout, index) => (
                             <Card key={workout.id} className="pr-4 py-3 mb-3">
