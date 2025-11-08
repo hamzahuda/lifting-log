@@ -1,6 +1,6 @@
 from .models import *
 from django.contrib.auth import get_user_model
-from rest_framework import viewsets
+from rest_framework import viewsets, status
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.decorators import action
@@ -34,6 +34,21 @@ class WorkoutTemplateViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         user = self.request.user
         return WorkoutTemplate.objects.filter(user=user)
+
+    @action(detail=True, methods=["post"], url_path="duplicate")
+    def duplicate(self, request, pk=None):
+
+        new_template = WorkoutTemplate.duplicate_from_id(
+            user=request.user, template_to_duplicate_id=pk
+        )
+
+        if new_template:
+            serializer = WorkoutTemplateSerializer(new_template)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(
+                {"error": "Template not found"}, status=status.HTTP_404_NOT_FOUND
+            )
 
 
 class WorkoutViewSet(viewsets.ModelViewSet):
