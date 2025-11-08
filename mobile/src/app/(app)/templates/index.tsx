@@ -5,15 +5,28 @@ import {
     Text,
     TouchableOpacity,
     ActivityIndicator,
+    Modal,
+    Pressable,
 } from "react-native";
 import api from "@/services/api";
 import { useRouter } from "expo-router";
 import { useFocusEffect } from "@react-navigation/native";
 import { WorkoutTemplate } from "@/types";
+import Ionicons from "@expo/vector-icons/Ionicons";
+import { THEME } from "@/utils/theme";
+import { useColorScheme } from "nativewind";
+import { Separator } from "@/components/ui/separator";
+import { set } from "lodash";
+import { hide } from "expo-router/build/utils/splash";
 
 export default function TemplateScreen() {
+    const { colorScheme } = useColorScheme();
+    const themeColors =
+        colorScheme === undefined ? THEME.dark : THEME[colorScheme];
     const [templates, setTemplates] = useState<WorkoutTemplate[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
+    const [showModal, setShowModal] = useState<boolean>(false);
+    const [selectedTemplateID, setSelectedTemplateID] = useState<number>();
     const router = useRouter();
 
     const getTemplates = useCallback(() => {
@@ -37,6 +50,59 @@ export default function TemplateScreen() {
         }, [getTemplates])
     );
 
+    const handleShowModal = (templateID: number) => {
+        setSelectedTemplateID(templateID);
+        setShowModal(true);
+    };
+
+    const handleHideModal = () => {
+        setSelectedTemplateID(undefined);
+        setShowModal(false);
+    };
+
+    const handleDeleteTemplate = (id: number) => {
+        Alert.alert(
+            "Delete Template",
+            "Are you sure you want to delete this template?",
+            [
+                { text: "Cancel", style: "cancel" },
+                {
+                    text: "Delete",
+                    style: "destructive",
+                    onPress: () =>
+                        api
+                            .delete(`/workout-templates/${id}/`)
+                            .catch((error) => {
+                                console.error(error);
+                                Alert.alert(
+                                    "Error",
+                                    "Failed to delete template."
+                                );
+                            })
+                            .finally(() => {
+                                handleHideModal();
+                                getTemplates();
+                            }),
+                },
+            ]
+        );
+    };
+
+    const handleDuplicateTemplate = () => {
+        api.post(`/workout-templates/${selectedTemplateID}/duplicate/`)
+            .catch((error) => {
+                console.error(error);
+                Alert.alert(
+                    "Error",
+                    "Failed to duplicate template. Please try again."
+                );
+            })
+            .finally(() => {
+                handleHideModal();
+                getTemplates();
+            });
+    };
+
     return (
         <View className="flex-1 bg-background p-2">
             <View className="flex-1">
@@ -57,19 +123,32 @@ export default function TemplateScreen() {
                     templates.map((template) => (
                         <TouchableOpacity
                             key={template.id}
-                            className="bg-background rounded-2xl p-4 mb-4 shadow-md border border-border"
+                            className="bg-background rounded-2xl p-4 mb-4 flex-row justify-between shadow-md border border-border"
                             onPress={() =>
                                 router.push(`/templates/${template.id}`)
                             }
                         >
-                            <Text className="text-foreground font-bold text-xl">
-                                {template.name}
-                            </Text>
-                            {template.notes && (
-                                <Text className="text-muted-foreground mt-1">
-                                    {template.notes}
+                            <View>
+                                <Text className="text-foreground font-bold text-xl">
+                                    {template.name}
                                 </Text>
-                            )}
+                                {template.notes && (
+                                    <Text className="text-muted-foreground mt-1">
+                                        {template.notes}
+                                    </Text>
+                                )}
+                            </View>
+
+                            <TouchableOpacity
+                                onPress={() => handleShowModal(template.id)}
+                            >
+                                <Ionicons
+                                    name="options-sharp"
+                                    className="m-auto"
+                                    size={24}
+                                    color={themeColors.foreground}
+                                />
+                            </TouchableOpacity>
                         </TouchableOpacity>
                     ))
                 )}
@@ -80,6 +159,61 @@ export default function TemplateScreen() {
             >
                 <Text className="text-white text-3xl">+</Text>
             </TouchableOpacity>
+            <Modal
+                visible={showModal}
+                onRequestClose={handleHideModal}
+                animationType="slide"
+                transparent={true}
+            >
+                <Pressable
+                    className="flex-1 justify-end"
+                    onPress={handleHideModal}
+                >
+                    <Pressable>
+                        <View className="w-full rounded-t-2xl bg-white p-4 shadow-lg dark:bg-gray-800">
+                            <TouchableOpacity
+                                className="flex-row items-center rounded-lg p-3 active:bg-gray-100 dark:active:bg-gray-700"
+                                onPress={handleDuplicateTemplate}
+                            >
+                                <Ionicons
+                                    name="copy-outline"
+                                    size={22}
+                                    color={themeColors.foreground}
+                                    className="mr-4 dark:text-gray-100"
+                                />
+                                <Text className="text-lg text-gray-800 dark:text-gray-100">
+                                    Duplicate Template
+                                </Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                className="flex-row items-center rounded-lg p-3 active:bg-gray-100 dark:active:bg-gray-700"
+                                onPress={() =>
+                                    handleDeleteTemplate(selectedTemplateID!)
+                                }
+                            >
+                                <Ionicons
+                                    name="trash-outline"
+                                    size={22}
+                                    color={themeColors.foreground}
+                                    className="mr-4"
+                                />
+                                <Text className="text-lg text-red-600 dark:text-red-500">
+                                    Delete Template
+                                </Text>
+                            </TouchableOpacity>
+                            <Separator className="bg-gray-200 dark:bg-gray-700" />
+                            <TouchableOpacity
+                                className="flex-row items-center justify-center rounded-lg p-3 active:bg-gray-100 dark:active:bg-gray-700"
+                                onPress={handleHideModal}
+                            >
+                                <Text className="text-lg font-semibold text-blue-600 dark:text-blue-400">
+                                    Cancel
+                                </Text>
+                            </TouchableOpacity>
+                        </View>
+                    </Pressable>
+                </Pressable>
+            </Modal>
         </View>
     );
 }
