@@ -1,7 +1,8 @@
 from django.conf import settings
 from django.db import models, transaction
 from django.contrib.auth.models import AbstractUser
-from supabase import create_client, Client
+from supabase import create_client
+from django.forms.models import model_to_dict
 import logging
 
 logger = logging.getLogger(__name__)
@@ -166,6 +167,34 @@ class WorkoutTemplate(models.Model):
                 for set_template_data in set_data:
                     exercise.set_templates.create(**set_template_data)
         return self
+
+    @classmethod
+    @transaction.atomic
+    def duplicate_from_id(cls, user, template_to_duplicate_id):
+        try:
+            template_to_duplicate = cls.objects.get(id=template_to_duplicate_id)
+        except cls.DoesNotExist:
+            return None
+
+        template_data = {
+            "name": f"{template_to_duplicate.name} (Copy)",
+            "notes": template_to_duplicate.notes,
+            "exercise_templates": [],
+        }
+
+        for ex in template_to_duplicate.exercise_templates.all():
+            exercise_dict = model_to_dict(ex, exclude=["id", "workout_template"])
+            exercise_dict["set_templates"] = []
+
+            for s in ex.set_templates.all():
+                set_dict = model_to_dict(s, exclude=["id", "exercise_template"])
+                exercise_dict["set_templates"].append(set_dict)
+
+            template_data["exercise_templates"].append(exercise_dict)
+
+        new_template = cls.create_with_exercises(user=user, template_data=template_data)
+
+        return new_template
 
     def __str__(self):
         return f"{self.name} - Template"
