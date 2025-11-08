@@ -80,7 +80,8 @@ class ExerciseViewSet(viewsets.ReadOnlyModelViewSet):
 
         if not exercise_name or not current_workout_id:
             return Response(
-                {"error": "Missing 'name' or 'workout_id' query parameters"}, status=400
+                {"error": "Missing 'name' or 'workout_id' query parameters"},
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
         try:
@@ -89,7 +90,9 @@ class ExerciseViewSet(viewsets.ReadOnlyModelViewSet):
                 id=current_workout_id, user=request.user
             )
         except Workout.DoesNotExist:
-            return Response({"error": "Workout not found"}, status=404)
+            return Response(
+                {"error": "Workout not found"}, status=status.HTTP_404_NOT_FOUND
+            )
 
         last_exercise = (
             Exercise.objects.filter(
