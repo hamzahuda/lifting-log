@@ -43,7 +43,7 @@ class WorkoutTemplateViewSet(viewsets.ModelViewSet):
         )
 
         if new_template:
-            serializer = WorkoutTemplateSerializer(new_template)
+            serializer = self.get_serializer(new_template)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response(
