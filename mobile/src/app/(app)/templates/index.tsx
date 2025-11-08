@@ -16,8 +16,6 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { THEME } from "@/utils/theme";
 import { useColorScheme } from "nativewind";
 import { Separator } from "@/components/ui/separator";
-import { set } from "lodash";
-import { hide } from "expo-router/build/utils/splash";
 
 export default function TemplateScreen() {
     const { colorScheme } = useColorScheme();
