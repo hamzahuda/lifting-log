@@ -1,7 +1,6 @@
 import { View, Text, TextInput, ActivityIndicator } from "react-native";
 import { Exercise } from "@/types";
 import { useEffect, useState } from "react";
-import { Progress } from "@/components/ui/progress";
 import api from "@/services/api";
 import { Exercise as ApiExercise, Set as ApiSet } from "@/types";
 
@@ -34,20 +33,11 @@ const ExerciseCard = ({
     workoutId,
     isLast,
 }: ExerciseCardProps) => {
-    const [progress, setProgress] = useState<number>(0);
     const [lastPerformance, setLastPerformance] = useState<Exercise | null>(
         null
     );
     const [isLoadingLastPerformance, setIsLoadingLastPerformance] =
         useState<boolean>(true);
-
-    useEffect(() => {
-        const completedSets = exercise.sets.filter(
-            (set) => set.reps !== null
-        ).length;
-        const totalSets = exercise.sets.length;
-        setProgress((totalSets > 0 ? completedSets / totalSets : 0) * 100);
-    }, [exercise]);
 
     useEffect(() => {
         const fetchLastPerformance = async () => {
@@ -86,7 +76,9 @@ const ExerciseCard = ({
     };
 
     return (
-        <View className={`pt-4 ${!isLast ? "border-b border-gray-500" : ""}`}>
+        <View
+            className={`pt-4 border-t ${isLast ? "border-b" : ""} border-gray-500`}
+        >
             <View className="flex-1">
                 <Text className="text-card-foreground font-extrabold text-2xl">
                     {exercise.name.toUpperCase()}
@@ -96,21 +88,20 @@ const ExerciseCard = ({
                         ({exercise.notes})
                     </Text>
                 )}
-                <Progress value={progress} className="mt-1" />
             </View>
 
-            <View className="mt-4">
-                <View className="flex-row border-b pb-2 mb-2 border-gray-500">
+            <View className="mt-4 mb-2">
+                <View className="flex-row pb-2 border-gray-500">
                     <Text className="w-12 text-muted-foreground text-center text-lg font-semibold">
                         SET
                     </Text>
                     <Text className="flex-1 text-muted-foreground text-center text-lg font-semibold">
                         PREVIOUS
                     </Text>
-                    <Text className="flex-1 text-muted-foreground text-center text-lg font-semibold">
+                    <Text className="w-24 text-muted-foreground text-center text-lg font-semibold">
                         WEIGHT
                     </Text>
-                    <Text className="flex-1 text-muted-foreground text-center text-lg font-semibold">
+                    <Text className="w-24 text-muted-foreground text-center text-lg font-semibold">
                         REPS
                     </Text>
                 </View>
@@ -130,13 +121,9 @@ const ExerciseCard = ({
                                 formatLastPerformanceSet(setIndex)
                             )}
                         </Text>
-                        <View className="flex-1 items-center">
+                        <View className="w-24 items-center">
                             <TextInput
-                                className={`text-lg text-center w-16 py-1 bg-secondary rounded-md ${
-                                    set.isWeightAutofilled
-                                        ? "text-muted-foreground"
-                                        : "text-foreground"
-                                }`}
+                                className="text-lg text-center w-16 py-1 bg-secondary rounded-md text-foreground"
                                 value={set.weight?.toString() ?? ""}
                                 onChangeText={(value) =>
                                     onSetUpdate(
@@ -151,7 +138,7 @@ const ExerciseCard = ({
                                 placeholderTextColor="#9CA3AF"
                             />
                         </View>
-                        <View className="flex-1 items-center">
+                        <View className="w-24 items-center">
                             <TextInput
                                 className="text-foreground text-lg text-center w-16 py-1 bg-secondary rounded-md"
                                 value={set.reps?.toString() ?? ""}
