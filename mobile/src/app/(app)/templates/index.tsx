@@ -13,6 +13,7 @@ import { useRouter } from "expo-router";
 import { useFocusEffect } from "@react-navigation/native";
 import { WorkoutTemplate } from "@/types";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import SimpleLineIcons from "@expo/vector-icons/SimpleLineIcons";
 import { THEME } from "@/utils/theme";
 import { useColorScheme } from "nativewind";
 import { Separator } from "@/components/ui/separator";
@@ -126,7 +127,7 @@ export default function TemplateScreen() {
                                 router.push(`/templates/${template.id}`)
                             }
                         >
-                            <View>
+                            <View className="flex-1">
                                 <Text className="text-foreground font-bold text-xl">
                                     {template.name}
                                 </Text>
@@ -139,11 +140,12 @@ export default function TemplateScreen() {
 
                             <TouchableOpacity
                                 onPress={() => handleShowModal(template.id)}
+                                className="w-10"
                             >
-                                <Ionicons
-                                    name="options-sharp"
-                                    className="m-auto"
-                                    size={24}
+                                <SimpleLineIcons
+                                    name="options"
+                                    className="my-auto ml-auto"
+                                    size={20}
                                     color={themeColors.foreground}
                                 />
                             </TouchableOpacity>
