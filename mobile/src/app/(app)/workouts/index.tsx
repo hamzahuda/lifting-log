@@ -11,6 +11,7 @@ import {
     Platform,
 } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import SimpleLineIcons from "@expo/vector-icons/SimpleLineIcons";
 import { useRouter } from "expo-router";
 import api from "@/services/api";
 import { useFocusEffect } from "@react-navigation/native";
@@ -214,10 +215,10 @@ export default function WorkoutListScreen() {
                                                 handleShowModal(workout.id)
                                             }
                                         >
-                                            <Ionicons
-                                                name="options-sharp"
-                                                className="m-auto"
-                                                size={24}
+                                            <SimpleLineIcons
+                                                name="options"
+                                                className="my-auto ml-auto"
+                                                size={20}
                                                 color={themeColors.foreground}
                                             />
                                         </TouchableOpacity>
