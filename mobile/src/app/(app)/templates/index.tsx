@@ -8,7 +8,11 @@ import {
     Modal,
     Pressable,
 } from "react-native";
-import api from "@/services/api";
+import {
+    fetchTemplateList,
+    deleteTemplate,
+    duplicateTemplate,
+} from "@/services/api";
 import { useRouter } from "expo-router";
 import { useFocusEffect } from "@react-navigation/native";
 import { WorkoutTemplate } from "@/types";
@@ -28,19 +32,17 @@ export default function TemplateScreen() {
     const [selectedTemplateID, setSelectedTemplateID] = useState<number>();
     const router = useRouter();
 
-    const getTemplates = useCallback(() => {
-        setLoading(true);
-        api.get<WorkoutTemplate[]>("/workout-templates/")
-            .then((result) => {
-                setTemplates(result.data);
-            })
-            .catch((err: Error) => {
-                console.error(err);
-                Alert.alert("Error", "Failed to fetch templates.");
-            })
-            .finally(() => {
-                setLoading(false);
-            });
+    const getTemplates = useCallback(async () => {
+        try {
+            setLoading(true);
+            const res = await fetchTemplateList();
+            setTemplates(res.data);
+        } catch (error) {
+            Alert.alert("Error", "Failed to fetch templates.");
+            console.error(error);
+        } finally {
+            setLoading(false);
+        }
     }, []);
 
     useFocusEffect(
@@ -68,38 +70,36 @@ export default function TemplateScreen() {
                 {
                     text: "Delete",
                     style: "destructive",
-                    onPress: () =>
-                        api
-                            .delete(`/workout-templates/${id}/`)
-                            .catch((error) => {
-                                console.error(error);
-                                Alert.alert(
-                                    "Error",
-                                    "Failed to delete template."
-                                );
-                            })
-                            .finally(() => {
-                                handleHideModal();
-                                getTemplates();
-                            }),
+                    onPress: async () => {
+                        try {
+                            await deleteTemplate(id);
+                        } catch (error) {
+                            Alert.alert("Error", "Failed to delete template.");
+                            console.error(error);
+                        } finally {
+                            handleHideModal();
+                            getTemplates();
+                        }
+                    },
                 },
             ]
         );
     };
 
-    const handleDuplicateTemplate = () => {
-        api.post(`/workout-templates/${selectedTemplateID}/duplicate/`)
-            .catch((error) => {
-                console.error(error);
-                Alert.alert(
-                    "Error",
-                    "Failed to duplicate template. Please try again."
-                );
-            })
-            .finally(() => {
-                handleHideModal();
-                getTemplates();
-            });
+    const handleDuplicateTemplate = async () => {
+        if (!selectedTemplateID) return;
+        try {
+            duplicateTemplate(selectedTemplateID);
+        } catch (error) {
+            Alert.alert(
+                "Error",
+                "Failed to duplicate template. Please try again."
+            );
+            console.error(error);
+        } finally {
+            handleHideModal();
+            getTemplates();
+        }
     };
 
     return (
