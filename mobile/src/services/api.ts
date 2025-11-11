@@ -57,6 +57,13 @@ export const updateWorkout = async (id: number | string, data: Workout) => {
     return response;
 };
 
+export const updateWorkoutDate = async (id: number | string, date: Date) => {
+    const response = await api.patch<Workout>(`/workouts/${id}/`, {
+        date: date.toISOString(),
+    });
+    return response;
+};
+
 export const deleteWorkout = async (id: number | string) => {
     await api.delete(`/workouts/${id}/`);
 };
