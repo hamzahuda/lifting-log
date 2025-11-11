@@ -64,8 +64,8 @@ export default function CreateWorkoutScreen() {
         setIsSubmitting(true);
 
         const payload = {
-            template: selectedTemplate,
-            date: date.toISOString(),
+            template_url: selectedTemplate,
+            date: date,
         };
 
         try {
