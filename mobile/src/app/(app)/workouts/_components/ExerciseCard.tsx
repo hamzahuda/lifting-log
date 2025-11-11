@@ -1,7 +1,7 @@
 import { View, Text, TextInput, ActivityIndicator } from "react-native";
 import { Exercise } from "@/types";
 import { useEffect, useState } from "react";
-import api from "@/services/api";
+import { fetchLastExercisePerformance } from "@/services/api";
 import { Exercise as ApiExercise, Set as ApiSet } from "@/types";
 
 interface LocalSet extends Omit<ApiSet, "weight" | "reps"> {
@@ -44,18 +44,13 @@ const ExerciseCard = ({
             if (!workoutId || !exercise.name) return;
             try {
                 setIsLoadingLastPerformance(true);
-                const response = await api.get<Exercise | null>(
-                    "/exercises/last-performance/",
-                    {
-                        params: {
-                            name: exercise.name,
-                            workout_id: workoutId,
-                        },
-                    }
+                const res = await fetchLastExercisePerformance(
+                    exercise.name,
+                    workoutId
                 );
-                setLastPerformance(response.data);
+                setLastPerformance(res.data);
             } catch (error) {
-                console.error("Failed to fetch last performance:", error);
+                console.error(error);
             } finally {
                 setIsLoadingLastPerformance(false);
             }
