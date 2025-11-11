@@ -1,7 +1,7 @@
 export type Set = {
     readonly id: number;
-    reps: number | null;
-    weight: number | null;
+    reps: string | null;
+    weight: string | null;
     min_reps: number;
     max_reps: number;
     notes: string;
