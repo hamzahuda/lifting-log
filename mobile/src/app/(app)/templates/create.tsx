@@ -1,6 +1,6 @@
 import { View, Alert, ScrollView } from "react-native";
 import { useRouter } from "expo-router";
-import api from "@/services/api";
+import { createTemplate } from "@/services/api";
 import { WorkoutTemplateFormData } from "@/types";
 import TemplateForm from "./_components/TemplateForm";
 
@@ -15,17 +15,15 @@ export default function CreateTemplateScreen() {
 
     const handleCreateSubmit = async (formData: WorkoutTemplateFormData) => {
         try {
-            const res = await api.post("/workout-templates/", formData);
-            if (res.status === 201) {
-                Alert.alert("Success", "Template created successfully!");
-                router.back();
-            }
-        } catch (err) {
+            await createTemplate(formData);
+            Alert.alert("Success", "Template created successfully!");
+            router.back();
+        } catch (error) {
             Alert.alert(
                 "Error",
                 "Failed to create template. Please try again."
             );
-            console.log(err);
+            console.log(error);
         }
     };
 
