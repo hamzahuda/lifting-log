@@ -129,3 +129,9 @@ export const fetchLastExercisePerformance = async (
     );
     return response.data;
 };
+
+// --- User ---
+
+export const deleteUser = async (id: string): Promise<void> => {
+    await api.delete(`/users/${id}/`);
+};
