@@ -1,5 +1,5 @@
 import { supabase } from "@/services/supabase";
-import api from "@/services/api";
+import { deleteUser } from "@/services/api";
 import { View, Text, TouchableOpacity, Alert } from "react-native";
 import { useSession } from "@/context/ctx";
 
@@ -7,13 +7,14 @@ export default function AccountScreen() {
     const { session } = useSession();
 
     const handleDeleteAccount = async () => {
-        await api
-            .delete(`/users/${session?.user?.id}/`)
-            .then(handleSignOut)
-            .catch((error) => {
-                Alert.alert("Error", "Failed to delete account.");
-                console.error(error);
-            });
+        try {
+            if (!session?.user?.id) throw new Error("No user ID found.");
+            await deleteUser(session.user.id);
+            handleSignOut();
+        } catch (error) {
+            Alert.alert("Error", "Failed to delete account.");
+            console.error(error);
+        }
     };
 
     const handleSignOut = () => {
