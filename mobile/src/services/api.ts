@@ -34,81 +34,71 @@ api.interceptors.request.use(
 
 // --- Workouts ---
 
-export const fetchWorkoutList = async (): Promise<Workout[]> => {
+export const fetchWorkoutList = async () => {
     const response = await api.get<Workout[]>("/workouts/");
-    return response.data;
+    return response;
 };
 
-export const fetchWorkout = async (id: number | string): Promise<Workout> => {
+export const fetchWorkout = async (id: number | string) => {
     const response = await api.get<Workout>(`/workouts/${id}/`);
-    return response.data;
+    return response;
 };
 
-export const createWorkout = async (
-    template_url: string,
-    date: Date
-): Promise<Workout> => {
+export const createWorkout = async (template_url: string, date: Date) => {
     const response = await api.post<Workout>("/workouts/", {
         template: template_url,
         date: date.toISOString(),
     });
-    return response.data;
+    return response;
 };
 
-export const updateWorkout = async (
-    id: number | string,
-    data: Workout
-): Promise<Workout> => {
+export const updateWorkout = async (id: number | string, data: Workout) => {
     const response = await api.put<Workout>(`/workouts/${id}/`, data);
-    return response.data;
+    return response;
 };
 
-export const deleteWorkout = async (id: number | string): Promise<void> => {
+export const deleteWorkout = async (id: number | string) => {
     await api.delete(`/workouts/${id}/`);
 };
 
 // --- Workout Templates ---
 
-export const fetchTemplateList = async (): Promise<WorkoutTemplate[]> => {
+export const fetchTemplateList = async () => {
     const response = await api.get<WorkoutTemplate[]>("/workout-templates/");
-    return response.data;
+    return response;
 };
 
-export const fetchTemplate = async (
-    id: number | string
-): Promise<WorkoutTemplate> => {
+export const fetchTemplate = async (id: number | string) => {
     const response = await api.get<WorkoutTemplate>(
         `/workout-templates/${id}/`
     );
-    return response.data;
+    return response;
 };
 
-export const createTemplate = async (
-    data: WorkoutTemplateFormData
-): Promise<WorkoutTemplate> => {
+export const createTemplate = async (data: WorkoutTemplateFormData) => {
     const response = await api.post<WorkoutTemplate>(
         "/workout-templates/",
         data
     );
-    return response.data;
+    return response;
 };
 
 export const updateTemplate = async (
     id: number | string,
     data: WorkoutTemplateFormData
-): Promise<WorkoutTemplate> => {
+) => {
     const response = await api.put<WorkoutTemplate>(
         `/workout-templates/${id}/`,
         data
     );
-    return response.data;
+    return response;
 };
 
-export const deleteTemplate = async (id: number | string): Promise<void> => {
+export const deleteTemplate = async (id: number | string) => {
     await api.delete(`/workout-templates/${id}/`);
 };
 
-export const duplicateTemplate = async (id: number | string): Promise<void> => {
+export const duplicateTemplate = async (id: number | string) => {
     await api.post(`/workout-templates/${id}/duplicate/`);
 };
 
@@ -117,7 +107,7 @@ export const duplicateTemplate = async (id: number | string): Promise<void> => {
 export const fetchLastExercisePerformance = async (
     name: string,
     workoutId: number
-): Promise<Exercise | null> => {
+) => {
     const response = await api.get<Exercise | null>(
         "/exercises/last-performance/",
         {
@@ -127,11 +117,11 @@ export const fetchLastExercisePerformance = async (
             },
         }
     );
-    return response.data;
+    return response;
 };
 
 // --- User ---
 
-export const deleteUser = async (id: string): Promise<void> => {
+export const deleteUser = async (id: string) => {
     await api.delete(`/users/${id}/`);
 };
