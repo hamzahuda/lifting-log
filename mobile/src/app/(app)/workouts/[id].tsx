@@ -11,7 +11,6 @@ import {
 import { useLocalSearchParams } from "expo-router";
 import api from "@/services/api";
 import ExerciseCard from "./_components/ExerciseCard";
-import { Card } from "@/components/ui/card";
 import useDebounce from "@/hooks/useDebounce";
 import { useNavigation } from "expo-router";
 import {
@@ -19,6 +18,7 @@ import {
     Exercise as ApiExercise,
     Set as ApiSet,
 } from "@/types";
+import { Textarea } from "@/components/ui/textarea";
 
 interface LocalSet extends Omit<ApiSet, "weight" | "reps"> {
     weight: string | null;
@@ -185,6 +185,16 @@ export default function WorkoutDetailScreen() {
             });
     };
 
+    const handleNotesChange = (newNotes: string) => {
+        setWorkout((currentWorkout) => {
+            if (!currentWorkout) return null;
+            return {
+                ...currentWorkout,
+                notes: newNotes,
+            };
+        });
+    };
+
     if (loading) {
         return (
             <View className="flex-1 justify-center items-center bg-background">
@@ -216,11 +226,13 @@ export default function WorkoutDetailScreen() {
                     showsVerticalScrollIndicator={false}
                     keyboardDismissMode="on-drag"
                 >
-                    {workout.notes && (
-                        <Text className="text-gray-500 mb-4 text-center">
-                            ({workout.notes})
-                        </Text>
-                    )}
+                    <Textarea
+                        className="mb-4 text-foreground"
+                        value={workout.notes || ""}
+                        onChangeText={handleNotesChange}
+                        placeholder="Add workout notes..."
+                    />
+
                     <View className="py-0 gap-0 px-4">
                         {workout.exercises.map((exercise, index) => (
                             <View
