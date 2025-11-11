@@ -13,7 +13,11 @@ import {
 import Ionicons from "@expo/vector-icons/Ionicons";
 import SimpleLineIcons from "@expo/vector-icons/SimpleLineIcons";
 import { useRouter } from "expo-router";
-import api from "@/services/api";
+import {
+    fetchWorkoutList,
+    deleteWorkout,
+    updateWorkoutDate,
+} from "@/services/api";
 import { useFocusEffect } from "@react-navigation/native";
 import { Workout } from "@/types";
 import { Card } from "@/components/ui/card";
@@ -39,18 +43,16 @@ export default function WorkoutListScreen() {
     const [showDatePicker, setShowDatePicker] = useState(false);
     const [showTimePicker, setShowTimePicker] = useState(false);
 
-    const getWorkouts = useCallback(() => {
-        setLoading(true);
-        api.get<Workout[]>("/workouts/")
-            .then((result) => {
-                setWorkouts(result.data);
-            })
-            .catch((err) => {
-                console.error(err);
-            })
-            .finally(() => {
-                setLoading(false);
-            });
+    const getWorkouts = useCallback(async () => {
+        try {
+            setLoading(true);
+            const res = await fetchWorkoutList();
+            setWorkouts(res.data);
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setLoading(false);
+        }
     }, []);
 
     useFocusEffect(
@@ -110,42 +112,36 @@ export default function WorkoutListScreen() {
                 {
                     text: "Delete",
                     style: "destructive",
-                    onPress: () =>
-                        api
-                            .delete(`/workouts/${id}/`)
-                            .catch((error) => {
-                                console.error(error);
-                                Alert.alert(
-                                    "Error",
-                                    "Failed to delete workout."
-                                );
-                            })
-                            .finally(() => {
-                                handleHideModal();
-                                getWorkouts();
-                            }),
+                    onPress: async () => {
+                        try {
+                            await deleteWorkout(id);
+                        } catch (error) {
+                            console.error(error);
+                            Alert.alert("Error", "Failed to delete workout.");
+                            console.error(error);
+                        } finally {
+                            handleHideModal();
+                            getWorkouts();
+                        }
+                    },
                 },
             ]
         );
     };
 
-    const handleUpdateWorkoutDate = () => {
+    const handleUpdateWorkoutDate = async () => {
         if (!selectedWorkoutID) return;
-
-        setLoading(true);
-        api.patch(`/workouts/${selectedWorkoutID}/`, {
-            date: date.toISOString(),
-        })
-            .then(() => {
-                handleHideDatetimeModal();
-                handleHideModal();
-                getWorkouts();
-            })
-            .catch((err) => {
-                console.error(err);
-                Alert.alert("Error", "Failed to update workout date.");
-                setLoading(false);
-            });
+        try {
+            await updateWorkoutDate(selectedWorkoutID, date);
+            handleHideDatetimeModal();
+            handleHideModal();
+            getWorkouts();
+        } catch (error) {
+            Alert.alert("Error", "Failed to update workout date.");
+            console.error(error);
+        } finally {
+            setLoading(false);
+        }
     };
 
     const formattedDate = date.toLocaleDateString("en-GB", {
