@@ -8,7 +8,7 @@ import {
     ActivityIndicator,
 } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import api from "@/services/api";
+import { deleteTemplate, fetchTemplate, updateTemplate } from "@/services/api";
 import { WorkoutTemplate, WorkoutTemplateFormData } from "@/types";
 import TemplateForm from "./_components/TemplateForm";
 
@@ -18,33 +18,34 @@ export default function TemplateDetailScreen() {
     const [template, setTemplate] = useState<WorkoutTemplate | null>(null);
     const [loading, setLoading] = useState(true);
 
-    const getTemplate = () => {
+    const getTemplate = async () => {
         if (!id) return;
         setLoading(true);
-        api.get(`/workout-templates/${id}/`)
-            .then((res) => setTemplate(res.data))
-            .catch((err) => {
-                Alert.alert("Error", "Failed to fetch templates");
-                console.error(err);
-            })
-            .finally(() => setLoading(false));
+        try {
+            const res = await fetchTemplate(id);
+            setTemplate(res.data);
+        } catch (error) {
+            Alert.alert("Error", "Failed to fetch template");
+            console.error(error);
+        } finally {
+            setLoading(false);
+        }
     };
 
     useEffect(() => {
         getTemplate();
     }, [id]);
 
-    const handleUpdateSubmit = (formData: WorkoutTemplateFormData) => {
-        api.put(`/workout-templates/${id}/`, formData)
-            .then((res) => {
-                if (res.status === 200) {
-                    Alert.alert("Success", "Template updated successfully!");
-                    getTemplate();
-                } else {
-                    Alert.alert("Error", "Failed to update template.");
-                }
-            })
-            .catch((err) => Alert.alert("Error", err.message));
+    const handleUpdateSubmit = async (formData: WorkoutTemplateFormData) => {
+        if (!id) return;
+        try {
+            await updateTemplate(id, formData);
+            Alert.alert("Success", "Template updated successfully!");
+            getTemplate();
+        } catch (error) {
+            Alert.alert("Error", "Failed to update template.");
+            console.error(error);
+        }
     };
 
     const handleDeleteTemplate = () => {
@@ -56,22 +57,18 @@ export default function TemplateDetailScreen() {
                 {
                     text: "Delete",
                     style: "destructive",
-                    onPress: () => {
-                        api.delete(`/workout-templates/${id}/`)
-                            .then(() => {
-                                Alert.alert(
-                                    "Success",
-                                    "Template deleted successfully!"
-                                );
-                                router.back();
-                            })
-                            .catch((err) => {
-                                Alert.alert(
-                                    "Error",
-                                    "Failed to delete template."
-                                );
-                                console.error(err);
-                            });
+                    onPress: async () => {
+                        try {
+                            await deleteTemplate(id);
+                            Alert.alert(
+                                "Success",
+                                "Template deleted successfully!"
+                            );
+                            router.back();
+                        } catch (error) {
+                            Alert.alert("Error", "Failed to delete template.");
+                            console.error(error);
+                        }
                     },
                 },
             ]
