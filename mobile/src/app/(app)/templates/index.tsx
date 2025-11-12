@@ -19,6 +19,7 @@ import { useThemeColors } from "@/hooks/useThemeColors";
 import BottomSheetModal from "@/components/common/bottom-sheet-modal";
 import ModalActionRow from "@/components/common/modal-action-row";
 import ScreenStateWrapper from "@/components/common/screen-state-wrapper";
+import FloatingActionButton from "@/components/common/floating-action-button";
 
 export default function TemplateScreen() {
     const themeColors = useThemeColors();
@@ -143,12 +144,11 @@ export default function TemplateScreen() {
                     ))}
                 </ScreenStateWrapper>
             </View>
-            <TouchableOpacity
-                className="absolute bottom-28 right-4 w-16 h-16 bg-accent rounded-2xl justify-center items-center shadow-lg shadow-black"
-                onPress={() => router.push("/(app)/templates/create")}
-            >
-                <Text className="text-white text-3xl">+</Text>
-            </TouchableOpacity>
+
+            <FloatingActionButton
+                onPress={() => router.push("/templates/create")}
+            />
+
             <BottomSheetModal visible={showModal} onClose={handleHideModal}>
                 <ModalActionRow
                     text="Duplicate Template"
