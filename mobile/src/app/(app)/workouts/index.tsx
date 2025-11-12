@@ -3,14 +3,12 @@ import {
     ScrollView,
     View,
     Text,
-    ActivityIndicator,
     TouchableOpacity,
     Alert,
     Modal,
     Pressable,
     Platform,
 } from "react-native";
-import SimpleLineIcons from "@expo/vector-icons/SimpleLineIcons";
 import { useRouter } from "expo-router";
 import {
     fetchWorkoutList,
@@ -19,7 +17,6 @@ import {
 } from "@/services/api";
 import { useFocusEffect } from "@react-navigation/native";
 import { Workout } from "@/types";
-import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import DateTimePicker, {
     DateTimePickerEvent,
@@ -29,6 +26,7 @@ import BottomSheetModal from "@/components/common/bottom-sheet-modal";
 import ModalActionRow from "@/components/common/modal-action-row";
 import ScreenStateWrapper from "@/components/common/screen-state-wrapper";
 import FloatingActionButton from "@/components/common/floating-action-button";
+import WorkoutListItem from "./_components/WorkoutListItem";
 
 export default function WorkoutListScreen() {
     const themeColors = useThemeColors();
@@ -172,51 +170,14 @@ export default function WorkoutListScreen() {
                 >
                     <View>
                         {workouts.map((workout, index) => (
-                            <Card key={workout.id} className="pr-4 py-3 mb-3">
-                                <TouchableOpacity
-                                    onPress={() =>
-                                        router.push(
-                                            `/(app)/workouts/${workout.id}`
-                                        )
-                                    }
-                                >
-                                    <View className="flex-row items-center">
-                                        <Text className="text-foreground font-bold text-center text-2xl px-6">
-                                            {`${workouts.length - index}`}
-                                        </Text>
-                                        <View className="flex-col flex-1">
-                                            <View className="flex-row items-center">
-                                                <Text className="text-foreground font-bold text-2xl flex-1">
-                                                    {workout.name}
-                                                </Text>
-                                                <Text className="text-foreground font-semibold text-lg">
-                                                    {new Date(
-                                                        workout.date
-                                                    ).toLocaleDateString(
-                                                        "en-GB"
-                                                    )}
-                                                </Text>
-                                            </View>
-                                            <Text className="text-muted-foreground flex-1">
-                                                {workout.notes || ""}
-                                            </Text>
-                                        </View>
-                                        <TouchableOpacity
-                                            className="ml-4"
-                                            onPress={() =>
-                                                handleShowModal(workout.id)
-                                            }
-                                        >
-                                            <SimpleLineIcons
-                                                name="options"
-                                                className="my-auto ml-auto"
-                                                size={20}
-                                                color={themeColors.foreground}
-                                            />
-                                        </TouchableOpacity>
-                                    </View>
-                                </TouchableOpacity>
-                            </Card>
+                            <WorkoutListItem
+                                key={workout.id}
+                                workout={workout}
+                                index={index}
+                                totalCount={workouts.length}
+                                onPress={(id) => router.push(`/workouts/${id}`)}
+                                onOptions={(id) => handleShowModal(id)}
+                            />
                         ))}
                     </View>
                 </ScrollView>
