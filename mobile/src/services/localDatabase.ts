@@ -1,7 +1,13 @@
 import * as SQLite from "expo-sqlite";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import defaultExercises from "@/../assets/data/defaultExercises.json";
-import api from "./api";
+import { RemoteCustomExercise } from "@/types";
+import {
+    createBackendCustomExercise,
+    updateBackendCustomExercise,
+    fetchBackendCustomExerciseList,
+    deleteBackendCustomExercise,
+} from "./api";
 
 const DB_VERSION_KEY = "@default_exercises_version";
 const LATEST_DEFAULT_EXERCISES_VERSION = 1;
@@ -246,16 +252,10 @@ export async function deleteAllCustomExercises(db: SQLite.SQLiteDatabase) {
 //  PRIVATE - SYNC LOGIC
 // ====================================================================
 
-interface RemoteCustomExercise {
-    id: string;
-    name: string;
-}
-
 async function pullCustomExercisesFromBackend(db: SQLite.SQLiteDatabase) {
     try {
-        const remoteExercises: RemoteCustomExercise[] = await api
-            .get("/custom-exercise-names/")
-            .then((response) => response.data);
+        const res = await fetchBackendCustomExerciseList();
+        const remoteExercises: RemoteCustomExercise[] = res.data;
 
         const localExercises = new Map(
             (
@@ -316,21 +316,18 @@ async function pushCustomExercisesToBackend(db: SQLite.SQLiteDatabase) {
         try {
             if (customExercise.is_deleted === 0) {
                 if (!customExercise.backend_id) {
-                    const response = await api.post<RemoteCustomExercise>(
-                        "/custom-exercise-names/",
-                        {
-                            name: customExercise.name,
-                        }
+                    const res = await createBackendCustomExercise(
+                        customExercise.name
                     );
 
                     await db.runAsync(
                         "UPDATE exercise_names SET needs_sync = 0, backend_id = ? WHERE name = ?",
-                        [response.data.id, customExercise.name]
+                        [res.data.id, customExercise.name]
                     );
                 } else {
-                    await api.put(
-                        `/custom-exercise-names/${customExercise.backend_id}/`,
-                        { name: customExercise.name }
+                    await updateBackendCustomExercise(
+                        customExercise.backend_id,
+                        customExercise.name
                     );
 
                     await db.runAsync(
@@ -340,8 +337,8 @@ async function pushCustomExercisesToBackend(db: SQLite.SQLiteDatabase) {
                 }
             } else if (customExercise.is_deleted === 1) {
                 if (customExercise.backend_id) {
-                    await api.delete(
-                        `/custom-exercise-names/${customExercise.backend_id}/`
+                    await deleteBackendCustomExercise(
+                        customExercise.backend_id
                     );
                 }
 
