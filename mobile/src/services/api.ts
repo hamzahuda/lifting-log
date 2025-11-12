@@ -5,6 +5,7 @@ import {
     WorkoutTemplate,
     Exercise,
     WorkoutTemplateFormData,
+    RemoteCustomExercise,
 } from "@/types";
 
 export const api = axios.create({
@@ -125,6 +126,42 @@ export const fetchLastExercisePerformance = async (
         }
     );
     return response;
+};
+
+// --- Custom Exercises ---
+
+export const createBackendCustomExercise = async (name: string) => {
+    const response = await api.post<RemoteCustomExercise>(
+        "/custom-exercise-names/",
+        {
+            name,
+        }
+    );
+    return response;
+};
+
+export const updateBackendCustomExercise = async (
+    id: number | string,
+    name: string
+) => {
+    const response = await api.put<RemoteCustomExercise>(
+        `/custom-exercise-names/${id}/`,
+        {
+            name,
+        }
+    );
+    return response;
+};
+
+export const fetchBackendCustomExerciseList = async () => {
+    const response = await api.get<RemoteCustomExercise[]>(
+        "/custom-exercise-names/"
+    );
+    return response;
+};
+
+export const deleteBackendCustomExercise = async (id: number | string) => {
+    await api.delete(`/custom-exercise-names/${id}/`);
 };
 
 // --- User ---
