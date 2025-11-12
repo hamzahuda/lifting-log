@@ -1,11 +1,5 @@
 import React, { useState, useCallback } from "react";
-import {
-    Alert,
-    View,
-    Text,
-    TouchableOpacity,
-    ActivityIndicator,
-} from "react-native";
+import { Alert, View } from "react-native";
 import {
     fetchTemplateList,
     deleteTemplate,
@@ -14,12 +8,12 @@ import {
 import { useRouter } from "expo-router";
 import { useFocusEffect } from "@react-navigation/native";
 import { WorkoutTemplate } from "@/types";
-import SimpleLineIcons from "@expo/vector-icons/SimpleLineIcons";
 import { useThemeColors } from "@/hooks/useThemeColors";
 import BottomSheetModal from "@/components/common/bottom-sheet-modal";
 import ModalActionRow from "@/components/common/modal-action-row";
 import ScreenStateWrapper from "@/components/common/screen-state-wrapper";
 import FloatingActionButton from "@/components/common/floating-action-button";
+import TemplateListItem from "./_components/TemplateListItem";
 
 export default function TemplateScreen() {
     const themeColors = useThemeColors();
@@ -111,36 +105,12 @@ export default function TemplateScreen() {
                     ]}
                 >
                     {templates.map((template) => (
-                        <TouchableOpacity
+                        <TemplateListItem
                             key={template.id}
-                            className="bg-background rounded-2xl p-4 mb-4 flex-row justify-between shadow-md border border-border"
-                            onPress={() =>
-                                router.push(`/templates/${template.id}`)
-                            }
-                        >
-                            <View className="flex-1">
-                                <Text className="text-foreground font-bold text-xl">
-                                    {template.name}
-                                </Text>
-                                {template.notes && (
-                                    <Text className="text-muted-foreground mt-1">
-                                        {template.notes}
-                                    </Text>
-                                )}
-                            </View>
-
-                            <TouchableOpacity
-                                onPress={() => handleShowModal(template.id)}
-                                className="w-10"
-                            >
-                                <SimpleLineIcons
-                                    name="options"
-                                    className="my-auto ml-auto"
-                                    size={20}
-                                    color={themeColors.foreground}
-                                />
-                            </TouchableOpacity>
-                        </TouchableOpacity>
+                            template={template}
+                            onPress={(id) => router.push(`/templates/${id}`)}
+                            onOptions={(id) => handleShowModal(id)}
+                        />
                     ))}
                 </ScreenStateWrapper>
             </View>
