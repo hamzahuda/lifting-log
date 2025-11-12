@@ -22,17 +22,14 @@ import { useFocusEffect } from "@react-navigation/native";
 import { Workout } from "@/types";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { useColorScheme } from "nativewind";
-import { THEME } from "@/utils/theme";
 import DateTimePicker, {
     DateTimePickerEvent,
 } from "@react-native-community/datetimepicker";
+import { useThemeColors } from "@/hooks/useThemeColors";
 
 export default function WorkoutListScreen() {
-    const { colorScheme } = useColorScheme();
+    const themeColors = useThemeColors();
     const router = useRouter();
-    const themeColors =
-        colorScheme === undefined ? THEME.dark : THEME[colorScheme];
 
     const [workouts, setWorkouts] = useState<Workout[]>([]);
     const [loading, setLoading] = useState<boolean>(true);

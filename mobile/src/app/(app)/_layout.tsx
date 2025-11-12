@@ -4,14 +4,11 @@ import {
     Ionicons,
     MaterialCommunityIcons,
 } from "@expo/vector-icons";
-import { useColorScheme } from "nativewind";
-import { THEME } from "@/utils/theme";
 import { View } from "react-native";
+import { useThemeColors } from "@/hooks/useThemeColors";
 
 export default function AppLayout() {
-    const { colorScheme } = useColorScheme();
-    const themeColors =
-        colorScheme === undefined ? THEME.dark : THEME[colorScheme];
+    const themeColors = useThemeColors();
 
     return (
         <Tabs

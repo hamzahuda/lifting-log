@@ -18,14 +18,11 @@ import { useFocusEffect } from "@react-navigation/native";
 import { WorkoutTemplate } from "@/types";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import SimpleLineIcons from "@expo/vector-icons/SimpleLineIcons";
-import { THEME } from "@/utils/theme";
-import { useColorScheme } from "nativewind";
+import { useThemeColors } from "@/hooks/useThemeColors";
 import { Separator } from "@/components/ui/separator";
 
 export default function TemplateScreen() {
-    const { colorScheme } = useColorScheme();
-    const themeColors =
-        colorScheme === undefined ? THEME.dark : THEME[colorScheme];
+    const themeColors = useThemeColors();
     const [templates, setTemplates] = useState<WorkoutTemplate[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [showModal, setShowModal] = useState<boolean>(false);
