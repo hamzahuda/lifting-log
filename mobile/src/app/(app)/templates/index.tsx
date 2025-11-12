@@ -86,7 +86,8 @@ export default function TemplateScreen() {
     const handleDuplicateTemplate = async () => {
         if (!selectedTemplateID) return;
         try {
-            duplicateTemplate(selectedTemplateID);
+            const res = await duplicateTemplate(selectedTemplateID);
+            setTemplates((prev) => [...prev, res.data]);
         } catch (error) {
             Alert.alert(
                 "Error",
@@ -95,7 +96,6 @@ export default function TemplateScreen() {
             console.error(error);
         } finally {
             handleHideModal();
-            getTemplates();
         }
     };
 
