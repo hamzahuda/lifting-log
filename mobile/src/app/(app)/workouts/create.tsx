@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { View, Text, TouchableOpacity, Alert, Platform } from "react-native";
 import { useRouter } from "expo-router";
-import api from "@/services/api";
+import { fetchTemplateList, createWorkout } from "@/services/api";
 import { Picker } from "@react-native-picker/picker";
 import DateTimePicker, {
     DateTimePickerEvent,
@@ -19,17 +19,20 @@ export default function CreateWorkoutScreen() {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const router = useRouter();
 
+    const getTemplates = async () => {
+        try {
+            const res = await fetchTemplateList();
+            if (res.data && res.data.length > 0) {
+                setSelectedTemplate(res.data[0].url);
+            }
+            setTemplates(res.data);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
     useEffect(() => {
-        api.get<WorkoutTemplate[]>("/workout-templates/")
-            .then((res) => {
-                setTemplates(res.data);
-                if (res.data && res.data.length > 0) {
-                    setSelectedTemplate(res.data[0].url);
-                }
-            })
-            .catch((err) => {
-                console.error(err);
-            });
+        getTemplates();
     }, []);
 
     const onChangeDate = (event: DateTimePickerEvent, selectedDate?: Date) => {
@@ -61,21 +64,14 @@ export default function CreateWorkoutScreen() {
         }
 
         if (isSubmitting) return;
-        setIsSubmitting(true);
-
-        const payload = {
-            template_url: selectedTemplate,
-            date: date,
-        };
 
         try {
-            const res = await api.post("/workouts/", payload);
-            if (res.status === 201) {
-                router.replace(`/(app)/workouts/${res.data.id}`);
-            }
-        } catch (err) {
+            setIsSubmitting(true);
+            const res = await createWorkout(selectedTemplate, date);
+            router.replace(`/(app)/workouts/${res.data.id}`);
+        } catch (error) {
             Alert.alert("Error", "Failed to create workout. Please try again.");
-            console.log(err);
+            console.log(error);
         } finally {
             setIsSubmitting(false);
         }
