@@ -28,6 +28,7 @@ import { useThemeColors } from "@/hooks/useThemeColors";
 import BottomSheetModal from "@/components/common/bottom-sheet-modal";
 import ModalActionRow from "@/components/common/modal-action-row";
 import ScreenStateWrapper from "@/components/common/screen-state-wrapper";
+import FloatingActionButton from "@/components/common/floating-action-button";
 
 export default function WorkoutListScreen() {
     const themeColors = useThemeColors();
@@ -221,12 +222,9 @@ export default function WorkoutListScreen() {
                 </ScrollView>
             </ScreenStateWrapper>
 
-            <TouchableOpacity
-                className="absolute bottom-28 right-4 w-16 h-16 bg-accent rounded-2xl justify-center items-center shadow-lg shadow-black"
+            <FloatingActionButton
                 onPress={() => router.push("/(app)/workouts/create")}
-            >
-                <Text className="text-white text-3xl">+</Text>
-            </TouchableOpacity>
+            />
 
             <BottomSheetModal visible={showModal} onClose={handleHideModal}>
                 <ModalActionRow
