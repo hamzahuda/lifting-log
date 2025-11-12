@@ -18,6 +18,7 @@ import SimpleLineIcons from "@expo/vector-icons/SimpleLineIcons";
 import { useThemeColors } from "@/hooks/useThemeColors";
 import BottomSheetModal from "@/components/common/bottom-sheet-modal";
 import ModalActionRow from "@/components/common/modal-action-row";
+import ScreenStateWrapper from "@/components/common/screen-state-wrapper";
 
 export default function TemplateScreen() {
     const themeColors = useThemeColors();
@@ -100,21 +101,15 @@ export default function TemplateScreen() {
     return (
         <View className="flex-1 bg-background p-2">
             <View className="flex-1">
-                {loading ? (
-                    <View className="flex-1 justify-center items-center">
-                        <ActivityIndicator size="large" color="#3B82F6" />
-                    </View>
-                ) : templates.length === 0 ? (
-                    <View className="flex-1 flex-col justify-center mb-60">
-                        <Text className="text-muted-foreground text-center">
-                            No workout templates found,
-                        </Text>
-                        <Text className="text-muted-foreground text-center">
-                            Click the plus button to create one.
-                        </Text>
-                    </View>
-                ) : (
-                    templates.map((template) => (
+                <ScreenStateWrapper
+                    isLoading={loading}
+                    isEmpty={templates.length === 0}
+                    emptyMessage={[
+                        "No workout templates found,",
+                        "Click the + button to create one.",
+                    ]}
+                >
+                    {templates.map((template) => (
                         <TouchableOpacity
                             key={template.id}
                             className="bg-background rounded-2xl p-4 mb-4 flex-row justify-between shadow-md border border-border"
@@ -145,8 +140,8 @@ export default function TemplateScreen() {
                                 />
                             </TouchableOpacity>
                         </TouchableOpacity>
-                    ))
-                )}
+                    ))}
+                </ScreenStateWrapper>
             </View>
             <TouchableOpacity
                 className="absolute bottom-28 right-4 w-16 h-16 bg-accent rounded-2xl justify-center items-center shadow-lg shadow-black"
