@@ -5,8 +5,6 @@ import {
     Text,
     TouchableOpacity,
     ActivityIndicator,
-    Modal,
-    Pressable,
 } from "react-native";
 import {
     fetchTemplateList,
