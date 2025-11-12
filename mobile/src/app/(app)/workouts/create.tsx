@@ -1,12 +1,10 @@
 import { useState, useEffect } from "react";
-import { View, Text, TouchableOpacity, Alert, Platform } from "react-native";
+import { View, Text, TouchableOpacity, Alert } from "react-native";
 import { useRouter } from "expo-router";
 import { fetchTemplateList, createWorkout } from "@/services/api";
 import { Picker } from "@react-native-picker/picker";
-import DateTimePicker, {
-    DateTimePickerEvent,
-} from "@react-native-community/datetimepicker";
 import { WorkoutTemplate } from "@/types";
+import DateTimePickerForm from "@/components/common/date-time-picker-form";
 
 export default function CreateWorkoutScreen() {
     const [templates, setTemplates] = useState<WorkoutTemplate[]>([]);
@@ -14,8 +12,6 @@ export default function CreateWorkoutScreen() {
         null
     );
     const [date, setDate] = useState(new Date());
-    const [showDatePicker, setShowDatePicker] = useState(false);
-    const [showTimePicker, setShowTimePicker] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const router = useRouter();
 
@@ -34,28 +30,6 @@ export default function CreateWorkoutScreen() {
     useEffect(() => {
         getTemplates();
     }, []);
-
-    const onChangeDate = (event: DateTimePickerEvent, selectedDate?: Date) => {
-        const currentDate = selectedDate || date;
-        setShowDatePicker(Platform.OS === "ios");
-        if (Platform.OS === "android") {
-            setShowDatePicker(false);
-        }
-        if (event.type === "set") {
-            setDate(currentDate);
-        }
-    };
-
-    const onChangeTime = (event: DateTimePickerEvent, selectedTime?: Date) => {
-        const currentTime = selectedTime || date;
-        setShowTimePicker(Platform.OS === "ios");
-        if (Platform.OS === "android") {
-            setShowTimePicker(false);
-        }
-        if (event.type === "set") {
-            setDate(currentTime);
-        }
-    };
 
     const handleSubmit = async () => {
         if (!selectedTemplate) {
@@ -77,18 +51,6 @@ export default function CreateWorkoutScreen() {
         }
     };
 
-    const formattedDate = date.toLocaleDateString("en-GB", {
-        day: "numeric",
-        month: "long",
-        year: "numeric",
-    });
-
-    const formattedTime = date.toLocaleTimeString("en-GB", {
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: false,
-    });
-
     return (
         <View className="flex-1 bg-background p-5 pt-2">
             <Text className="text-foreground text-lg mb-2">Template:</Text>
@@ -104,39 +66,7 @@ export default function CreateWorkoutScreen() {
                 </Picker>
             </View>
 
-            <Text className="text-foreground text-lg mb-2">Date:</Text>
-            <TouchableOpacity
-                onPress={() => setShowDatePicker(true)}
-                className="bg-secondary p-4 rounded-lg items-center mb-4"
-            >
-                <Text className="text-foreground text-lg">{formattedDate}</Text>
-            </TouchableOpacity>
-
-            <Text className="text-foreground text-lg mb-2">Time:</Text>
-            <TouchableOpacity
-                onPress={() => setShowTimePicker(true)}
-                className="bg-secondary p-4 rounded-lg items-center mb-8"
-            >
-                <Text className="text-foreground text-lg">{formattedTime}</Text>
-            </TouchableOpacity>
-
-            {showDatePicker && (
-                <DateTimePicker
-                    value={date}
-                    mode="date"
-                    display="default"
-                    onChange={onChangeDate}
-                />
-            )}
-
-            {showTimePicker && (
-                <DateTimePicker
-                    value={date}
-                    mode="time"
-                    display="default"
-                    onChange={onChangeTime}
-                />
-            )}
+            <DateTimePickerForm date={date} onDateChange={setDate} />
 
             <TouchableOpacity
                 className="py-3 px-6 rounded-xl bg-green-600 absolute bottom-28 mb-1 left-5 right-5"
