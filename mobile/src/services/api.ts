@@ -107,7 +107,8 @@ export const deleteTemplate = async (id: number | string) => {
 };
 
 export const duplicateTemplate = async (id: number | string) => {
-    await api.post(`/workout-templates/${id}/duplicate/`);
+    const response = await api.post(`/workout-templates/${id}/duplicate/`);
+    return response;
 };
 
 // --- Exercises ---
