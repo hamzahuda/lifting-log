@@ -1,3 +1,5 @@
+// --- Workouts ---
+
 export type Set = {
     readonly id: number;
     reps: string | null;
@@ -25,6 +27,8 @@ export type Workout = {
     exercises: Exercise[];
 };
 
+// --- Templates ---
+
 export type SetTemplate = {
     readonly id: number;
     notes: string;
@@ -49,3 +53,10 @@ export type WorkoutTemplate = {
 };
 
 export type WorkoutTemplateFormData = Omit<WorkoutTemplate, "id" | "url">;
+
+// --- Custom Exercises ---
+
+export type RemoteCustomExercise = {
+    id: string;
+    name: string;
+};
