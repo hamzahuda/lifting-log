@@ -1,20 +1,11 @@
-import { View, Text, TextInput, ActivityIndicator } from "react-native";
+import { View, Text } from "react-native";
 import { Exercise } from "@/types";
 import { useEffect, useState } from "react";
 import { fetchLastExercisePerformance } from "@/services/api";
-import { Exercise as ApiExercise, Set as ApiSet } from "@/types";
-
-interface LocalSet extends Omit<ApiSet, "weight" | "reps"> {
-    weight: string | null;
-    reps: string | null;
-}
-
-interface LocalExercise extends Omit<ApiExercise, "sets"> {
-    sets: LocalSet[];
-}
+import SetRow from "./SetRow";
 
 interface ExerciseCardProps {
-    exercise: LocalExercise;
+    exercise: Exercise;
     onSetUpdate: (
         exerciseIndex: number,
         setIndex: number,
@@ -26,13 +17,13 @@ interface ExerciseCardProps {
     isLast?: boolean;
 }
 
-const ExerciseCard = ({
+export default function ExerciseCard({
     exercise,
     onSetUpdate,
     exerciseIndex,
     workoutId,
     isLast,
-}: ExerciseCardProps) => {
+}: ExerciseCardProps) {
     const [lastPerformance, setLastPerformance] = useState<Exercise | null>(
         null
     );
@@ -63,6 +54,7 @@ const ExerciseCard = ({
         if (
             !lastPerformance ||
             !lastPerformance.sets ||
+            !lastPerformance.sets[setIndex] ||
             lastPerformance.sets[setIndex].reps === null ||
             lastPerformance.sets[setIndex].weight === null
         )
@@ -102,59 +94,17 @@ const ExerciseCard = ({
                 </View>
 
                 {exercise.sets.map((set, setIndex) => (
-                    <View
+                    <SetRow
                         key={set.id}
-                        className="flex-row py-1 mb-2 items-center"
-                    >
-                        <Text className="w-12 text-foreground text-lg text-center">
-                            {setIndex + 1}
-                        </Text>
-                        <Text className="flex-1 text-muted-foreground text-lg text-center">
-                            {isLoadingLastPerformance ? (
-                                <ActivityIndicator size="small" />
-                            ) : (
-                                formatLastPerformanceSet(setIndex)
-                            )}
-                        </Text>
-                        <View className="w-24 items-center">
-                            <TextInput
-                                className="text-lg text-center w-16 py-1 bg-secondary rounded-md text-foreground"
-                                value={set.weight?.toString() ?? ""}
-                                onChangeText={(value) =>
-                                    onSetUpdate(
-                                        exerciseIndex,
-                                        setIndex,
-                                        "weight",
-                                        value
-                                    )
-                                }
-                                keyboardType="numeric"
-                                placeholder="--"
-                                placeholderTextColor="#9CA3AF"
-                            />
-                        </View>
-                        <View className="w-24 items-center">
-                            <TextInput
-                                className="text-foreground text-lg text-center w-16 py-1 bg-secondary rounded-md"
-                                value={set.reps?.toString() ?? ""}
-                                onChangeText={(value) =>
-                                    onSetUpdate(
-                                        exerciseIndex,
-                                        setIndex,
-                                        "reps",
-                                        value
-                                    )
-                                }
-                                keyboardType="numeric"
-                                placeholder={`${set.min_reps}-${set.max_reps}`}
-                                placeholderTextColor="#9CA3AF"
-                            />
-                        </View>
-                    </View>
+                        set={set}
+                        setIndex={setIndex}
+                        exerciseIndex={exerciseIndex}
+                        lastPerformanceSet={formatLastPerformanceSet(setIndex)}
+                        isLoadingLastPerformance={isLoadingLastPerformance}
+                        onSetUpdate={onSetUpdate}
+                    />
                 ))}
             </View>
         </View>
     );
-};
-
-export default ExerciseCard;
+}
