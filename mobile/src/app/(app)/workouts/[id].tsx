@@ -9,34 +9,17 @@ import {
     Platform,
 } from "react-native";
 import { useLocalSearchParams } from "expo-router";
-import api from "@/services/api";
+import { fetchWorkout, updateWorkout } from "@/services/api";
 import ExerciseCard from "./_components/ExerciseCard";
 import useDebounce from "@/hooks/useDebounce";
 import { useNavigation } from "expo-router";
-import {
-    Workout as ApiWorkout,
-    Exercise as ApiExercise,
-    Set as ApiSet,
-} from "@/types";
+import { Workout } from "@/types";
 import { Textarea } from "@/components/ui/textarea";
-
-interface LocalSet extends Omit<ApiSet, "weight" | "reps"> {
-    weight: string | null;
-    reps: string | null;
-}
-
-interface LocalExercise extends Omit<ApiExercise, "sets"> {
-    sets: LocalSet[];
-}
-
-interface LocalWorkout extends Omit<ApiWorkout, "exercises"> {
-    exercises: LocalExercise[];
-}
 
 export default function WorkoutDetailScreen() {
     const { id } = useLocalSearchParams<{ id: string }>();
-    const [workout, setWorkout] = useState<LocalWorkout | null>(null);
-    const [originalWorkout, setOriginalWorkout] = useState<LocalWorkout | null>(
+    const [workout, setWorkout] = useState<Workout | null>(null);
+    const [originalWorkout, setOriginalWorkout] = useState<Workout | null>(
         null
     );
     const [loading, setLoading] = useState(true);
@@ -52,35 +35,35 @@ export default function WorkoutDetailScreen() {
         navigation.setOptions({ title: "" });
     }, [navigation]);
 
-    useEffect(() => {
+    const getWorkout = async () => {
         if (!id) return;
-        setLoading(true);
-        api.get(`/workouts/${id}/`)
-            .then((res) => {
-                const apiData = res.data as ApiWorkout;
-
-                const localData: LocalWorkout = {
-                    ...apiData,
-                    exercises: apiData.exercises.map((exercise) => ({
-                        ...exercise,
-                        sets: exercise.sets.map((set) => ({
-                            ...set,
-                            weight: set.weight?.toString() ?? null,
-                            reps: set.reps?.toString() ?? null,
-                        })),
+        try {
+            const res = await fetchWorkout(id);
+            const apiData = res.data;
+            const localData: Workout = {
+                ...apiData,
+                exercises: apiData.exercises.map((exercise) => ({
+                    ...exercise,
+                    sets: exercise.sets.map((set) => ({
+                        ...set,
+                        weight: set.weight?.toString() ?? null,
+                        reps: set.reps?.toString() ?? null,
                     })),
-                };
+                })),
+            };
 
-                setWorkout(localData);
-                setOriginalWorkout(structuredClone(localData));
-            })
-            .catch((err) => {
-                Alert.alert("Error", "Could not load workout details.");
-                console.error(err);
-            })
-            .finally(() => {
-                setLoading(false);
-            });
+            setWorkout(localData);
+            setOriginalWorkout(structuredClone(localData));
+        } catch (error) {
+            Alert.alert("Error", "Could not load workout details.");
+            console.error(error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        getWorkout();
     }, [id]);
 
     useLayoutEffect(() => {
@@ -164,25 +147,18 @@ export default function WorkoutDetailScreen() {
         });
     };
 
-    const handleSaveChanges = () => {
+    const handleSaveChanges = async () => {
         if (!workout || isSaving) return;
-
-        setIsSaving(true);
-
-        api.put(`/workouts/${id}/`, workout)
-            .then(() => {
-                setOriginalWorkout(structuredClone(workout));
-            })
-            .catch((err) => {
-                console.error("Failed to save workout:", err);
-                Alert.alert(
-                    "Error",
-                    "Could not save changes. Please try again."
-                );
-            })
-            .finally(() => {
-                setIsSaving(false);
-            });
+        try {
+            setIsSaving(true);
+            await updateWorkout(id, workout);
+            setOriginalWorkout(structuredClone(workout));
+        } catch (error) {
+            Alert.alert("Error", "Could not save changes. Please try again.");
+            console.error("Failed to save workout:", error);
+        } finally {
+            setIsSaving(false);
+        }
     };
 
     const handleNotesChange = (newNotes: string) => {
