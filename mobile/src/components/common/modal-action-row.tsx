@@ -4,9 +4,10 @@ import { useThemeColors } from "@/hooks/useThemeColors";
 
 type ModalActionRowProps = {
     text: string;
-    icon: keyof typeof Ionicons.glyphMap;
+    icon?: keyof typeof Ionicons.glyphMap;
     onPress: () => void;
     isDestructive?: boolean;
+    centred?: boolean;
 };
 
 export default function ModalActionRow({
@@ -14,6 +15,7 @@ export default function ModalActionRow({
     icon,
     onPress,
     isDestructive = false,
+    centred = false,
 }: ModalActionRowProps) {
     const themeColors = useThemeColors();
 
@@ -23,15 +25,18 @@ export default function ModalActionRow({
 
     return (
         <TouchableOpacity
-            className="flex-row items-center rounded-lg p-3 active:bg-gray-100 dark:active:bg-gray-700"
+            className={`${centred ? "mx-auto" : ""} flex-row items-center rounded-lg p-3 active:bg-gray-100 dark:active:bg-gray-700`}
             onPress={onPress}
         >
-            <Ionicons
-                name={icon}
-                size={22}
-                color={themeColors.foreground}
-                className="mr-4"
-            />
+            {icon && (
+                <Ionicons
+                    name={icon}
+                    size={22}
+                    color={themeColors.foreground}
+                    className="mr-4"
+                />
+            )}
+
             <Text className={`text-lg ${textColor}`}>{text}</Text>
         </TouchableOpacity>
     );
