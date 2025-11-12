@@ -1,7 +1,7 @@
 import { supabase } from "@/services/supabase";
 import { deleteUser } from "@/services/api";
 import { View, Text, TouchableOpacity, Alert } from "react-native";
-import { useSession } from "@/context/ctx";
+import { useSession } from "@/context/SessionContext";
 
 export default function AccountScreen() {
     const { session } = useSession();

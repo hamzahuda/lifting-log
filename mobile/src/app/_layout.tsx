@@ -1,5 +1,5 @@
 import { Stack, SplashScreen } from "expo-router";
-import { SessionProvider, useSession } from "../context/ctx";
+import { SessionProvider, useSession } from "../context/SessionContext";
 import { SplashScreenController } from "../splash";
 import "../global.css";
 import { useState, useEffect } from "react";

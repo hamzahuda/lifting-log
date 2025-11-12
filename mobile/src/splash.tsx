@@ -1,5 +1,5 @@
 import { SplashScreen } from "expo-router";
-import { useSession } from "./context/ctx";
+import { useSession } from "./context/SessionContext";
 import { useEffect } from "react";
 
 export function SplashScreenController() {
