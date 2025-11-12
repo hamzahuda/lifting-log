@@ -16,10 +16,10 @@ import {
 import { useRouter } from "expo-router";
 import { useFocusEffect } from "@react-navigation/native";
 import { WorkoutTemplate } from "@/types";
-import Ionicons from "@expo/vector-icons/Ionicons";
 import SimpleLineIcons from "@expo/vector-icons/SimpleLineIcons";
 import { useThemeColors } from "@/hooks/useThemeColors";
-import { Separator } from "@/components/ui/separator";
+import BottomSheetModal from "@/components/common/bottom-sheet-modal";
+import ModalActionRow from "@/components/common/modal-action-row";
 
 export default function TemplateScreen() {
     const themeColors = useThemeColors();
@@ -156,61 +156,19 @@ export default function TemplateScreen() {
             >
                 <Text className="text-white text-3xl">+</Text>
             </TouchableOpacity>
-            <Modal
-                visible={showModal}
-                onRequestClose={handleHideModal}
-                animationType="slide"
-                transparent={true}
-            >
-                <Pressable
-                    className="flex-1 justify-end"
-                    onPress={handleHideModal}
-                >
-                    <Pressable>
-                        <View className="w-full rounded-t-2xl bg-white p-4 shadow-lg dark:bg-gray-800">
-                            <TouchableOpacity
-                                className="flex-row items-center rounded-lg p-3 active:bg-gray-100 dark:active:bg-gray-700"
-                                onPress={handleDuplicateTemplate}
-                            >
-                                <Ionicons
-                                    name="copy-outline"
-                                    size={22}
-                                    color={themeColors.foreground}
-                                    className="mr-4 dark:text-gray-100"
-                                />
-                                <Text className="text-lg text-gray-800 dark:text-gray-100">
-                                    Duplicate Template
-                                </Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity
-                                className="flex-row items-center rounded-lg p-3 active:bg-gray-100 dark:active:bg-gray-700"
-                                onPress={() =>
-                                    handleDeleteTemplate(selectedTemplateID!)
-                                }
-                            >
-                                <Ionicons
-                                    name="trash-outline"
-                                    size={22}
-                                    color={themeColors.foreground}
-                                    className="mr-4"
-                                />
-                                <Text className="text-lg text-red-600 dark:text-red-500">
-                                    Delete Template
-                                </Text>
-                            </TouchableOpacity>
-                            <Separator className="bg-gray-200 dark:bg-gray-700" />
-                            <TouchableOpacity
-                                className="flex-row items-center justify-center rounded-lg p-3 active:bg-gray-100 dark:active:bg-gray-700"
-                                onPress={handleHideModal}
-                            >
-                                <Text className="text-lg font-semibold text-blue-600 dark:text-blue-400">
-                                    Cancel
-                                </Text>
-                            </TouchableOpacity>
-                        </View>
-                    </Pressable>
-                </Pressable>
-            </Modal>
+            <BottomSheetModal visible={showModal} onClose={handleHideModal}>
+                <ModalActionRow
+                    text="Duplicate Template"
+                    icon="copy-outline"
+                    onPress={handleDuplicateTemplate}
+                />
+                <ModalActionRow
+                    text="Delete Template"
+                    icon="trash-outline"
+                    onPress={() => handleDeleteTemplate(selectedTemplateID!)}
+                    isDestructive
+                />
+            </BottomSheetModal>
         </View>
     );
 }
