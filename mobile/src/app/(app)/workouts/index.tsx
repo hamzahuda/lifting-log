@@ -27,6 +27,7 @@ import DateTimePicker, {
 import { useThemeColors } from "@/hooks/useThemeColors";
 import BottomSheetModal from "@/components/common/bottom-sheet-modal";
 import ModalActionRow from "@/components/common/modal-action-row";
+import ScreenStateWrapper from "@/components/common/screen-state-wrapper";
 
 export default function WorkoutListScreen() {
     const themeColors = useThemeColors();
@@ -156,18 +157,14 @@ export default function WorkoutListScreen() {
 
     return (
         <View className="flex-1 bg-background p-2">
-            {loading ? (
-                <ActivityIndicator className="flex-1" size="large" />
-            ) : workouts.length === 0 ? (
-                <View className="flex-1 flex-col justify-center mb-60">
-                    <Text className="text-muted-foreground text-center">
-                        No workouts found,
-                    </Text>
-                    <Text className="text-muted-foreground text-center">
-                        Click the plus button to create one.
-                    </Text>
-                </View>
-            ) : (
+            <ScreenStateWrapper
+                isLoading={loading}
+                isEmpty={workouts.length === 0}
+                emptyMessage={[
+                    "No workouts found,",
+                    "Click the + button to create one.",
+                ]}
+            >
                 <ScrollView
                     contentContainerStyle={{ paddingBottom: 210 }}
                     showsVerticalScrollIndicator={false}
@@ -222,7 +219,7 @@ export default function WorkoutListScreen() {
                         ))}
                     </View>
                 </ScrollView>
-            )}
+            </ScreenStateWrapper>
 
             <TouchableOpacity
                 className="absolute bottom-28 right-4 w-16 h-16 bg-accent rounded-2xl justify-center items-center shadow-lg shadow-black"
