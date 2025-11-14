@@ -2,8 +2,6 @@ import { useState, useEffect, useRef, useLayoutEffect } from "react";
 import {
     ScrollView,
     View,
-    Text,
-    ActivityIndicator,
     Alert,
     KeyboardAvoidingView,
     Platform,
@@ -15,6 +13,7 @@ import useDebounce from "@/hooks/useDebounce";
 import { useNavigation } from "expo-router";
 import { Workout } from "@/types";
 import { Textarea } from "@/components/ui/textarea";
+import ScreenStateWrapper from "@/components/common/screen-state-wrapper";
 
 export default function WorkoutDetailScreen() {
     const { id } = useLocalSearchParams<{ id: string }>();
@@ -171,67 +170,60 @@ export default function WorkoutDetailScreen() {
         });
     };
 
-    if (loading) {
-        return (
-            <View className="flex-1 justify-center items-center bg-background">
-                <ActivityIndicator size="large" color="#3B82F6" />
-            </View>
-        );
-    }
-
-    if (!workout) {
-        return (
-            <View className="flex-1 justify-center items-center bg-background">
-                <Text className="text-t-primary">Workout not found.</Text>
-            </View>
-        );
-    }
-
     return (
-        <KeyboardAvoidingView
-            behavior={Platform.OS === "ios" ? "padding" : "height"}
-            style={{ flex: 1 }}
-            keyboardVerticalOffset={100}
+        <ScreenStateWrapper
+            isLoading={loading}
+            isNotFound={!workout}
+            notFoundMessage={["Workout not found."]}
         >
-            <View className="flex-1 bg-background px-2">
-                <ScrollView
-                    ref={scrollViewRef}
-                    contentContainerStyle={{
-                        paddingBottom: 150,
-                    }}
-                    showsVerticalScrollIndicator={false}
-                    keyboardDismissMode="on-drag"
+            {workout && (
+                <KeyboardAvoidingView
+                    behavior={Platform.OS === "ios" ? "padding" : "height"}
+                    style={{ flex: 1 }}
+                    keyboardVerticalOffset={100}
                 >
-                    <Textarea
-                        className="mb-4 text-foreground"
-                        value={workout.notes || ""}
-                        onChangeText={handleNotesChange}
-                        placeholder="Add workout notes..."
-                    />
+                    <View className="flex-1 bg-background px-2">
+                        <ScrollView
+                            ref={scrollViewRef}
+                            contentContainerStyle={{
+                                paddingBottom: 150,
+                            }}
+                            showsVerticalScrollIndicator={false}
+                            keyboardDismissMode="on-drag"
+                        >
+                            <Textarea
+                                className="mb-4 text-foreground"
+                                value={workout.notes || ""}
+                                onChangeText={handleNotesChange}
+                                placeholder="Add workout notes..."
+                            />
 
-                    <View className="py-0 gap-0 px-4">
-                        {workout.exercises.map((exercise, index) => (
-                            <View
-                                key={exercise.id}
-                                onLayout={(event) => {
-                                    itemLayouts.current[index] =
-                                        event.nativeEvent.layout.y;
-                                }}
-                            >
-                                <ExerciseCard
-                                    exercise={exercise}
-                                    exerciseIndex={index}
-                                    workoutId={workout.id}
-                                    onSetUpdate={handleSetUpdate}
-                                    isLast={
-                                        index === workout.exercises.length - 1
-                                    }
-                                />
+                            <View className="py-0 gap-0 px-4">
+                                {workout.exercises.map((exercise, index) => (
+                                    <View
+                                        key={exercise.id}
+                                        onLayout={(event) => {
+                                            itemLayouts.current[index] =
+                                                event.nativeEvent.layout.y;
+                                        }}
+                                    >
+                                        <ExerciseCard
+                                            exercise={exercise}
+                                            exerciseIndex={index}
+                                            workoutId={workout.id}
+                                            onSetUpdate={handleSetUpdate}
+                                            isLast={
+                                                index ===
+                                                workout.exercises.length - 1
+                                            }
+                                        />
+                                    </View>
+                                ))}
                             </View>
-                        ))}
+                        </ScrollView>
                     </View>
-                </ScrollView>
-            </View>
-        </KeyboardAvoidingView>
+                </KeyboardAvoidingView>
+            )}
+        </ScreenStateWrapper>
     );
 }
