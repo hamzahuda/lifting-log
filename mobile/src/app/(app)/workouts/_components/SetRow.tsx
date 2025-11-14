@@ -1,5 +1,6 @@
-import { View, Text, TextInput, ActivityIndicator } from "react-native";
+import { View, Text, ActivityIndicator } from "react-native";
 import { Set } from "@/types";
+import SetInput from "./SetInput";
 
 interface SetRowProps {
     set: Set;
@@ -44,23 +45,17 @@ export default function SetRow({
                 )}
             </Text>
             <View className="w-24 items-center">
-                <TextInput
-                    className="text-lg text-center w-16 py-1 bg-secondary rounded-md text-foreground"
+                <SetInput
                     value={set.weight?.toString() ?? ""}
                     onChangeText={handleWeightChange}
-                    keyboardType="numeric"
                     placeholder="--"
-                    placeholderTextColor="#9CA3AF"
                 />
             </View>
             <View className="w-24 items-center">
-                <TextInput
-                    className="text-foreground text-lg text-center w-16 py-1 bg-secondary rounded-md"
+                <SetInput
                     value={set.reps?.toString() ?? ""}
                     onChangeText={handleRepsChange}
-                    keyboardType="numeric"
                     placeholder={`${set.min_reps}-${set.max_reps}`}
-                    placeholderTextColor="#9CA3AF"
                 />
             </View>
         </View>
