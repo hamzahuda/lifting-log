@@ -11,6 +11,7 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { deleteTemplate, fetchTemplate, updateTemplate } from "@/services/api";
 import { WorkoutTemplate, WorkoutTemplateFormData } from "@/types";
 import TemplateForm from "./_components/TemplateForm";
+import ScreenStateWrapper from "@/components/common/screen-state-wrapper";
 
 export default function TemplateDetailScreen() {
     const { id } = useLocalSearchParams<{ id: string }>();
@@ -75,42 +76,34 @@ export default function TemplateDetailScreen() {
         );
     };
 
-    if (loading) {
-        return (
-            <View className="flex-1 justify-center items-center bg-background">
-                <ActivityIndicator size="large" color="#3B82F6" />
-            </View>
-        );
-    }
-
-    if (!template) {
-        return (
-            <View className="flex-1 justify-center items-center bg-background">
-                <Text className="text-t-primary">Template not found.</Text>
-            </View>
-        );
-    }
-
     return (
-        <View className="flex-1 bg-background">
-            <ScrollView
-                keyboardShouldPersistTaps="handled"
-                contentContainerStyle={{ paddingBottom: 100 }}
-            >
-                <TemplateForm
-                    initialFormData={template}
-                    onSubmit={handleUpdateSubmit}
-                    submitButtonText="Save Changes"
-                />
-                <TouchableOpacity
-                    className="py-3 px-6 rounded-xl bg-red-600 flex-1 m-5"
-                    onPress={handleDeleteTemplate}
-                >
-                    <Text className="text-white text-center font-bold">
-                        Delete Template
-                    </Text>
-                </TouchableOpacity>
-            </ScrollView>
-        </View>
+        <ScreenStateWrapper
+            isLoading={loading}
+            isNotFound={!template}
+            notFoundMessage={["Template not found."]}
+        >
+            {template && (
+                <View className="flex-1 bg-background">
+                    <ScrollView
+                        keyboardShouldPersistTaps="handled"
+                        contentContainerStyle={{ paddingBottom: 100 }}
+                    >
+                        <TemplateForm
+                            initialFormData={template}
+                            onSubmit={handleUpdateSubmit}
+                            submitButtonText="Save Changes"
+                        />
+                        <TouchableOpacity
+                            className="py-3 px-6 rounded-xl bg-red-600 flex-1 m-5"
+                            onPress={handleDeleteTemplate}
+                        >
+                            <Text className="text-white text-center font-bold">
+                                Delete Template
+                            </Text>
+                        </TouchableOpacity>
+                    </ScrollView>
+                </View>
+            )}
+        </ScreenStateWrapper>
     );
 }
