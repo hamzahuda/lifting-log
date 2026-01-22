@@ -3,6 +3,7 @@ import {
     FontAwesome,
     Ionicons,
     MaterialCommunityIcons,
+    Entypo,
 } from "@expo/vector-icons";
 import { View } from "react-native";
 import { useThemeColors } from "@/hooks/useThemeColors";
@@ -67,6 +68,15 @@ export default function AppLayout() {
                             size={24}
                             color={color}
                         />
+                    ),
+                }}
+            />
+            <Tabs.Screen
+                name="progress"
+                options={{
+                    title: "Progress",
+                    tabBarIcon: ({ color }) => (
+                        <Entypo name="line-graph" size={24} color={color} />
                     ),
                 }}
             />
