@@ -39,7 +39,7 @@ export default function WorkoutListItem({
                             </Text>
                             <Text className="text-foreground font-semibold text-lg">
                                 {new Date(workout.date).toLocaleDateString(
-                                    "en-GB"
+                                    "en-GB",
                                 )}
                             </Text>
                         </View>

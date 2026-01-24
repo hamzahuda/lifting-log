@@ -79,7 +79,7 @@ export function SocialConnections() {
                             className={cn(
                                 "size-4",
                                 strategy.useTint &&
-                                    Platform.select({ web: "dark:invert" })
+                                    Platform.select({ web: "dark:invert" }),
                             )}
                             tintColor={Platform.select({
                                 native: strategy.useTint

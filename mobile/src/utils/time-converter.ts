@@ -29,7 +29,7 @@ export function HHMMSStoSeconds(duration: string): number {
     const parts = duration.split(":");
     if (parts.length !== 3) {
         throw new Error(
-            `Invalid duration format, expected HH:MM:SS, got ${duration}`
+            `Invalid duration format, expected HH:MM:SS, got ${duration}`,
         );
     }
 
@@ -37,7 +37,7 @@ export function HHMMSStoSeconds(duration: string): number {
 
     if (isNaN(hours) || isNaN(minutes) || isNaN(seconds)) {
         throw new Error(
-            `Invalid duration format, contains non-numeric parts: ${duration}`
+            `Invalid duration format, contains non-numeric parts: ${duration}`,
         );
     }
 

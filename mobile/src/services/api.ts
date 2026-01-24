@@ -26,7 +26,7 @@ api.interceptors.request.use(
     },
     (error) => {
         return Promise.reject(error);
-    }
+    },
 );
 
 // ===================================
@@ -78,7 +78,7 @@ export const fetchTemplateList = async () => {
 
 export const fetchTemplate = async (id: number | string) => {
     const response = await api.get<WorkoutTemplate>(
-        `/workout-templates/${id}/`
+        `/workout-templates/${id}/`,
     );
     return response;
 };
@@ -86,18 +86,18 @@ export const fetchTemplate = async (id: number | string) => {
 export const createTemplate = async (data: WorkoutTemplateFormData) => {
     const response = await api.post<WorkoutTemplate>(
         "/workout-templates/",
-        data
+        data,
     );
     return response;
 };
 
 export const updateTemplate = async (
     id: number | string,
-    data: WorkoutTemplateFormData
+    data: WorkoutTemplateFormData,
 ) => {
     const response = await api.put<WorkoutTemplate>(
         `/workout-templates/${id}/`,
-        data
+        data,
     );
     return response;
 };
@@ -115,7 +115,7 @@ export const duplicateTemplate = async (id: number | string) => {
 
 export const fetchLastExercisePerformance = async (
     name: string,
-    workoutId: number
+    workoutId: number,
 ) => {
     const response = await api.get<Exercise | null>(
         "/exercises/last-performance/",
@@ -124,7 +124,7 @@ export const fetchLastExercisePerformance = async (
                 name: name,
                 workout_id: workoutId,
             },
-        }
+        },
     );
     return response;
 };
@@ -136,27 +136,27 @@ export const createBackendCustomExercise = async (name: string) => {
         "/custom-exercise-names/",
         {
             name,
-        }
+        },
     );
     return response;
 };
 
 export const updateBackendCustomExercise = async (
     id: number | string,
-    name: string
+    name: string,
 ) => {
     const response = await api.put<RemoteCustomExercise>(
         `/custom-exercise-names/${id}/`,
         {
             name,
-        }
+        },
     );
     return response;
 };
 
 export const fetchBackendCustomExerciseList = async () => {
     const response = await api.get<RemoteCustomExercise[]>(
-        "/custom-exercise-names/"
+        "/custom-exercise-names/",
     );
     return response;
 };

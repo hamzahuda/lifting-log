@@ -19,7 +19,7 @@ export default function WorkoutDetailScreen() {
     const { id } = useLocalSearchParams<{ id: string }>();
     const [workout, setWorkout] = useState<Workout | null>(null);
     const [originalWorkout, setOriginalWorkout] = useState<Workout | null>(
-        null
+        null,
     );
     const [loading, setLoading] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
@@ -73,7 +73,7 @@ export default function WorkoutDetailScreen() {
                     year: "2-digit",
                     month: "2-digit",
                     day: "2-digit",
-                }
+                },
             );
             navigation.setOptions({
                 title: `${workout.name} - ${workoutDate}`,
@@ -99,7 +99,7 @@ export default function WorkoutDetailScreen() {
         exerciseIndex: number,
         setIndex: number,
         field: "weight" | "reps",
-        value: string
+        value: string,
     ) => {
         // Regex to allow only number.number
         const validPattern = /^(\d+\.?\d*)?$/;
@@ -139,7 +139,7 @@ export default function WorkoutDetailScreen() {
                     }
 
                     return { ...exercise, sets: newSets };
-                }
+                },
             );
 
             return { ...currentWorkout, exercises: newExercises };

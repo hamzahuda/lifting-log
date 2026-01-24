@@ -40,7 +40,7 @@ export default function WorkoutListScreen() {
     useFocusEffect(
         useCallback(() => {
             getWorkouts();
-        }, [getWorkouts])
+        }, [getWorkouts]),
     );
 
     const handleShowModal = (workoutID: number) => {
@@ -83,7 +83,7 @@ export default function WorkoutListScreen() {
                         }
                     },
                 },
-            ]
+            ],
         );
     };
 

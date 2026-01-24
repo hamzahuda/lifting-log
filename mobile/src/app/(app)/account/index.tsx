@@ -46,13 +46,13 @@ export default function AccountScreen() {
                                     onPress: handleDeleteAccount,
                                     style: "destructive",
                                 },
-                            ]
+                            ],
                         );
                     },
                     style: "destructive",
                 },
             ],
-            { cancelable: true }
+            { cancelable: true },
         );
     };
 
