@@ -1,5 +1,6 @@
 from .models import *
 from django.contrib.auth import get_user_model
+from django.db.models import Count, Max
 from rest_framework import viewsets, status
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
@@ -109,6 +110,28 @@ class ExerciseViewSet(viewsets.ReadOnlyModelViewSet):
             return Response(serializer.data)
         else:
             return Response(None)
+
+    @action(detail=False, methods=["get"], url_path="directory")
+    def directory(self, request):
+        """
+        Returns a list of unique user completed exercise names, sorted by the date they were
+        last performed (most recent first) + supports ?search= query param.
+        """
+        search_query = request.query_params.get("search", None)
+
+        queryset = Exercise.objects.filter(workout__user=request.user)
+
+        if search_query:
+            queryset = queryset.filter(name__icontains=search_query)
+
+        exercises = (
+            queryset.values("name")
+            .annotate(last_performed=Max("workout__date"))
+            .order_by("-last_performed")
+            .values_list("name", flat=True)
+        )
+
+        return Response(list(exercises))
 
 
 class CustomExerciseNameViewSet(viewsets.ModelViewSet):
