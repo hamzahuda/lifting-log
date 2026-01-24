@@ -9,7 +9,7 @@ import DateTimePickerForm from "@/components/common/date-time-picker-form";
 export default function CreateWorkoutScreen() {
     const [templates, setTemplates] = useState<WorkoutTemplate[]>([]);
     const [selectedTemplate, setSelectedTemplate] = useState<string | null>(
-        null
+        null,
     );
     const [date, setDate] = useState(new Date());
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -55,7 +55,10 @@ export default function CreateWorkoutScreen() {
         <View className="flex-1 bg-background p-5 pt-2">
             <Text className="text-foreground text-lg mb-2">Template:</Text>
             <View className="bg-secondary rounded-lg mb-6 pl-2">
-                <Picker>
+                <Picker
+                    selectedValue={selectedTemplate}
+                    onValueChange={setSelectedTemplate}
+                >
                     {templates.map((template) => (
                         <Picker.Item
                             key={template.id}
