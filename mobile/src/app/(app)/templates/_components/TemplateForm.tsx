@@ -36,12 +36,12 @@ export default function TemplateForm({
 
     const handleExerciseEdit = (
         exID: number,
-        updatedData: ExerciseTemplate
+        updatedData: ExerciseTemplate,
     ) => {
         setWorkoutTemplateFormData((workoutTemplateFormData) => ({
             ...workoutTemplateFormData,
             exercise_templates: workoutTemplateFormData.exercise_templates.map(
-                (ex) => (ex.id === exID ? updatedData : ex)
+                (ex) => (ex.id === exID ? updatedData : ex),
             ),
         }));
     };
@@ -51,7 +51,7 @@ export default function TemplateForm({
             ...workoutTemplateFormData,
             exercise_templates:
                 workoutTemplateFormData.exercise_templates.filter(
-                    (ex) => ex.id !== exID
+                    (ex) => ex.id !== exID,
                 ),
         }));
     };
@@ -91,7 +91,7 @@ export default function TemplateForm({
                         onEdit={handleExerciseEdit}
                         onDelete={handleExerciseDelete}
                     />
-                )
+                ),
             )}
             <TouchableOpacity
                 className="bg-accent p-2 rounded-md w-40 self-center mb-5"

@@ -12,7 +12,7 @@ interface SetRowProps {
         exerciseIndex: number,
         setIndex: number,
         field: "weight" | "reps",
-        value: string
+        value: string,
     ) => void;
 }
 

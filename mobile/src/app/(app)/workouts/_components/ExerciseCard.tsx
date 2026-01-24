@@ -10,7 +10,7 @@ interface ExerciseCardProps {
         exerciseIndex: number,
         setIndex: number,
         field: "weight" | "reps",
-        value: string
+        value: string,
     ) => void;
     exerciseIndex: number;
     workoutId: number;
@@ -25,7 +25,7 @@ export default function ExerciseCard({
     isLast,
 }: ExerciseCardProps) {
     const [lastPerformance, setLastPerformance] = useState<Exercise | null>(
-        null
+        null,
     );
     const [isLoadingLastPerformance, setIsLoadingLastPerformance] =
         useState<boolean>(true);
@@ -37,7 +37,7 @@ export default function ExerciseCard({
                 setIsLoadingLastPerformance(true);
                 const res = await fetchLastExercisePerformance(
                     exercise.name,
-                    workoutId
+                    workoutId,
                 );
                 setLastPerformance(res.data);
             } catch (error) {

@@ -21,7 +21,7 @@ export default function CreateTemplateScreen() {
         } catch (error) {
             Alert.alert(
                 "Error",
-                "Failed to create template. Please try again."
+                "Failed to create template. Please try again.",
             );
             console.log(error);
         }

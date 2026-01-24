@@ -35,7 +35,7 @@ export async function initialiseDatabase(db: SQLite.SQLiteDatabase) {
                         backend_id UNINDEXED,
                         needs_sync UNINDEXED,
                         is_deleted UNINDEXED
-                    );`
+                    );`,
                 );
 
                 const insertedNames = new Set<string>();
@@ -48,7 +48,7 @@ export async function initialiseDatabase(db: SQLite.SQLiteDatabase) {
             });
         } else if (storedVersion < LATEST_DEFAULT_EXERCISES_VERSION) {
             console.log(
-                `Upgrading database from version ${storedVersion} to ${LATEST_DEFAULT_EXERCISES_VERSION}`
+                `Upgrading database from version ${storedVersion} to ${LATEST_DEFAULT_EXERCISES_VERSION}`,
             );
 
             await db.withExclusiveTransactionAsync(async () => {
@@ -63,7 +63,7 @@ export async function initialiseDatabase(db: SQLite.SQLiteDatabase) {
                 }
 
                 console.log(
-                    `Migration: Added ${newExercisesAdded} new default exercises.`
+                    `Migration: Added ${newExercisesAdded} new default exercises.`,
                 );
             });
         } else {
@@ -72,7 +72,7 @@ export async function initialiseDatabase(db: SQLite.SQLiteDatabase) {
 
         await AsyncStorage.setItem(
             DB_VERSION_KEY,
-            LATEST_DEFAULT_EXERCISES_VERSION.toString()
+            LATEST_DEFAULT_EXERCISES_VERSION.toString(),
         );
 
         await pullCustomExercisesFromBackend(db);
@@ -86,7 +86,7 @@ async function _addDefaultExercise(db: SQLite.SQLiteDatabase, name: string) {
     try {
         await db.runAsync(
             "INSERT INTO exercise_names (name, is_custom, backend_id, needs_sync, is_deleted) VALUES (?, 0, NULL, 0, 0);",
-            [name]
+            [name],
         );
     } catch (error) {
         console.log("Error adding default exercise:", error);
@@ -99,7 +99,7 @@ async function _addDefaultExercise(db: SQLite.SQLiteDatabase, name: string) {
 
 export async function searchExercises(
     db: SQLite.SQLiteDatabase,
-    query: string
+    query: string,
 ): Promise<string[]> {
     try {
         const ftsQuery = query
@@ -117,7 +117,7 @@ export async function searchExercises(
         return (
             await db.getAllAsync<{ name: string }>(
                 "SELECT name FROM exercise_names WHERE name MATCH ? AND is_deleted = 0 ORDER BY rank",
-                [ftsQuery]
+                [ftsQuery],
             )
         ).map((row) => row.name);
     } catch (error) {
@@ -132,26 +132,26 @@ export async function addCustomExercise(
     options: {
         needs_sync?: number;
         backend_id?: string | null;
-    } = {}
+    } = {},
 ) {
     const { needs_sync = 1, backend_id = null } = options;
 
     try {
         const existing = await db.getFirstAsync<{ backend_id: string | null }>(
             "SELECT backend_id FROM exercise_names WHERE name = ? AND is_deleted = 0 LIMIT 1",
-            [name]
+            [name],
         );
 
         if (!existing) {
             await db.runAsync(
                 "INSERT INTO exercise_names (name, is_custom, backend_id, needs_sync, is_deleted) VALUES (?, 1, ?, ?, 0);",
-                [name, backend_id, needs_sync]
+                [name, backend_id, needs_sync],
             );
         } else if (existing.backend_id === null && backend_id !== null) {
             // A local, unsynced exercise with this name already exists, so link the local one.
             await db.runAsync(
                 "UPDATE exercise_names SET backend_id = ?, needs_sync = 0 WHERE name = ? AND is_custom = 1 AND backend_id IS NULL",
-                [backend_id, name]
+                [backend_id, name],
             );
         }
     } catch (error) {
@@ -162,12 +162,12 @@ export async function addCustomExercise(
 
 export async function deleteCustomExercise(
     db: SQLite.SQLiteDatabase,
-    name: string
+    name: string,
 ) {
     try {
         await db.runAsync(
             "UPDATE exercise_names SET is_deleted = 1, needs_sync = 1 WHERE name = ? AND is_custom = 1 AND is_deleted = 0",
-            [name]
+            [name],
         );
     } catch (error) {
         console.error("Error deleting exercise:", error);
@@ -176,11 +176,11 @@ export async function deleteCustomExercise(
 }
 
 export async function getAllExercises(
-    db: SQLite.SQLiteDatabase
+    db: SQLite.SQLiteDatabase,
 ): Promise<string[]> {
     try {
         const results = await db.getAllAsync<{ name: string }>(
-            "SELECT name FROM exercise_names WHERE is_deleted = 0 ORDER BY name"
+            "SELECT name FROM exercise_names WHERE is_deleted = 0 ORDER BY name",
         );
         return results.map((row) => row.name);
     } catch (error) {
@@ -190,11 +190,11 @@ export async function getAllExercises(
 }
 
 export async function getAllCustomExercises(
-    db: SQLite.SQLiteDatabase
+    db: SQLite.SQLiteDatabase,
 ): Promise<string[]> {
     try {
         const results = await db.getAllAsync<{ name: string }>(
-            "SELECT name FROM exercise_names WHERE is_custom = 1 AND is_deleted = 0 ORDER BY name"
+            "SELECT name FROM exercise_names WHERE is_custom = 1 AND is_deleted = 0 ORDER BY name",
         );
         return results.map((row) => row.name);
     } catch (error) {
@@ -206,29 +206,29 @@ export async function getAllCustomExercises(
 export async function updateCustomExercise(
     db: SQLite.SQLiteDatabase,
     oldName: string,
-    newName: string
+    newName: string,
 ) {
     try {
         await db.withExclusiveTransactionAsync(async () => {
             const existing = await db.getFirstAsync(
                 "SELECT 1 FROM exercise_names WHERE name = ? AND is_deleted = 0 LIMIT 1",
-                [newName]
+                [newName],
             );
 
             if (existing) {
                 throw new Error(
-                    `An exercise named "${newName}" already exists.`
+                    `An exercise named "${newName}" already exists.`,
                 );
             }
 
             const result = await db.runAsync(
                 "UPDATE exercise_names SET name = ?, needs_sync = 1 WHERE name = ? AND is_deleted = 0 AND is_custom = 1",
-                [newName, oldName]
+                [newName, oldName],
             );
 
             if (result.changes === 0) {
                 throw new Error(
-                    `Could not find a custom exercise named "${oldName}" to update.`
+                    `Could not find a custom exercise named "${oldName}" to update.`,
                 );
             }
         });
@@ -263,9 +263,9 @@ async function pullCustomExercisesFromBackend(db: SQLite.SQLiteDatabase) {
                     backend_id: string;
                     name: string;
                 }>(
-                    "SELECT backend_id, name FROM exercise_names WHERE is_custom = 1 AND backend_id IS NOT NULL"
+                    "SELECT backend_id, name FROM exercise_names WHERE is_custom = 1 AND backend_id IS NOT NULL",
                 )
-            ).map((customEx) => [customEx.backend_id, customEx.name])
+            ).map((customEx) => [customEx.backend_id, customEx.name]),
         );
 
         await db.withExclusiveTransactionAsync(async () => {
@@ -282,7 +282,7 @@ async function pullCustomExercisesFromBackend(db: SQLite.SQLiteDatabase) {
                     // Backend has an updated name for this exercise (only if it has no pending sync)
                     await db.runAsync(
                         "UPDATE exercise_names SET name = ? WHERE backend_id = ? AND needs_sync = 0",
-                        [remoteExercise.name, remoteExercise.id]
+                        [remoteExercise.name, remoteExercise.id],
                     );
                 }
             }
@@ -300,7 +300,7 @@ async function pushCustomExercisesToBackend(db: SQLite.SQLiteDatabase) {
             is_deleted: number;
             backend_id: string | null;
         }>(
-            "SELECT name, backend_id, is_deleted FROM exercise_names WHERE is_custom = 1 AND needs_sync = 1"
+            "SELECT name, backend_id, is_deleted FROM exercise_names WHERE is_custom = 1 AND needs_sync = 1",
         );
     } catch (error) {
         console.error("Error fetching exercises to sync:", error);
@@ -317,28 +317,28 @@ async function pushCustomExercisesToBackend(db: SQLite.SQLiteDatabase) {
             if (customExercise.is_deleted === 0) {
                 if (!customExercise.backend_id) {
                     const res = await createBackendCustomExercise(
-                        customExercise.name
+                        customExercise.name,
                     );
 
                     await db.runAsync(
                         "UPDATE exercise_names SET needs_sync = 0, backend_id = ? WHERE name = ?",
-                        [res.data.id, customExercise.name]
+                        [res.data.id, customExercise.name],
                     );
                 } else {
                     await updateBackendCustomExercise(
                         customExercise.backend_id,
-                        customExercise.name
+                        customExercise.name,
                     );
 
                     await db.runAsync(
                         "UPDATE exercise_names SET needs_sync = 0 WHERE backend_id = ?",
-                        [customExercise.backend_id]
+                        [customExercise.backend_id],
                     );
                 }
             } else if (customExercise.is_deleted === 1) {
                 if (customExercise.backend_id) {
                     await deleteBackendCustomExercise(
-                        customExercise.backend_id
+                        customExercise.backend_id,
                     );
                 }
 
@@ -349,7 +349,7 @@ async function pushCustomExercisesToBackend(db: SQLite.SQLiteDatabase) {
         } catch (error) {
             console.error(
                 `Error syncing exercise '${customExercise.name}':`,
-                error
+                error,
             );
         }
     }

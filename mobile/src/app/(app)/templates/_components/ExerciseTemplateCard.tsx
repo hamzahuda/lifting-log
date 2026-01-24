@@ -85,7 +85,7 @@ export default function ExerciseTemplateCard({
                             resetAndCloseModal();
                         },
                     },
-                ]
+                ],
             );
         } catch (error) {
             console.error("Error creating new exercise:", error);
@@ -95,7 +95,7 @@ export default function ExerciseTemplateCard({
     const handleMinOrMaxRepsChange = (
         setID: number,
         field: keyof SetTemplate,
-        value: string
+        value: string,
     ) => {
         const updatedSetTemplates = data.set_templates.map((set) => {
             if (set.id === setID) {
@@ -110,7 +110,7 @@ export default function ExerciseTemplateCard({
         const currentSeconds = HHMMSStoSeconds(data.rest_period);
         const newSeconds = Math.min(
             600,
-            Math.max(0, currentSeconds + adjustment)
+            Math.max(0, currentSeconds + adjustment),
         );
         onEdit(data.id, {
             ...data,
@@ -144,7 +144,7 @@ export default function ExerciseTemplateCard({
         onEdit(data.id, {
             ...data,
             set_templates: data.set_templates.filter(
-                (s, index) => index !== data.set_templates.length - 1
+                (s, index) => index !== data.set_templates.length - 1,
             ),
         });
     };
@@ -222,7 +222,7 @@ export default function ExerciseTemplateCard({
                                         handleMinOrMaxRepsChange(
                                             set.id,
                                             "min_reps",
-                                            value
+                                            value,
                                         )
                                     }
                                     keyboardType="numeric"
@@ -239,7 +239,7 @@ export default function ExerciseTemplateCard({
                                         handleMinOrMaxRepsChange(
                                             set.id,
                                             "max_reps",
-                                            value
+                                            value,
                                         )
                                     }
                                     keyboardType="numeric"

@@ -39,7 +39,7 @@ export default function TemplateScreen() {
     useFocusEffect(
         useCallback(() => {
             getTemplates();
-        }, [getTemplates])
+        }, [getTemplates]),
     );
 
     const handleShowModal = (templateID: number) => {
@@ -73,7 +73,7 @@ export default function TemplateScreen() {
                         }
                     },
                 },
-            ]
+            ],
         );
     };
 
@@ -85,7 +85,7 @@ export default function TemplateScreen() {
         } catch (error) {
             Alert.alert(
                 "Error",
-                "Failed to duplicate template. Please try again."
+                "Failed to duplicate template. Please try again.",
             );
             console.error(error);
         } finally {

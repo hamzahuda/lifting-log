@@ -10,7 +10,7 @@ function Card({ className, ...props }: ViewProps & React.RefAttributes<View>) {
                 layout={LinearTransition.duration(200)}
                 className={cn(
                     "bg-card border-border flex flex-col gap-6 rounded-xl border py-6 shadow-sm shadow-black/5",
-                    className
+                    className,
                 )}
                 {...props}
             />

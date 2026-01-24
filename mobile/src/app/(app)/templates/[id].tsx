@@ -63,7 +63,7 @@ export default function TemplateDetailScreen() {
                             await deleteTemplate(id);
                             Alert.alert(
                                 "Success",
-                                "Template deleted successfully!"
+                                "Template deleted successfully!",
                             );
                             router.back();
                         } catch (error) {
@@ -72,7 +72,7 @@ export default function TemplateDetailScreen() {
                         }
                     },
                 },
-            ]
+            ],
         );
     };
 
