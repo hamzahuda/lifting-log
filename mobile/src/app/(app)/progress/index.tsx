@@ -49,7 +49,9 @@ export default function ProgressListScreen() {
                             <ProgressListItem
                                 key={index}
                                 exercise={exercise}
-                                onPress={(exercise) => router.push(`/progress`)}
+                                onPress={(exercise) =>
+                                    router.push(`/progress/${exercise}`)
+                                }
                             />
                         ))}
                     </View>
