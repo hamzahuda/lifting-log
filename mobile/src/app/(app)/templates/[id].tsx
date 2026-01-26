@@ -1,12 +1,5 @@
 import { useState, useEffect } from "react";
-import {
-    ScrollView,
-    View,
-    Text,
-    TouchableOpacity,
-    Alert,
-    ActivityIndicator,
-} from "react-native";
+import { ScrollView, View, Text, TouchableOpacity, Alert } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { deleteTemplate, fetchTemplate, updateTemplate } from "@/services/api";
 import { WorkoutTemplate, WorkoutTemplateFormData } from "@/types";
