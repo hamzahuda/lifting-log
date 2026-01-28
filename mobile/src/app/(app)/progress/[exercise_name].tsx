@@ -1,10 +1,13 @@
 import { View, Alert } from "react-native";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { fetchSingleExerciseHistory } from "@/services/api";
-import { useState, useEffect, useLayoutEffect } from "react";
+import { useState, useEffect, useLayoutEffect, useCallback } from "react";
 import { LineChart } from "react-native-gifted-charts";
 import { Exercise } from "@/types";
+import { calculateOneRepMax } from "@/utils/one-rep-max";
 import ScreenStateWrapper from "@/components/common/screen-state-wrapper";
+import { useFocusEffect } from "@react-navigation/native";
+import { set } from "lodash";
 
 export default function ProgressDetailScreen() {
     const { exercise_name } = useLocalSearchParams<{ exercise_name: string }>();
@@ -18,6 +21,7 @@ export default function ProgressDetailScreen() {
 
     const getSingleExerciseHistory = async () => {
         try {
+            setLoading(true);
             const res = await fetchSingleExerciseHistory(exercise_name);
             setExerciseHistory(res.data);
         } catch (error) {
@@ -29,17 +33,26 @@ export default function ProgressDetailScreen() {
 
     const calculateValuesFromHistory = () => {
         const values = exerciseHistory?.map((exercise) => {
-            let highestWeight = 0;
-            for (let i = 0; i < exercise.sets.length; i++) {
-                const set = exercise.sets[i];
-                if (set && Number(set.weight) > highestWeight) {
-                    highestWeight = Number(set.weight);
+            let highestOneRepMax = 0;
+            for (const set of exercise.sets) {
+                const oneRepMax = calculateOneRepMax(
+                    Number(set.weight),
+                    Number(set.reps),
+                );
+                if (oneRepMax > highestOneRepMax) {
+                    highestOneRepMax = oneRepMax;
                 }
             }
-            return { value: highestWeight };
+            return { value: highestOneRepMax };
         });
         return values;
     };
+
+    useFocusEffect(
+        useCallback(() => {
+            getSingleExerciseHistory();
+        }, [exercise_name]),
+    );
 
     useEffect(() => {
         getSingleExerciseHistory();
@@ -59,6 +72,7 @@ export default function ProgressDetailScreen() {
                     dataPointsColor1="#ffffff"
                     thickness={2}
                     hideRules
+                    isAnimated
                     yAxisTextStyle={{ color: "#ffffff" }}
                     xAxisLabelTextStyle={{ color: "#ffffff" }}
                     yAxisColor="#ffffff"
