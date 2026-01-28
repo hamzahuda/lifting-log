@@ -133,6 +133,31 @@ class ExerciseViewSet(viewsets.ReadOnlyModelViewSet):
 
         return Response(list(exercises))
 
+    @action(detail=False, methods=["get"], url_path="single-exercise-history")
+    def single_exercise_history(self, request):
+        """
+        Returns the exercise history for a specific exercise, oldest to newest
+        """
+        exercise_name = request.query_params.get("exercise_name")
+
+        if not exercise_name:
+            return Response(
+                {"error": "Missing 'exercise_name' in query parameters"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        exercise_history = (
+            Exercise.objects.filter(
+                workout__user=request.user,
+                name=exercise_name,
+            )
+            .select_related("workout")
+            .order_by("workout__date")
+        )
+
+        serializer = self.get_serializer(exercise_history, many=True)
+        return Response(serializer.data)
+
 
 class CustomExerciseNameViewSet(viewsets.ModelViewSet):
     serializer_class = CustomExerciseNameSerializer
