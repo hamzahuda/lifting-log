@@ -113,6 +113,18 @@ export const duplicateTemplate = async (id: number | string) => {
 
 // --- Exercises ---
 
+export const fetchSingleExerciseHistory = async (exercise_name: string) => {
+    const response = await api.get<Exercise[]>(
+        "/exercises/single-exercise-history/",
+        {
+            params: {
+                exercise_name,
+            },
+        },
+    );
+    return response;
+};
+
 export const fetchPerformedExercises = async () => {
     const response = await api.get<string[]>("/exercises/directory/");
     return response;
