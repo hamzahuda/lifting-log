@@ -45,6 +45,28 @@ class CustomExerciseName(models.Model):
         unique_together = ["user", "name"]
 
 
+class ExerciseGoal(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="exercise_goals",
+    )
+    exercise_name = models.CharField(max_length=255)
+    goal_weight = models.FloatField()
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        unique_together = ["user", "exercise_name"]
+        indexes = [
+            models.Index(fields=["user", "exercise_name"]),
+        ]
+
+    def __str__(self):
+        return f"{self.user.username} - {self.exercise_name}: {self.goal_weight}"
+
+
 # --- Workout Models ---
 
 
