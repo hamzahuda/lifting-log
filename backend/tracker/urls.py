@@ -14,6 +14,7 @@ router.register(
     views.CustomExerciseNameViewSet,
     basename="customexercisename",
 )
+router.register(r"exercise-goals", views.ExerciseGoalViewSet, basename="exercisegoal")
 
 urlpatterns = [
     path("", include(router.urls)),
