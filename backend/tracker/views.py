@@ -166,3 +166,17 @@ class CustomExerciseNameViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         user = self.request.user
         return CustomExerciseName.objects.filter(user=user)
+
+
+class ExerciseGoalViewSet(viewsets.ModelViewSet):
+    serializer_class = ExerciseGoalSerializer
+    permission_classes = [IsAuthenticated, IsObjectOwner]
+
+    def get_queryset(self):
+        user = self.request.user
+        queryset = ExerciseGoal.objects.filter(user=user)
+        name = self.request.query_params.get("exercise_name")
+        if name is not None:
+            return queryset.filter(exercise_name=name)
+
+        return queryset
