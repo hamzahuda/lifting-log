@@ -57,6 +57,16 @@ export type WorkoutTemplateFormData = Omit<WorkoutTemplate, "id" | "url">;
 // --- Custom Exercises ---
 
 export type RemoteCustomExercise = {
-    id: string;
+    readonly id: number;
     name: string;
+};
+
+// --- Exercise Goals ---
+
+export type ExerciseGoal = {
+    readonly id: number;
+    exercise_name: string;
+    goal_weight: number;
+    created_at: string;
+    updated_at: string;
 };
