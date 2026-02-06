@@ -6,6 +6,7 @@ import {
     Exercise,
     WorkoutTemplateFormData,
     RemoteCustomExercise,
+    ExerciseGoal,
 } from "@/types";
 
 export const api = axios.create({
@@ -143,6 +144,33 @@ export const fetchLastExercisePerformance = async (
             },
         },
     );
+    return response;
+};
+
+// --- Exercise Goals ---
+
+export const fetchExerciseGoal = async (exercise_name: string) => {
+    const response = await api.get<ExerciseGoal[]>("/exercise-goals/", {
+        params: { exercise_name },
+    });
+    return response;
+};
+
+export const createExerciseGoal = async (
+    exercise_name: string,
+    goal_weight: number,
+) => {
+    const response = await api.post<ExerciseGoal>("/exercise-goals/", {
+        exercise_name,
+        goal_weight,
+    });
+    return response;
+};
+
+export const updateExerciseGoal = async (id: number, goal_weight: number) => {
+    const response = await api.patch<ExerciseGoal>(`/exercise-goals/${id}/`, {
+        goal_weight,
+    });
     return response;
 };
 
