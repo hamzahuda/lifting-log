@@ -5,7 +5,6 @@ import datetime
 from django.utils import timezone
 
 
-# User Serializer
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = User
@@ -29,9 +28,6 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
         return instance
 
 
-# Custom Exercise Name Serializers
-
-
 class CustomExerciseNameSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomExerciseName
@@ -40,6 +36,12 @@ class CustomExerciseNameSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         user = self.context["request"].user
         return CustomExerciseName.objects.create(user=user, **validated_data)
+
+
+class ExerciseGoalSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ExerciseGoal
+        fields = ["id", "exercise_name", "goal_weight", "created_at", "updated_at"]
 
 
 # --- Workout Serializers ---
