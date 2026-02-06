@@ -1,7 +1,6 @@
 from rest_framework import serializers
 from .models import *
 from django.contrib.auth.models import User
-import datetime
 from django.utils import timezone
 
 
@@ -42,6 +41,10 @@ class ExerciseGoalSerializer(serializers.ModelSerializer):
     class Meta:
         model = ExerciseGoal
         fields = ["id", "exercise_name", "goal_weight", "created_at", "updated_at"]
+
+    def create(self, validated_data):
+        user = self.context["request"].user
+        return ExerciseGoal.objects.create(user=user, **validated_data)
 
 
 # --- Workout Serializers ---
