@@ -209,13 +209,6 @@ export default function ProgressDetailScreen() {
                 hideDataPoint: !hasData,
                 dataPointColor: "#ffffff",
                 dataPointRadius: 3,
-                dataPointLabelComponent: hasData
-                    ? () => (
-                          <Text className="text-white text-[10px] mb-1">
-                              {value}
-                          </Text>
-                      )
-                    : undefined,
                 date: dateStr,
             });
 
