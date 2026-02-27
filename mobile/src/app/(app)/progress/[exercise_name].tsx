@@ -6,6 +6,7 @@ import {
     TouchableOpacity,
     ActivityIndicator,
     Dimensions,
+    FlatList,
 } from "react-native";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import {
@@ -21,6 +22,7 @@ import { calculateOneRepMax } from "@/utils/one-rep-max";
 import ScreenStateWrapper from "@/components/common/screen-state-wrapper";
 import { useFocusEffect } from "@react-navigation/native";
 import TimeFilterButton from "./_components/TimeFilterButton";
+import LiftHistoryItem from "./_components/LiftHistoryItem";
 
 export default function ProgressDetailScreen() {
     const { exercise_name } = useLocalSearchParams<{ exercise_name: string }>();
@@ -243,81 +245,113 @@ export default function ProgressDetailScreen() {
             isNotFound={exerciseHistory?.length === 0}
             notFoundMessage={["No history found for", exercise_name]}
         >
-            <View>
-                <View className="flex-row justify-center mb-4 mt-2">
-                    {(["1W", "1M", "3M", "6M", "1Y", "All"] as TimeRange[]).map(
-                        (range) => (
-                            <TimeFilterButton
-                                key={range}
-                                range={range}
-                                active={selectedRange === range}
-                                onPress={handleTimeRangeChange}
-                            />
-                        ),
-                    )}
-                </View>
+            <FlatList
+                data={[...exerciseHistory].reverse()}
+                keyExtractor={(item, index) =>
+                    item.id?.toString() || index.toString()
+                }
+                renderItem={({ item }) => <LiftHistoryItem item={item} />}
+                contentContainerStyle={{ paddingBottom: 40 }}
+                showsVerticalScrollIndicator={false}
+                ListHeaderComponent={
+                    <View>
+                        <View className="flex-row justify-center mb-4 mt-2">
+                            {(
+                                [
+                                    "1W",
+                                    "1M",
+                                    "3M",
+                                    "6M",
+                                    "1Y",
+                                    "All",
+                                ] as TimeRange[]
+                            ).map((range) => (
+                                <TimeFilterButton
+                                    key={range}
+                                    range={range}
+                                    active={selectedRange === range}
+                                    onPress={handleTimeRangeChange}
+                                />
+                            ))}
+                        </View>
 
-                {chartData.length > 0 && (
-                    <View className="items-center">
-                        <LineChart
-                            data={chartData}
-                            height={250}
-                            thickness={2}
-                            color="#ffffff"
-                            initialSpacing={10}
-                            spacing={chartSpacing}
-                            hideRules
-                            yAxisTextStyle={{ color: "#ffffff", fontSize: 10 }}
-                            xAxisLabelTextStyle={{
-                                color: "#ffffff",
-                                fontSize: 10,
-                                width: 40,
-                            }}
-                            yAxisColor="#ffffff"
-                            xAxisColor="#ffffff"
-                            extrapolateMissingValues={false}
-                        />
-                    </View>
-                )}
-
-                <View className="flex-row items-center justify-center mt-6">
-                    <Text className="text-foreground">Goal (1RM):</Text>
-
-                    <TextInput
-                        className="text-xl text-foreground font-bold mx-2 bg-secondary rounded-md px-3 py-1 min-w-[60px] text-center"
-                        onChangeText={handleLocalUpdate}
-                        value={
-                            exerciseGoal.goal_weight
-                                ? exerciseGoal.goal_weight.toString()
-                                : ""
-                        }
-                        placeholder="0"
-                        placeholderTextColor="gray"
-                        keyboardType="numeric"
-                        returnKeyType="done"
-                    />
-
-                    <Text className="text-foreground mr-4">kg</Text>
-
-                    <TouchableOpacity
-                        onPress={handleSave}
-                        disabled={!canSave}
-                        className={`px-4 py-2 rounded-lg flex-row items-center ${
-                            canSave ? "bg-primary" : "bg-muted opacity-50"
-                        }`}
-                    >
-                        {saving ? (
-                            <ActivityIndicator color="#fff" size="small" />
-                        ) : (
-                            <Text
-                                className={`${canSave ? "text-primary-foreground" : "text-muted-foreground"} font-bold`}
-                            >
-                                Save
-                            </Text>
+                        {chartData.length > 0 && (
+                            <View className="items-center">
+                                <LineChart
+                                    data={chartData}
+                                    height={250}
+                                    thickness={2}
+                                    color="#ffffff"
+                                    initialSpacing={10}
+                                    spacing={chartSpacing}
+                                    hideRules
+                                    yAxisTextStyle={{
+                                        color: "#ffffff",
+                                        fontSize: 10,
+                                    }}
+                                    xAxisLabelTextStyle={{
+                                        color: "#ffffff",
+                                        fontSize: 10,
+                                        width: 40,
+                                    }}
+                                    yAxisColor="transparent"
+                                    xAxisColor="#ffffff"
+                                    extrapolateMissingValues={false}
+                                />
+                            </View>
                         )}
-                    </TouchableOpacity>
-                </View>
-            </View>
+
+                        <View className="flex-row items-center justify-center mt-6 mb-10">
+                            <Text className="text-foreground">Goal (1RM):</Text>
+                            <TextInput
+                                className="text-xl text-foreground font-bold mx-2 bg-secondary rounded-md px-3 py-1 min-w-[60px] text-center"
+                                onChangeText={handleLocalUpdate}
+                                value={
+                                    exerciseGoal.goal_weight
+                                        ? exerciseGoal.goal_weight.toString()
+                                        : ""
+                                }
+                                placeholder="0"
+                                placeholderTextColor="gray"
+                                keyboardType="numeric"
+                                returnKeyType="done"
+                            />
+                            <Text className="text-foreground mr-4">kg</Text>
+                            <TouchableOpacity
+                                onPress={handleSave}
+                                disabled={!canSave}
+                                className={`px-4 py-2 rounded-lg flex-row items-center ${
+                                    canSave
+                                        ? "bg-primary"
+                                        : "bg-muted opacity-50"
+                                }`}
+                            >
+                                {saving ? (
+                                    <ActivityIndicator
+                                        color="#fff"
+                                        size="small"
+                                    />
+                                ) : (
+                                    <Text
+                                        className={`${canSave ? "text-primary-foreground" : "text-muted-foreground"} font-bold`}
+                                    >
+                                        Save
+                                    </Text>
+                                )}
+                            </TouchableOpacity>
+                        </View>
+
+                        <Text className="text-foreground text-xl font-bold mb-4 px-4">
+                            History
+                        </Text>
+                    </View>
+                }
+                ListEmptyComponent={
+                    <Text className="text-muted-foreground text-center py-10 px-4">
+                        No recorded lifts yet.
+                    </Text>
+                }
+            />
         </ScreenStateWrapper>
     );
 }
