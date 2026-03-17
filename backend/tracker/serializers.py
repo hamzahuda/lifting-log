@@ -61,10 +61,11 @@ class SetSerializer(serializers.ModelSerializer):
 class ExerciseSerializer(serializers.ModelSerializer):
     sets = SetSerializer(many=True)
     date = serializers.DateTimeField(source="workout.date", read_only=True)
+    workout_id = serializers.ReadOnlyField(source="workout.id")
 
     class Meta:
         model = Exercise
-        fields = ["id", "name", "rest_period", "notes", "sets", "date"]
+        fields = ["id", "workout_id", "name", "rest_period", "notes", "sets", "date"]
 
 
 class WorkoutSerializer(serializers.HyperlinkedModelSerializer):
