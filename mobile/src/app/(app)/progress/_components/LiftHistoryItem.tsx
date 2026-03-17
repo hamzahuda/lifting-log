@@ -1,12 +1,16 @@
-import { View, Text } from "react-native";
+import { View, Text, TouchableOpacity } from "react-native";
 import { Exercise } from "@/types";
 import { calculateOneRepMax } from "@/utils/one-rep-max";
 
 interface LiftHistoryItemProps {
     item: Exercise;
+    onPress: () => void;
 }
 
-export default function LiftHistoryItem({ item }: LiftHistoryItemProps) {
+export default function LiftHistoryItem({
+    item,
+    onPress,
+}: LiftHistoryItemProps) {
     const bestOneRepMax = Math.max(
         ...item.sets.map((s) =>
             calculateOneRepMax(Number(s.weight), Number(s.reps)),
@@ -14,7 +18,10 @@ export default function LiftHistoryItem({ item }: LiftHistoryItemProps) {
     );
 
     return (
-        <View className="flex-row justify-between items-center py-4 px-4 border-b border-muted/30">
+        <TouchableOpacity
+            className="flex-row justify-between items-center py-4 px-4 border-b border-muted/30"
+            onPress={onPress}
+        >
             <View>
                 <Text className="text-foreground font-semibold">
                     {new Date(item.date).toLocaleDateString(undefined, {
@@ -36,6 +43,6 @@ export default function LiftHistoryItem({ item }: LiftHistoryItemProps) {
                     kg (est. 1RM)
                 </Text>
             </View>
-        </View>
+        </TouchableOpacity>
     );
 }
