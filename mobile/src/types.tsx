@@ -14,6 +14,7 @@ export type Set = {
 
 export type Exercise = {
     readonly id: number;
+    readonly workout_id: number;
     name: string;
     rest_period: string;
     notes: string;
