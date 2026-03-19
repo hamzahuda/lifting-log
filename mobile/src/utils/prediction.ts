@@ -1,15 +1,20 @@
 import { logarithmic, linear, Result } from "regression";
+import { RegressionType } from "@/types";
 
-export type RegressionType = "linear" | "logarithmic";
-
-export interface RegressionData {
+type RegressionData = {
     models: {
         linear: Result;
         logarithmic: Result;
     };
     earliestTimestamp: number;
     recommended: RegressionType;
-}
+};
+
+type PredictionResult =
+    | { status: "ACHIEVED" }
+    | { status: "PLATEAUED" }
+    | { status: "OUT_OF_BOUNDS" }
+    | { status: "PREDICTED"; daysRemaining: number };
 
 export function getRegressionResult(
     dailyMaxes: Map<string, number>,
@@ -50,22 +55,18 @@ export function getRegressionResult(
     };
 }
 
-export function calculateGoalPrediction(
+export function calculateDaysToGoal(
+    regData: RegressionData,
     dailyMaxes: Map<string, number>,
     goalWeight: number | undefined,
-    selectedType?: RegressionType,
-): string | null {
+    selectedType: RegressionType,
+): PredictionResult | null {
     if (!goalWeight || goalWeight <= 0) return null;
 
     const currentMax = Math.max(...Array.from(dailyMaxes.values()));
-    if (currentMax >= goalWeight) return "Goal Achieved!";
+    if (currentMax >= goalWeight) return { status: "ACHIEVED" };
 
-    // Grab the regression data
-    const regData = getRegressionResult(dailyMaxes);
-    if (!regData) return null;
-
-    const typeToUse = selectedType || regData.recommended;
-    const model = regData.models[typeToUse];
+    const model = regData.models[selectedType];
     const { earliestTimestamp } = regData;
 
     const now = new Date().getTime();
@@ -75,18 +76,17 @@ export function calculateGoalPrediction(
     const todayPrediction = model.predict(daysFromStartToNow)[1];
     const tomorrowPrediction = model.predict(daysFromStartToNow + 1)[1];
     if (tomorrowPrediction <= todayPrediction) {
-        return "Progress plateaued - keep pushing to predict!";
+        return { status: "PLATEAUED" };
     }
 
     const maxSearchDays = daysFromStartToNow + 365;
     let daysFromStartToGoal: number;
 
     // solve for x (days) using the target y (goalWeight)
-    if (typeToUse === "linear") {
+    if (selectedType === "linear") {
         const [m, b] = model.equation; // y = mx + b
         daysFromStartToGoal = (goalWeight - b) / m;
     } else {
-        // logarithmic
         const [a, b] = model.equation; //  y = a + b * ln(x)
         daysFromStartToGoal = Math.exp((goalWeight - a) / b);
     }
@@ -99,32 +99,14 @@ export function calculateGoalPrediction(
         !isFinite(daysFromStartToGoal) ||
         daysFromStartToGoal > maxSearchDays
     ) {
-        return "Estimated time: > 1 year";
+        return { status: "OUT_OF_BOUNDS" };
     }
 
     const daysFromNowToGoal = daysFromStartToGoal - daysFromStartToNow;
 
     if (daysFromNowToGoal <= 0) {
-        return "Goal should be achieved soon!";
-    } else {
-        const months = Math.floor(daysFromNowToGoal / 30);
-        const days = Math.floor(daysFromNowToGoal % 30);
-
-        let timeString = "";
-
-        if (months > 0) {
-            timeString += `${months} month${months > 1 ? "s" : ""}`;
-        }
-
-        if (days > 0) {
-            if (months > 0) timeString += ", ";
-            timeString += `${days} day${days > 1 ? "s" : ""}`;
-        }
-
-        if (timeString === "") {
-            return "Estimated time: < 1 day";
-        }
-
-        return `Estimated time remaining: ${timeString}`;
+        return { status: "ACHIEVED" };
     }
+
+    return { status: "PREDICTED", daysRemaining: daysFromNowToGoal };
 }
