@@ -22,7 +22,6 @@ export type Exercise = {
     notes: string;
     sets: Set[];
     date: string;
-    increment_step: number;
 };
 
 export type Workout = {
