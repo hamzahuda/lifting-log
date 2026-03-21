@@ -14,6 +14,10 @@ export default function AccountLayout() {
             }}
         >
             <Stack.Screen name="index" options={{ title: "Account" }} />
+            <Stack.Screen
+                name="manage-custom-exercises"
+                options={{ title: "Custom Exercises" }}
+            />
         </Stack>
     );
 }

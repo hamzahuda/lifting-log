@@ -2,9 +2,12 @@ import { supabase } from "@/services/supabase";
 import { deleteUser } from "@/services/api";
 import { View, Text, TouchableOpacity, Alert } from "react-native";
 import { useSession } from "@/context/SessionContext";
+import { useRouter } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
 
 export default function AccountScreen() {
     const { session } = useSession();
+    const router = useRouter();
 
     const handleDeleteAccount = async () => {
         try {
@@ -63,6 +66,16 @@ export default function AccountScreen() {
                     {session?.user?.email}
                 </Text>
             </View>
+
+            <TouchableOpacity
+                className="bg-background border border-border p-4 rounded-lg mb-4 flex-row justify-between items-center"
+                onPress={() => router.push("/account/manage-custom-exercises")}
+            >
+                <Text className="text-foreground text-lg font-bold">
+                    Manage Custom Exercises
+                </Text>
+                <Ionicons name="chevron-forward" size={20} color="gray" />
+            </TouchableOpacity>
 
             <TouchableOpacity
                 className="bg-background border border-border p-4 rounded-lg"
