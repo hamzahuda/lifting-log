@@ -106,6 +106,11 @@ export default function ExerciseTemplateCard({
         onEdit(data.id, { ...data, set_templates: updatedSetTemplates });
     };
 
+    const handleIncrementChange = (adjustment: number) => {
+        const newValue = data.increment_step + adjustment;
+        onEdit(data.id, { ...data, increment_step: newValue });
+    };
+
     const handleRestPeriodChange = (adjustment: number) => {
         const currentSeconds = HHMMSStoSeconds(data.rest_period);
         const newSeconds = Math.min(
@@ -251,32 +256,63 @@ export default function ExerciseTemplateCard({
                     ))}
                 </View>
 
-                <View className="flex-row justify-between items-center mt-1 pt-2 border-t border-gray-700">
-                    <Text className="text-foreground text-lg font-semibold">
-                        Rest Period
-                    </Text>
+                <View className="mt-1 pt-2 border-t border-gray-700">
+                    <View className="flex-row items-center mb-3">
+                        <View className="flex-1">
+                            <Text className="text-foreground text-lg font-semibold">
+                                Increment
+                            </Text>
+                        </View>
+                        <View className="flex-1 flex-row items-center justify-between">
+                            <TouchableOpacity
+                                onPress={() => handleIncrementChange(-0.5)}
+                                className="bg-secondary rounded-md px-2 py-1"
+                            >
+                                <Text className="text-foreground text-sm">
+                                    -0.5
+                                </Text>
+                            </TouchableOpacity>
+                            <Text className="text-xl text-foreground font-bold mx-2">
+                                {data.increment_step + "kg"}
+                            </Text>
+                            <TouchableOpacity
+                                onPress={() => handleIncrementChange(+0.5)}
+                                className="bg-secondary rounded-md px-2 py-1"
+                            >
+                                <Text className="text-foreground text-sm">
+                                    +0.5
+                                </Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+
                     <View className="flex-row items-center">
-                        <TouchableOpacity
-                            onPress={() => handleRestPeriodChange(-15)}
-                            className="bg-secondary rounded-md px-2 py-1"
-                        >
-                            <Text className="text-foreground text-sm">
-                                -15s
+                        <View className="flex-1">
+                            <Text className="text-foreground text-lg font-semibold">
+                                Rest Period
                             </Text>
-                        </TouchableOpacity>
-
-                        <Text className="text-xl text-foreground font-bold mx-4">
-                            {data.rest_period.substring(3)}
-                        </Text>
-
-                        <TouchableOpacity
-                            onPress={() => handleRestPeriodChange(15)}
-                            className="bg-secondary rounded-md px-2 py-1"
-                        >
-                            <Text className="text-foreground text-sm">
-                                +15s
+                        </View>
+                        <View className="flex-1 flex-row items-center justify-between">
+                            <TouchableOpacity
+                                onPress={() => handleRestPeriodChange(-15)}
+                                className="bg-secondary rounded-md px-2 py-1"
+                            >
+                                <Text className="text-foreground text-sm">
+                                    -15
+                                </Text>
+                            </TouchableOpacity>
+                            <Text className="text-xl text-foreground font-bold mx-2">
+                                {data.rest_period.substring(3)}
                             </Text>
-                        </TouchableOpacity>
+                            <TouchableOpacity
+                                onPress={() => handleRestPeriodChange(15)}
+                                className="bg-secondary rounded-md px-2 py-1"
+                            >
+                                <Text className="text-foreground text-sm">
+                                    +15
+                                </Text>
+                            </TouchableOpacity>
+                        </View>
                     </View>
                 </View>
             </CardContent>
