@@ -150,7 +150,10 @@ class ExerciseViewSet(viewsets.ReadOnlyModelViewSet):
             Exercise.objects.filter(
                 workout__user=request.user,
                 name=exercise_name,
+                sets__reps__isnull=False,
+                sets__weight__isnull=False,
             )
+            .distinct()
             .select_related("workout")
             .order_by("workout__date")
         )
