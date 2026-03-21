@@ -96,13 +96,48 @@ class Workout(models.Model):
                 name=exercise_template.name,
                 rest_period=exercise_template.rest_period,
                 notes=exercise_template.notes,
-                increment_step=exercise_template.increment_step,
             )
+
+            autofilled_weight = None
+            ExerciseModel = new_workout.exercises.model
+
+            previous_exercise = (
+                ExerciseModel.objects.filter(
+                    workout__user=user,
+                    name=exercise_template.name,
+                    workout__date__lt=date,
+                )
+                .order_by("-workout__date")
+                .first()
+            )
+
+            if previous_exercise:
+                previous_sets = previous_exercise.sets.all()
+                if previous_sets.exists():
+                    first_weight = previous_sets.first().weight
+
+                    if first_weight is not None:
+                        all_same_weight = all(
+                            s.weight == first_weight for s in previous_sets
+                        )
+                        all_hit_top_reps = all(
+                            s.reps is not None and s.reps >= s.max_reps
+                            for s in previous_sets
+                        )
+
+                        if all_same_weight and all_hit_top_reps:
+                            autofilled_weight = (
+                                first_weight + exercise_template.increment_step
+                            )
+                        else:
+                            autofilled_weight = first_weight
+
             for set_template in exercise_template.set_templates.all():
                 new_exercise.sets.create(
                     notes=set_template.notes,
                     min_reps=set_template.min_reps,
                     max_reps=set_template.max_reps,
+                    weight=autofilled_weight,
                 )
         return new_workout
 
