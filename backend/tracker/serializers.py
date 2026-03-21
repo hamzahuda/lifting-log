@@ -72,7 +72,6 @@ class ExerciseSerializer(serializers.ModelSerializer):
             "rest_period",
             "notes",
             "date",
-            "increment_step",
             "sets",
         ]
 
