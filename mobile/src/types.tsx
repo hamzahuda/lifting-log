@@ -22,6 +22,7 @@ export type Exercise = {
     notes: string;
     sets: Set[];
     date: string;
+    increment_step: number;
 };
 
 export type Workout = {
@@ -47,6 +48,7 @@ export type ExerciseTemplate = {
     rest_period: string;
     notes: string;
     set_templates: SetTemplate[];
+    increment_step: number;
 };
 
 export type WorkoutTemplate = {
