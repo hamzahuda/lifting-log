@@ -290,7 +290,9 @@ export default function ProgressDetailScreen() {
             case "PLATEAUED":
                 return "Progress plateaued - keep pushing to predict!";
             case "OUT_OF_BOUNDS":
-                return "Estimated time: > 1 year";
+                return activeRegressionType === "linear"
+                    ? "Estimated time: > 1 month"
+                    : "Estimated time: > 1 year";
             case "PREDICTED": {
                 const { daysRemaining } = result;
                 const months = Math.floor(daysRemaining / 30);

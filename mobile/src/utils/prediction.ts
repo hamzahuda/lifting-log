@@ -79,7 +79,9 @@ export function calculateDaysToGoal(
         return { status: "PLATEAUED" };
     }
 
-    const maxSearchDays = daysFromStartToNow + 365;
+    const predictionDaysCap = selectedType === "linear" ? 30 : 360;
+    const daysFromStartToMaxSearch = daysFromStartToNow + predictionDaysCap;
+
     let daysFromStartToGoal: number;
 
     // solve for x (days) using the target y (goalWeight)
@@ -93,11 +95,11 @@ export function calculateDaysToGoal(
 
     daysFromStartToGoal = Math.ceil(daysFromStartToGoal);
 
-    // If the prediction is NaN, infinitely far away, or beyond our 1-year cap
+    // If the prediction is NaN, infinite, or exceeds the specific cap for that model
     if (
         isNaN(daysFromStartToGoal) ||
         !isFinite(daysFromStartToGoal) ||
-        daysFromStartToGoal > maxSearchDays
+        daysFromStartToGoal > daysFromStartToMaxSearch
     ) {
         return { status: "OUT_OF_BOUNDS" };
     }
