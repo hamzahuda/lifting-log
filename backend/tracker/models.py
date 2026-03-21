@@ -96,6 +96,7 @@ class Workout(models.Model):
                 name=exercise_template.name,
                 rest_period=exercise_template.rest_period,
                 notes=exercise_template.notes,
+                increment_step=exercise_template.increment_step,
             )
             for set_template in exercise_template.set_templates.all():
                 new_exercise.sets.create(
@@ -135,6 +136,7 @@ class Exercise(models.Model):
     name = models.CharField(max_length=100)
     rest_period = models.DurationField()
     notes = models.TextField(blank=True)
+    increment_step = models.FloatField(default=2.5)
 
     def __str__(self):
         return self.name
