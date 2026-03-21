@@ -28,6 +28,7 @@ export default function TemplateForm({
                     name: "",
                     rest_period: "00:02:00",
                     notes: "",
+                    increment_step: 2.5,
                     set_templates: [],
                 },
             ],
