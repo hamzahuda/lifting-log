@@ -270,13 +270,15 @@ async function pullCustomExercisesFromBackend(db: SQLite.SQLiteDatabase) {
 
         await db.withExclusiveTransactionAsync(async () => {
             for (const remoteExercise of remoteExercises) {
-                const localName = localExercises.get(remoteExercise.id);
+                const localName = localExercises.get(
+                    remoteExercise.id.toString(),
+                );
 
                 if (localName === undefined) {
                     // This exercise is on the backend but not locally so add it
                     await addCustomExercise(db, remoteExercise.name, {
                         needs_sync: 0,
-                        backend_id: remoteExercise.id,
+                        backend_id: remoteExercise.id.toString(),
                     });
                 } else if (localName !== remoteExercise.name) {
                     // Backend has an updated name for this exercise (only if it has no pending sync)
