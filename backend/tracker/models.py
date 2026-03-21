@@ -229,6 +229,7 @@ class ExerciseTemplate(models.Model):
     name = models.CharField(max_length=100)
     rest_period = models.DurationField()
     notes = models.TextField(blank=True)
+    increment_step = models.FloatField(default=2.5)
 
     def __str__(self):
         return f"{self.name} - Template"
