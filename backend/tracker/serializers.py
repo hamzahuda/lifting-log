@@ -65,7 +65,16 @@ class ExerciseSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Exercise
-        fields = ["id", "workout_id", "name", "rest_period", "notes", "sets", "date"]
+        fields = [
+            "id",
+            "workout_id",
+            "name",
+            "rest_period",
+            "notes",
+            "date",
+            "increment_step",
+            "sets",
+        ]
 
 
 class WorkoutSerializer(serializers.HyperlinkedModelSerializer):
@@ -124,6 +133,7 @@ class ExerciseTemplateSerializer(serializers.ModelSerializer):
             "name",
             "rest_period",
             "notes",
+            "increment_step",
             "set_templates",
         ]
 
