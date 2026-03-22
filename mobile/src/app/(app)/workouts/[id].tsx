@@ -5,6 +5,7 @@ import {
     Alert,
     KeyboardAvoidingView,
     Platform,
+    TouchableOpacity,
 } from "react-native";
 import { useLocalSearchParams } from "expo-router";
 import { fetchWorkout, updateWorkout } from "@/services/api";
@@ -14,6 +15,8 @@ import { useNavigation } from "expo-router";
 import { Workout } from "@/types";
 import { Textarea } from "@/components/ui/textarea";
 import ScreenStateWrapper from "@/components/common/screen-state-wrapper";
+import { Pencil } from "lucide-react-native";
+import { Icon } from "@/components/ui/icon";
 
 export default function WorkoutDetailScreen() {
     const { id } = useLocalSearchParams<{ id: string }>();
@@ -23,6 +26,7 @@ export default function WorkoutDetailScreen() {
     );
     const [loading, setLoading] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
+    const [isEditing, setIsEditing] = useState(false);
     const scrollViewRef = useRef<ScrollView>(null);
     const itemLayouts = useRef<{ [key: number]: number }>({});
     const isInitialLoad = useRef(true);
@@ -77,9 +81,25 @@ export default function WorkoutDetailScreen() {
             );
             navigation.setOptions({
                 title: `${workout.name} - ${workoutDate}`,
+                headerRight: () => (
+                    <TouchableOpacity
+                        onPress={() => setIsEditing((prev) => !prev)}
+                        className="mr-2"
+                    >
+                        <Icon
+                            as={Pencil}
+                            size={20}
+                            className={
+                                isEditing
+                                    ? "text-primary"
+                                    : "text-muted-foreground"
+                            }
+                        />
+                    </TouchableOpacity>
+                ),
             });
         }
-    }, [navigation, workout]);
+    }, [navigation, workout, isEditing]);
 
     useEffect(() => {
         if (isInitialLoad.current) {
@@ -138,6 +158,66 @@ export default function WorkoutDetailScreen() {
                         newSets[setIndex].reps = newValue;
                     }
 
+                    return { ...exercise, sets: newSets };
+                },
+            );
+
+            return { ...currentWorkout, exercises: newExercises };
+        });
+    };
+
+    const handleAddSet = (exerciseIndex: number) => {
+        setWorkout((currentWorkout) => {
+            if (!currentWorkout) return null;
+
+            const newExercises = currentWorkout.exercises.map(
+                (exercise, exIndex) => {
+                    if (exIndex !== exerciseIndex) {
+                        return exercise;
+                    }
+
+                    const minReps =
+                        exercise.sets.length > 0
+                            ? exercise.sets[0].min_reps
+                            : 0;
+                    const maxReps =
+                        exercise.sets.length > 0
+                            ? exercise.sets[0].max_reps
+                            : 0;
+
+                    const newSets = [
+                        ...exercise.sets,
+                        {
+                            id: Date.now(),
+                            weight: null,
+                            reps: null,
+                            min_reps: minReps,
+                            max_reps: maxReps,
+                            notes: "",
+                        },
+                    ];
+
+                    return { ...exercise, sets: newSets };
+                },
+            );
+
+            return { ...currentWorkout, exercises: newExercises };
+        });
+    };
+
+    const handleDeleteSet = (exerciseIndex: number, setIndex: number) => {
+        setWorkout((currentWorkout) => {
+            if (!currentWorkout) return null;
+
+            const newExercises = currentWorkout.exercises.map(
+                (exercise, exIndex) => {
+                    if (exIndex !== exerciseIndex) {
+                        return exercise;
+                    }
+
+                    const newSets = exercise.sets.filter(
+                        (_, sIndex) => sIndex !== setIndex,
+                    );
                     return { ...exercise, sets: newSets };
                 },
             );
@@ -216,6 +296,9 @@ export default function WorkoutDetailScreen() {
                                                 index ===
                                                 workout.exercises.length - 1
                                             }
+                                            isEditing={isEditing}
+                                            onAddSet={handleAddSet}
+                                            onDeleteSet={handleDeleteSet}
                                         />
                                     </View>
                                 ))}
