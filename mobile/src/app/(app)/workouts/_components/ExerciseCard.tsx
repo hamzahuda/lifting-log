@@ -1,8 +1,10 @@
-import { View, Text } from "react-native";
+import { View, Text, TouchableOpacity } from "react-native";
 import { Exercise } from "@/types";
 import { useEffect, useState } from "react";
 import { fetchLastExercisePerformance } from "@/services/api";
 import SetRow from "./SetRow";
+import { Plus } from "lucide-react-native";
+import { Icon } from "@/components/ui/icon";
 
 interface ExerciseCardProps {
     exercise: Exercise;
@@ -15,6 +17,9 @@ interface ExerciseCardProps {
     exerciseIndex: number;
     workoutId: number;
     isLast?: boolean;
+    isEditing: boolean;
+    onAddSet: (exerciseIndex: number) => void;
+    onDeleteSet: (exerciseIndex: number, setIndex: number) => void;
 }
 
 export default function ExerciseCard({
@@ -23,6 +28,9 @@ export default function ExerciseCard({
     exerciseIndex,
     workoutId,
     isLast,
+    isEditing,
+    onAddSet,
+    onDeleteSet,
 }: ExerciseCardProps) {
     const [lastPerformance, setLastPerformance] = useState<Exercise | null>(
         null,
@@ -78,19 +86,27 @@ export default function ExerciseCard({
             </View>
 
             <View className="mt-4 mb-2">
-                <View className="flex-row pb-2 border-gray-500">
-                    <Text className="w-12 text-muted-foreground text-center text-lg font-semibold">
-                        SET
-                    </Text>
-                    <Text className="flex-1 text-muted-foreground text-center text-lg font-semibold">
-                        PREVIOUS
-                    </Text>
-                    <Text className="w-24 text-muted-foreground text-center text-lg font-semibold">
-                        WEIGHT
-                    </Text>
-                    <Text className="w-24 text-muted-foreground text-center text-lg font-semibold">
-                        REPS
-                    </Text>
+                <View className="flex-row pb-2 border-gray-500 items-center">
+                    <View className="flex-1 flex-row items-center">
+                        <Text className="w-12 text-muted-foreground text-center text-lg font-semibold">
+                            SET
+                        </Text>
+                        <View className="flex-1 justify-center items-center px-1">
+                            <Text
+                                className="text-muted-foreground text-center text-lg font-semibold"
+                                numberOfLines={1}
+                            >
+                                PREVIOUS
+                            </Text>
+                        </View>
+                        <Text className="w-24 text-muted-foreground text-center text-lg font-semibold">
+                            WEIGHT
+                        </Text>
+                        <Text className="w-24 text-muted-foreground text-center text-lg font-semibold">
+                            REPS
+                        </Text>
+                    </View>
+                    {isEditing && <View className="w-6" />}
                 </View>
 
                 {exercise.sets.map((set, setIndex) => (
@@ -102,8 +118,26 @@ export default function ExerciseCard({
                         lastPerformanceSet={formatLastPerformanceSet(setIndex)}
                         isLoadingLastPerformance={isLoadingLastPerformance}
                         onSetUpdate={onSetUpdate}
+                        isEditing={isEditing}
+                        onDeleteSet={onDeleteSet}
                     />
                 ))}
+
+                {isEditing && (
+                    <TouchableOpacity
+                        className="flex-row items-center justify-center py-2 mt-2 bg-secondary rounded-md"
+                        onPress={() => onAddSet(exerciseIndex)}
+                    >
+                        <Icon
+                            as={Plus}
+                            size={20}
+                            className="text-foreground mr-2"
+                        />
+                        <Text className="text-foreground font-semibold">
+                            Add Set
+                        </Text>
+                    </TouchableOpacity>
+                )}
             </View>
         </View>
     );
