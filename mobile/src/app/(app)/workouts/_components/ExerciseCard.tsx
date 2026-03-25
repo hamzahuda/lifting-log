@@ -3,8 +3,9 @@ import { Exercise } from "@/types";
 import { useEffect, useState } from "react";
 import { fetchLastExercisePerformance } from "@/services/api";
 import SetRow from "./SetRow";
-import { Plus } from "lucide-react-native";
+import { Plus, Timer as TimerIcon } from "lucide-react-native";
 import { Icon } from "@/components/ui/icon";
+import { HHMMSStoSeconds, secondsToMMSS } from "@/utils/time-converter";
 
 interface ExerciseCardProps {
     exercise: Exercise;
@@ -20,6 +21,7 @@ interface ExerciseCardProps {
     isEditing: boolean;
     onAddSet: (exerciseIndex: number) => void;
     onDeleteSet: (exerciseIndex: number, setIndex: number) => void;
+    onStartRestTimer: (seconds: number) => void;
 }
 
 export default function ExerciseCard({
@@ -31,6 +33,7 @@ export default function ExerciseCard({
     isEditing,
     onAddSet,
     onDeleteSet,
+    onStartRestTimer,
 }: ExerciseCardProps) {
     const [lastPerformance, setLastPerformance] = useState<Exercise | null>(
         null,
@@ -69,6 +72,17 @@ export default function ExerciseCard({
             return "-";
         return `${lastPerformance.sets[setIndex].weight} x ${lastPerformance.sets[setIndex].reps}`;
     };
+
+    let restSeconds = 0;
+    let hasValidRest = false;
+    if (exercise.rest_period && exercise.rest_period !== "00:00:00") {
+        try {
+            restSeconds = HHMMSStoSeconds(exercise.rest_period);
+            if (restSeconds > 0) hasValidRest = true;
+        } catch (e) {
+            console.error("Invalid rest period format:", e);
+        }
+    }
 
     return (
         <View
@@ -135,6 +149,22 @@ export default function ExerciseCard({
                         />
                         <Text className="text-foreground font-semibold">
                             Add Set
+                        </Text>
+                    </TouchableOpacity>
+                )}
+
+                {hasValidRest && (
+                    <TouchableOpacity
+                        className="flex-row items-center justify-center py-2 mt-2 bg-muted/30 border border-border rounded-md"
+                        onPress={() => onStartRestTimer(restSeconds)}
+                    >
+                        <Icon
+                            as={TimerIcon}
+                            size={20}
+                            className="text-muted-foreground mr-2"
+                        />
+                        <Text className="text-muted-foreground font-semibold">
+                            Rest ({secondsToMMSS(restSeconds)})
                         </Text>
                     </TouchableOpacity>
                 )}
