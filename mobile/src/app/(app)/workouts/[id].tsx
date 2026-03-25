@@ -6,6 +6,7 @@ import {
     KeyboardAvoidingView,
     Platform,
     TouchableOpacity,
+    Text,
 } from "react-native";
 import { useLocalSearchParams } from "expo-router";
 import { fetchWorkout, updateWorkout } from "@/services/api";
@@ -15,8 +16,15 @@ import { useNavigation } from "expo-router";
 import { Workout } from "@/types";
 import { Textarea } from "@/components/ui/textarea";
 import ScreenStateWrapper from "@/components/common/screen-state-wrapper";
-import { Pencil } from "lucide-react-native";
+import {
+    Pencil,
+    Play,
+    Pause,
+    X,
+    Timer as TimerIcon,
+} from "lucide-react-native";
 import { Icon } from "@/components/ui/icon";
+import { secondsToMMSS } from "@/utils/time-converter";
 
 export default function WorkoutDetailScreen() {
     const { id } = useLocalSearchParams<{ id: string }>();
@@ -27,6 +35,11 @@ export default function WorkoutDetailScreen() {
     const [loading, setLoading] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
+
+    const [timerSeconds, setTimerSeconds] = useState(0);
+    const [isTimerRunning, setIsTimerRunning] = useState(false);
+    const [showTimerBanner, setShowTimerBanner] = useState(false);
+
     const scrollViewRef = useRef<ScrollView>(null);
     const itemLayouts = useRef<{ [key: number]: number }>({});
     const isInitialLoad = useRef(true);
@@ -114,6 +127,38 @@ export default function WorkoutDetailScreen() {
             handleSaveChanges();
         }
     }, [debouncedWorkout]);
+
+    // Timer logic interval
+    useEffect(() => {
+        let interval: ReturnType<typeof setInterval>;
+
+        if (isTimerRunning && timerSeconds > 0) {
+            interval = setInterval(() => {
+                setTimerSeconds((prev) => prev - 1);
+            }, 1000);
+        } else if (timerSeconds === 0 && isTimerRunning) {
+            setIsTimerRunning(false);
+        }
+
+        return () => {
+            if (interval) {
+                clearInterval(interval);
+            }
+        };
+    }, [isTimerRunning, timerSeconds]);
+
+    const handleStartRestTimer = (seconds: number) => {
+        setTimerSeconds(seconds);
+        setIsTimerRunning(true);
+        setShowTimerBanner(true);
+    };
+
+    const toggleTimer = () => setIsTimerRunning((prev) => !prev);
+
+    const closeTimerBanner = () => {
+        setShowTimerBanner(false);
+        setIsTimerRunning(false);
+    };
 
     const handleSetUpdate = (
         exerciseIndex: number,
@@ -266,7 +311,7 @@ export default function WorkoutDetailScreen() {
                         <ScrollView
                             ref={scrollViewRef}
                             contentContainerStyle={{
-                                paddingBottom: 150,
+                                paddingBottom: 200,
                             }}
                             showsVerticalScrollIndicator={false}
                             keyboardDismissMode="on-drag"
@@ -299,11 +344,58 @@ export default function WorkoutDetailScreen() {
                                             isEditing={isEditing}
                                             onAddSet={handleAddSet}
                                             onDeleteSet={handleDeleteSet}
+                                            onStartRestTimer={
+                                                handleStartRestTimer
+                                            }
                                         />
                                     </View>
                                 ))}
                             </View>
                         </ScrollView>
+
+                        {/* Floating Timer Banner */}
+                        {showTimerBanner && (
+                            <View
+                                className="absolute left-2 right-2 bg-secondary rounded-xl flex-row items-center justify-between p-4"
+                                style={{
+                                    bottom: 105,
+                                    elevation: 10,
+                                }}
+                            >
+                                <View className="flex-row items-center">
+                                    <Icon
+                                        as={TimerIcon}
+                                        size={28}
+                                        className="text-foreground mr-3"
+                                    />
+                                    <Text className="text-foreground font-bold text-2xl">
+                                        {secondsToMMSS(timerSeconds)}
+                                    </Text>
+                                </View>
+                                <View className="flex-row items-center gap-4">
+                                    <TouchableOpacity
+                                        onPress={toggleTimer}
+                                        className="p-2"
+                                    >
+                                        <Icon
+                                            as={isTimerRunning ? Pause : Play}
+                                            size={24}
+                                            className="text-foreground"
+                                        />
+                                    </TouchableOpacity>
+                                    <TouchableOpacity
+                                        onPress={closeTimerBanner}
+                                        className="p-2"
+                                    >
+                                        <Icon
+                                            as={X}
+                                            size={24}
+                                            className="text-foreground"
+                                        />
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
+                        )}
                     </View>
                 </KeyboardAvoidingView>
             )}
