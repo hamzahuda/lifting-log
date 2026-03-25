@@ -12,6 +12,7 @@ type RegressionData = {
 
 type PredictionResult =
     | { status: "ACHIEVED" }
+    | { status: "ACHIEVABLE_NOW" }
     | { status: "PLATEAUED" }
     | { status: "OUT_OF_BOUNDS" }
     | { status: "PREDICTED"; daysRemaining: number };
@@ -107,7 +108,7 @@ export function calculateDaysToGoal(
     const daysFromNowToGoal = daysFromStartToGoal - daysFromStartToNow;
 
     if (daysFromNowToGoal <= 0) {
-        return { status: "ACHIEVED" };
+        return { status: "ACHIEVABLE_NOW" };
     }
 
     return { status: "PREDICTED", daysRemaining: daysFromNowToGoal };

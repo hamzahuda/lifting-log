@@ -287,6 +287,8 @@ export default function ProgressDetailScreen() {
         switch (result.status) {
             case "ACHIEVED":
                 return "Goal Achieved!";
+            case "ACHIEVABLE_NOW":
+                return "Goal Achievable Now!";
             case "PLATEAUED":
                 return "Progress plateaued - keep pushing to predict!";
             case "OUT_OF_BOUNDS":
