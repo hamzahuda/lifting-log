@@ -1,6 +1,8 @@
 from rest_framework.test import APITestCase
 from django.contrib.auth import get_user_model
 from unittest.mock import patch, MagicMock
+from .models import *
+from datetime import timedelta
 
 User = get_user_model()
 
@@ -26,3 +28,26 @@ class UserModelTests(APITestCase):
 
         mock_create_client.assert_called_once()
         mock_supabase.auth.admin.delete_user.assert_called_once_with("mock-uuid-1234")
+
+
+class WorkoutTemplateTests(APITestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username="testuser")
+        self.client.force_authenticate(user=self.user)
+
+        self.template_data = {
+            "name": "Push Day",
+            "notes": "Focus on chest and triceps",
+            "exercise_templates": [
+                {
+                    "name": "Bench Press",
+                    "rest_period": timedelta(seconds=120),
+                    "notes": "Keep shoulders back",
+                    "increment_step": 2.5,
+                    "set_templates": [
+                        {"min_reps": 8, "max_reps": 10, "notes": "Set 1"},
+                        {"min_reps": 8, "max_reps": 10, "notes": "Set 2"},
+                    ],
+                }
+            ],
+        }
