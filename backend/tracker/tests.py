@@ -51,3 +51,13 @@ class WorkoutTemplateTests(APITestCase):
                 }
             ],
         }
+
+    def testCreateTemplateWithExercises(self):
+        template = WorkoutTemplate.create_with_exercises(
+            user=self.user, template_data=self.template_data
+        )
+
+        self.assertEqual(WorkoutTemplate.objects.count(), 1)
+        self.assertEqual(ExerciseTemplate.objects.count(), 1)
+        self.assertEqual(SetTemplate.objects.count(), 2)
+        self.assertEqual(template.name, "Push Day")
