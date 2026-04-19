@@ -88,3 +88,23 @@ class WorkoutTemplateTests(APITestCase):
         self.assertEqual(ExerciseTemplate.objects.count(), 1)
         self.assertEqual(ExerciseTemplate.objects.first().name, "Incline Bench Press")
         self.assertEqual(SetTemplate.objects.count(), 1)
+
+    def testDuplicateTemplate(self):
+        template = WorkoutTemplate.create_with_exercises(
+            user=self.user, template_data=self.template_data
+        )
+
+        duplicate = WorkoutTemplate.duplicate_from_id(
+            user=self.user, template_to_duplicate_id=template.id
+        )
+
+        self.assertIsNotNone(duplicate)
+        self.assertEqual(WorkoutTemplate.objects.count(), 2)
+        self.assertEqual(duplicate.name, f"{template.name} (Copy)")
+        self.assertEqual(
+            duplicate.exercise_templates.count(), template.exercise_templates.count()
+        )
+        self.assertEqual(
+            duplicate.exercise_templates.first().set_templates.count(),
+            template.exercise_templates.first().set_templates.count(),
+        )
