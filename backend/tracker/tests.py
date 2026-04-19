@@ -108,3 +108,10 @@ class WorkoutTemplateTests(APITestCase):
             duplicate.exercise_templates.first().set_templates.count(),
             template.exercise_templates.first().set_templates.count(),
         )
+
+    def testDuplicateInvalidTemplate(self):
+        duplicate = WorkoutTemplate.duplicate_from_id(
+            user=self.user, template_to_duplicate_id=999
+        )
+
+        self.assertIsNone(duplicate)
