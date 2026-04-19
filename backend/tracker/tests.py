@@ -61,3 +61,30 @@ class WorkoutTemplateTests(APITestCase):
         self.assertEqual(ExerciseTemplate.objects.count(), 1)
         self.assertEqual(SetTemplate.objects.count(), 2)
         self.assertEqual(template.name, "Push Day")
+
+    def testUpdateTemplateWithExercises(self):
+        template = WorkoutTemplate.create_with_exercises(
+            user=self.user, template_data=self.template_data
+        )
+
+        update_data = {
+            "name": "Updated Push Day",
+            "notes": "Updated notes",
+            "exercise_templates": [
+                {
+                    "name": "Incline Bench Press",
+                    "rest_period": timedelta(seconds=90),
+                    "increment_step": 2.5,
+                    "set_templates": [
+                        {"min_reps": 10, "max_reps": 12},
+                    ],
+                }
+            ],
+        }
+
+        template.update_with_exercises(update_data)
+
+        self.assertEqual(template.name, "Updated Push Day")
+        self.assertEqual(ExerciseTemplate.objects.count(), 1)
+        self.assertEqual(ExerciseTemplate.objects.first().name, "Incline Bench Press")
+        self.assertEqual(SetTemplate.objects.count(), 1)
