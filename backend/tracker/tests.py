@@ -354,3 +354,13 @@ class SettingsAndGoalsTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(ExerciseGoal.objects.count(), 1)
         self.assertEqual(ExerciseGoal.objects.first().goal_weight, 100.0)
+
+    def testCreateCustomExerciseName(self):
+        url = reverse("customexercisename-list")
+        data = {"name": "Zercher Squat"}
+
+        response = self.client.post(url, data)
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(CustomExerciseName.objects.count(), 1)
+        self.assertEqual(CustomExerciseName.objects.first().name, "Zercher Squat")
