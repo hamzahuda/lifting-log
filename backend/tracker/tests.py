@@ -336,3 +336,11 @@ class ProgressAndHistoryTests(APITestCase):
         self.assertEqual(len(response.data), 2)
         self.assertEqual(response.data[0]["sets"][0]["weight"], 140)
         self.assertEqual(response.data[1]["sets"][0]["weight"], 145)
+
+
+class SettingsAndGoalsTests(APITestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username="testuser", password="testpassword"
+        )
+        self.client.force_authenticate(user=self.user)
