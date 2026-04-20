@@ -242,3 +242,33 @@ class WorkoutTests(APITestCase):
         updated_set = workout.exercises.first().sets.first()
         self.assertEqual(updated_set.reps, 6)
         self.assertEqual(updated_set.weight, 110)
+
+
+class ProgressAndHistoryTests(APITestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username="testuser", password="testpassword"
+        )
+        self.client.force_authenticate(user=self.user)
+
+        # Workout 1
+        date1 = timezone.now() - timedelta(days=14)
+        w1 = Workout.objects.create(user=self.user, name="Back", date=date1)
+        e1 = Exercise.objects.create(
+            workout=w1, name="Deadlift", rest_period=timedelta(seconds=120)
+        )
+        Set.objects.create(exercise=e1, reps=5, min_reps=5, max_reps=5, weight=140)
+
+        # Workout 2
+        date2 = timezone.now() - timedelta(days=7)
+        w2 = Workout.objects.create(user=self.user, name="Back", date=date2)
+        e2 = Exercise.objects.create(
+            workout=w2, name="Deadlift", rest_period=timedelta(seconds=120)
+        )
+        Set.objects.create(exercise=e2, reps=5, min_reps=5, max_reps=5, weight=145)
+
+        # Current Workout (in progress)
+        self.current_date = timezone.now()
+        self.current_workout = Workout.objects.create(
+            user=self.user, name="Back", date=self.current_date
+        )
