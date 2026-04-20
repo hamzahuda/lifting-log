@@ -189,3 +189,26 @@ class WorkoutTests(APITestCase):
             self.assertEqual(
                 s.weight, 100 + self.template.exercise_templates.first().increment_step
             )
+
+    def testWorkoutAutofillMaintainWeight(self):
+        # Create a previous workout where max reps were not hit
+        prev_workout = Workout.objects.create(
+            user=self.user, name="Leg Day", date=timezone.now() - timedelta(days=7)
+        )
+        prev_exercise = Exercise.objects.create(
+            workout=prev_workout, name="Squat", rest_period=timedelta(seconds=180)
+        )
+        Set.objects.create(
+            exercise=prev_exercise, reps=6, min_reps=4, max_reps=6, weight=100
+        )
+        Set.objects.create(
+            exercise=prev_exercise, reps=5, min_reps=4, max_reps=6, weight=100
+        )
+
+        new_workout = Workout.create_from_template(
+            user=self.user, template=self.template, date=timezone.now()
+        )
+
+        new_exercise = new_workout.exercises.first()
+        for s in new_exercise.sets.all():
+            self.assertEqual(s.weight, 100)
