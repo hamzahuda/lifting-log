@@ -317,3 +317,22 @@ class ProgressAndHistoryTests(APITestCase):
         self.assertEqual(response_search.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response_search.data), 1)
         self.assertEqual(response_search.data[0], "Dumbbell Press")
+
+    def testSingleExerciseHistory(self):
+        # Exercise with null reps/weights to test exclusion
+        e_null = Exercise.objects.create(
+            workout=self.current_workout,
+            name="Deadlift",
+            rest_period=timedelta(seconds=120),
+        )
+        Set.objects.create(
+            exercise=e_null, reps=None, min_reps=5, max_reps=5, weight=None
+        )
+
+        url = reverse("exercise-single-exercise-history")
+        response = self.client.get(url, {"exercise_name": "Deadlift"})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 2)
+        self.assertEqual(response.data[0]["sets"][0]["weight"], 140)
+        self.assertEqual(response.data[1]["sets"][0]["weight"], 145)
