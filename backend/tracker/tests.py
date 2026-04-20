@@ -256,17 +256,17 @@ class ProgressAndHistoryTests(APITestCase):
 
         # Workout 1
         date1 = timezone.now() - timedelta(days=14)
-        w1 = Workout.objects.create(user=self.user, name="Back", date=date1)
+        self.w1 = Workout.objects.create(user=self.user, name="Back", date=date1)
         e1 = Exercise.objects.create(
-            workout=w1, name="Deadlift", rest_period=timedelta(seconds=120)
+            workout=self.w1, name="Deadlift", rest_period=timedelta(seconds=120)
         )
         Set.objects.create(exercise=e1, reps=5, min_reps=5, max_reps=5, weight=140)
 
         # Workout 2
         date2 = timezone.now() - timedelta(days=7)
-        w2 = Workout.objects.create(user=self.user, name="Back", date=date2)
+        self.w2 = Workout.objects.create(user=self.user, name="Back", date=date2)
         e2 = Exercise.objects.create(
-            workout=w2, name="Deadlift", rest_period=timedelta(seconds=120)
+            workout=self.w2, name="Deadlift", rest_period=timedelta(seconds=120)
         )
         Set.objects.create(exercise=e2, reps=5, min_reps=5, max_reps=5, weight=145)
 
@@ -285,7 +285,7 @@ class ProgressAndHistoryTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(
             parse_datetime(response.data["date"]),
-            Workout.objects.get(id=2).date,
+            self.w2.date,
         )
         self.assertEqual(response.data["sets"][0]["weight"], 145)
 
