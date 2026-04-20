@@ -4,6 +4,9 @@ from unittest.mock import patch, MagicMock
 from .models import *
 from datetime import timedelta
 from django.utils import timezone
+from rest_framework import status
+from django.urls import reverse
+from django.utils.dateparse import parse_datetime
 
 User = get_user_model()
 
@@ -272,3 +275,16 @@ class ProgressAndHistoryTests(APITestCase):
         self.current_workout = Workout.objects.create(
             user=self.user, name="Back", date=self.current_date
         )
+
+    def testGettingLastPerformance(self):
+        url = reverse("exercise-last-performance")
+        response = self.client.get(
+            url, {"name": "Deadlift", "workout_id": self.current_workout.id}
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(
+            parse_datetime(response.data["date"]),
+            Workout.objects.get(id=2).date,
+        )
+        self.assertEqual(response.data["sets"][0]["weight"], 145)
