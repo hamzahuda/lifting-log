@@ -115,3 +115,30 @@ class WorkoutTemplateTests(APITestCase):
         )
 
         self.assertIsNone(duplicate)
+
+
+class WorkoutTests(APITestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username="testuser", password="testpassword"
+        )
+        self.client.force_authenticate(user=self.user)
+
+        template_data = {
+            "name": "Leg Day",
+            "notes": "",
+            "exercise_templates": [
+                {
+                    "name": "Squat",
+                    "rest_period": timedelta(seconds=180),
+                    "increment_step": 5.0,
+                    "set_templates": [
+                        {"min_reps": 4, "max_reps": 6, "notes": ""},
+                        {"min_reps": 4, "max_reps": 6, "notes": ""},
+                    ],
+                }
+            ],
+        }
+        self.template = WorkoutTemplate.create_with_exercises(
+            user=self.user, template_data=template_data
+        )
