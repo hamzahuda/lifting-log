@@ -212,3 +212,33 @@ class WorkoutTests(APITestCase):
         new_exercise = new_workout.exercises.first()
         for s in new_exercise.sets.all():
             self.assertEqual(s.weight, 100)
+
+    def testUpdateWorkoutWithExercises(self):
+        workout = Workout.create_from_template(
+            user=self.user, template=self.template, date=timezone.now()
+        )
+
+        update_data = {
+            "name": "Leg Day Completed",
+            "date": timezone.now(),
+            "notes": "Felt strong today",
+            "exercises": [
+                {
+                    "name": "Squat",
+                    "rest_period": timedelta(seconds=180),
+                    "sets": [
+                        {"min_reps": 4, "max_reps": 6, "reps": 6, "weight": 110},
+                        {"min_reps": 4, "max_reps": 6, "reps": 5, "weight": 110},
+                    ],
+                }
+            ],
+        }
+
+        workout.update_with_exercises(update_data)
+
+        self.assertEqual(workout.name, update_data["name"])
+        self.assertEqual(workout.notes, update_data["notes"])
+
+        updated_set = workout.exercises.first().sets.first()
+        self.assertEqual(updated_set.reps, 6)
+        self.assertEqual(updated_set.weight, 110)
