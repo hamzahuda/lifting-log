@@ -288,3 +288,11 @@ class ProgressAndHistoryTests(APITestCase):
             Workout.objects.get(id=2).date,
         )
         self.assertEqual(response.data["sets"][0]["weight"], 145)
+
+    def testGettingLastPerformanceMissingParams(self):
+        url = reverse("exercise-last-performance")
+
+        # Missing workout_id
+        response = self.client.get(url, {"name": "Deadlift"})
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
