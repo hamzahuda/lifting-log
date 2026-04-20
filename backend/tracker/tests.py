@@ -344,3 +344,13 @@ class SettingsAndGoalsTests(APITestCase):
             username="testuser", password="testpassword"
         )
         self.client.force_authenticate(user=self.user)
+
+    def testCreateExerciseGoal(self):
+        url = reverse("exercisegoal-list")
+        data = {"exercise_name": "Bench Press", "goal_weight": 100.0}
+
+        response = self.client.post(url, data)
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(ExerciseGoal.objects.count(), 1)
+        self.assertEqual(ExerciseGoal.objects.first().goal_weight, 100.0)
