@@ -3,6 +3,7 @@ from django.contrib.auth import get_user_model
 from unittest.mock import patch, MagicMock
 from .models import *
 from datetime import timedelta
+from django.utils import timezone
 
 User = get_user_model()
 
@@ -142,3 +143,23 @@ class WorkoutTests(APITestCase):
         self.template = WorkoutTemplate.create_with_exercises(
             user=self.user, template_data=template_data
         )
+
+    def testCreateWorkoutFromTemplate(self):
+        workout = Workout.create_from_template(
+            user=self.user, template=self.template, date=timezone.now()
+        )
+
+        self.assertEqual(Workout.objects.count(), 1)
+        self.assertEqual(workout.name, self.template.name)
+        self.assertEqual(
+            workout.exercises.count(), self.template.exercise_templates.count()
+        )
+        self.assertEqual(
+            workout.exercises.first().sets.count(),
+            self.template.exercise_templates.first().set_templates.count(),
+        )
+
+        # Should have None weights/reps since no previous workout exists to progressively overload from
+        first_set = workout.exercises.first().sets.first()
+        self.assertIsNone(first_set.weight)
+        self.assertIsNone(first_set.reps)
