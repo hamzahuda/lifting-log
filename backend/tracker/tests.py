@@ -296,3 +296,24 @@ class ProgressAndHistoryTests(APITestCase):
         response = self.client.get(url, {"name": "Deadlift"})
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def testExerciseDirectorySearch(self):
+        w3 = Workout.objects.create(
+            user=self.user, name="Chest", date=self.current_date - timedelta(days=1)
+        )
+        Exercise.objects.create(
+            workout=w3, name="Dumbbell Press", rest_period=timedelta(seconds=60)
+        )
+
+        url = reverse("exercise-directory")
+
+        # Test getting all unique exercises
+        response_all = self.client.get(url)
+        self.assertEqual(response_all.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response_all.data), 2)
+
+        # Test with search query
+        response_search = self.client.get(url, {"search": "Dumbbell"})
+        self.assertEqual(response_search.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response_search.data), 1)
+        self.assertEqual(response_search.data[0], "Dumbbell Press")
