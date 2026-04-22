@@ -33,6 +33,16 @@ class UserModelTests(APITestCase):
         mock_create_client.assert_called_once()
         mock_supabase.auth.admin.delete_user.assert_called_once_with("mock-uuid-1234")
 
+    @patch("tracker.models.create_client")
+    def testDeleteUserNoSupabaseId(self, mock_create_client):
+        user_no_sb = User.objects.create_user(
+            username="testuser2", password="testpassword2"
+        )
+        user_no_sb.delete()
+
+        self.assertFalse(User.objects.filter(username="testuser2").exists())
+        mock_create_client.assert_not_called()
+
 
 class WorkoutTemplateTests(APITestCase):
     def setUp(self):
