@@ -44,11 +44,9 @@ class UserModelTests(APITestCase):
         mock_create_client.assert_not_called()
 
 
-class WorkoutTemplateTests(APITestCase):
+class WorkoutTemplateModelTests(APITestCase):
     def setUp(self):
         self.user = User.objects.create_user(username="testuser")
-        self.client.force_authenticate(user=self.user)
-
         self.template_data = {
             "name": "Push Day",
             "notes": "Focus on chest and triceps",
