@@ -7,6 +7,7 @@ from datetime import timedelta
 from django.utils.dateparse import parse_datetime
 from tracker.models import (
     Workout,
+    WorkoutTemplate,
     Exercise,
     Set,
     ExerciseGoal,
@@ -114,3 +115,105 @@ class SettingsAndGoalsTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(CustomExerciseName.objects.count(), 1)
         self.assertEqual(CustomExerciseName.objects.first().name, "Zercher Squat")
+
+
+class WorkoutTemplateViewSetTests(APITestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username="testuser", password="testpassword", email="user@user.com"
+        )
+        self.other_user = User.objects.create_user(
+            username="otheruser", password="testpassword", email="other@other.com"
+        )
+        self.client.force_authenticate(user=self.user)
+
+        self.template = WorkoutTemplate.create_with_exercises(
+            user=self.user,
+            template_data={"name": "My Template", "exercise_templates": []},
+        )
+
+    def test_list_templates(self):
+        url = reverse("workouttemplate-list")
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data[0]["name"], "My Template")
+
+    def test_create_template(self):
+        url = reverse("workouttemplate-list")
+        data = {"name": "New Template", "notes": "Testing", "exercise_templates": []}
+        response = self.client.post(url, data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(WorkoutTemplate.objects.filter(user=self.user).count(), 2)
+
+    def test_cannot_see_other_users_templates(self):
+        WorkoutTemplate.create_with_exercises(
+            user=self.other_user,
+            template_data={"name": "Other Template", "exercise_templates": []},
+        )
+        url = reverse("workouttemplate-list")
+        response = self.client.get(url)
+        self.assertEqual(len(response.data), 1)
+
+
+class WorkoutViewSetTests(APITestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username="testuser", password="testpassword", email="user@user.com"
+        )
+        self.other_user = User.objects.create_user(
+            username="otheruser", password="testpassword", email="other@other.com"
+        )
+        self.client.force_authenticate(user=self.user)
+
+        self.template = WorkoutTemplate.create_with_exercises(
+            user=self.user,
+            template_data={"name": "My Template", "exercise_templates": []},
+        )
+        self.other_user_template = WorkoutTemplate.create_with_exercises(
+            user=self.other_user,
+            template_data={"name": "Other Template", "exercise_templates": []},
+        )
+
+    def test_create_workout_from_template(self):
+        url = reverse("workout-list")
+        data = {
+            "template": reverse("workouttemplate-detail", args=[self.template.id]),
+            "date": timezone.now().date(),
+        }
+        response = self.client.post(url, data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(Workout.objects.count(), 1)
+        self.assertEqual(Workout.objects.first().name, "My Template")
+
+    def test_create_workout_from_other_users_template(self):
+        url = reverse("workout-list")
+        data = {
+            "template": reverse(
+                "workouttemplate-detail", args=[self.other_user_template.id]
+            ),
+            "date": timezone.now().date(),
+        }
+        response = self.client.post(url, data, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn(
+            "You do not have permission to use this template.", str(response.data)
+        )
+
+    def test_list_workouts_uses_list_serializer(self):
+        Workout.objects.create(
+            user=self.user, name="Quick Session", date=timezone.now()
+        )
+        url = reverse("workout-list")
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # Make sure exercises are not included
+        self.assertNotIn("exercises", response.data[0])
+
+
+class UserViewSetTests(APITestCase):
+    def test_user_list_requires_auth(self):
+        url = reverse("user-list")
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
