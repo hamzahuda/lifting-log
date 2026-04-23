@@ -44,6 +44,9 @@ class UserModelTests(APITestCase):
         mock_create_client.assert_not_called()
 
 
+# --- Model Level Logic Tests ---
+
+
 class WorkoutTemplateModelTests(APITestCase):
     def setUp(self):
         self.user = User.objects.create_user(username="testuser")
@@ -129,12 +132,11 @@ class WorkoutTemplateModelTests(APITestCase):
         self.assertIsNone(duplicate)
 
 
-class WorkoutTests(APITestCase):
+class WorkoutModelTests(APITestCase):
     def setUp(self):
         self.user = User.objects.create_user(
             username="testuser", password="testpassword"
         )
-        self.client.force_authenticate(user=self.user)
 
         template_data = {
             "name": "Leg Day",
@@ -253,6 +255,9 @@ class WorkoutTests(APITestCase):
         updated_set = workout.exercises.first().sets.first()
         self.assertEqual(updated_set.reps, 6)
         self.assertEqual(updated_set.weight, 110)
+
+
+# --- API Level & Security Tests ---
 
 
 class ProgressAndHistoryTests(APITestCase):
