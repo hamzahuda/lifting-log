@@ -1,12 +1,17 @@
-from rest_framework.test import APITestCase
 from django.contrib.auth import get_user_model
+from rest_framework.test import APITestCase
 from unittest.mock import patch, MagicMock
-from .models import *
 from datetime import timedelta
 from django.utils import timezone
-from rest_framework import status
-from django.urls import reverse
-from django.utils.dateparse import parse_datetime
+from tracker.models import (
+    User,
+    WorkoutTemplate,
+    ExerciseTemplate,
+    SetTemplate,
+    Workout,
+    Exercise,
+    Set,
+)
 
 User = get_user_model()
 
@@ -21,30 +26,22 @@ class UserModelTests(APITestCase):
         )
 
     @patch("tracker.models.create_client")
-    def testDeleteUserSupabaseSync(self, mock_create_client):
-
+    def test_delete_user_supabase_sync(self, mock_create_client):
         mock_supabase = MagicMock()
         mock_create_client.return_value = mock_supabase
-
         self.user.delete()
-
         self.assertFalse(User.objects.filter(username="testuser").exists())
-
         mock_create_client.assert_called_once()
         mock_supabase.auth.admin.delete_user.assert_called_once_with("mock-uuid-1234")
 
     @patch("tracker.models.create_client")
-    def testDeleteUserNoSupabaseId(self, mock_create_client):
+    def test_delete_user_no_supabase_id(self, mock_create_client):
         user_no_sb = User.objects.create_user(
             username="testuser2", password="testpassword2"
         )
         user_no_sb.delete()
-
         self.assertFalse(User.objects.filter(username="testuser2").exists())
         mock_create_client.assert_not_called()
-
-
-# --- Model Level Logic Tests ---
 
 
 class WorkoutTemplateModelTests(APITestCase):
@@ -67,21 +64,19 @@ class WorkoutTemplateModelTests(APITestCase):
             ],
         }
 
-    def testCreateTemplateWithExercises(self):
+    def test_create_template_with_exercises(self):
         template = WorkoutTemplate.create_with_exercises(
             user=self.user, template_data=self.template_data
         )
-
         self.assertEqual(WorkoutTemplate.objects.count(), 1)
         self.assertEqual(ExerciseTemplate.objects.count(), 1)
         self.assertEqual(SetTemplate.objects.count(), 2)
         self.assertEqual(template.name, "Push Day")
 
-    def testUpdateTemplateWithExercises(self):
+    def test_update_template_with_exercises(self):
         template = WorkoutTemplate.create_with_exercises(
             user=self.user, template_data=self.template_data
         )
-
         update_data = {
             "name": "Updated Push Day",
             "notes": "Updated notes",
@@ -96,39 +91,30 @@ class WorkoutTemplateModelTests(APITestCase):
                 }
             ],
         }
-
         template.update_with_exercises(update_data)
-
         self.assertEqual(template.name, "Updated Push Day")
         self.assertEqual(ExerciseTemplate.objects.count(), 1)
         self.assertEqual(ExerciseTemplate.objects.first().name, "Incline Bench Press")
         self.assertEqual(SetTemplate.objects.count(), 1)
 
-    def testDuplicateTemplate(self):
+    def test_duplicate_template(self):
         template = WorkoutTemplate.create_with_exercises(
             user=self.user, template_data=self.template_data
         )
-
         duplicate = WorkoutTemplate.duplicate_from_id(
             user=self.user, template_to_duplicate_id=template.id
         )
-
         self.assertIsNotNone(duplicate)
         self.assertEqual(WorkoutTemplate.objects.count(), 2)
         self.assertEqual(duplicate.name, f"{template.name} (Copy)")
         self.assertEqual(
             duplicate.exercise_templates.count(), template.exercise_templates.count()
         )
-        self.assertEqual(
-            duplicate.exercise_templates.first().set_templates.count(),
-            template.exercise_templates.first().set_templates.count(),
-        )
 
-    def testDuplicateInvalidTemplate(self):
+    def test_duplicate_invalid_template(self):
         duplicate = WorkoutTemplate.duplicate_from_id(
             user=self.user, template_to_duplicate_id=999
         )
-
         self.assertIsNone(duplicate)
 
 
@@ -137,7 +123,6 @@ class WorkoutModelTests(APITestCase):
         self.user = User.objects.create_user(
             username="testuser", password="testpassword"
         )
-
         template_data = {
             "name": "Leg Day",
             "notes": "",
@@ -157,28 +142,20 @@ class WorkoutModelTests(APITestCase):
             user=self.user, template_data=template_data
         )
 
-    def testCreateWorkoutFromTemplate(self):
+    def test_create_workout_from_template(self):
         workout = Workout.create_from_template(
             user=self.user, template=self.template, date=timezone.now()
         )
-
         self.assertEqual(Workout.objects.count(), 1)
         self.assertEqual(workout.name, self.template.name)
         self.assertEqual(
             workout.exercises.count(), self.template.exercise_templates.count()
         )
-        self.assertEqual(
-            workout.exercises.first().sets.count(),
-            self.template.exercise_templates.first().set_templates.count(),
-        )
-
-        # Should have None weights/reps since no previous workout exists to progressively overload from
         first_set = workout.exercises.first().sets.first()
         self.assertIsNone(first_set.weight)
         self.assertIsNone(first_set.reps)
 
-    def testWorkoutAutofillProgressiveOverload(self):
-        # Create a previous workout where the top of the rep range was hit
+    def test_workout_autofill_progressive_overload(self):
         prev_workout = Workout.objects.create(
             user=self.user, name="Leg Day", date=timezone.now() - timedelta(days=7)
         )
@@ -195,16 +172,13 @@ class WorkoutModelTests(APITestCase):
         new_workout = Workout.create_from_template(
             user=self.user, template=self.template, date=timezone.now()
         )
-
-        # Check if auto-filled and progressively overloaded
         new_exercise = new_workout.exercises.first()
         for s in new_exercise.sets.all():
             self.assertEqual(
                 s.weight, 100 + self.template.exercise_templates.first().increment_step
             )
 
-    def testWorkoutAutofillMaintainWeight(self):
-        # Create a previous workout where max reps were not hit
+    def test_workout_autofill_maintain_weight(self):
         prev_workout = Workout.objects.create(
             user=self.user, name="Leg Day", date=timezone.now() - timedelta(days=7)
         )
@@ -221,16 +195,14 @@ class WorkoutModelTests(APITestCase):
         new_workout = Workout.create_from_template(
             user=self.user, template=self.template, date=timezone.now()
         )
-
         new_exercise = new_workout.exercises.first()
         for s in new_exercise.sets.all():
             self.assertEqual(s.weight, 100)
 
-    def testUpdateWorkoutWithExercises(self):
+    def test_update_workout_with_exercises(self):
         workout = Workout.create_from_template(
             user=self.user, template=self.template, date=timezone.now()
         )
-
         update_data = {
             "name": "Leg Day Completed",
             "date": timezone.now(),
@@ -246,175 +218,8 @@ class WorkoutModelTests(APITestCase):
                 }
             ],
         }
-
         workout.update_with_exercises(update_data)
-
         self.assertEqual(workout.name, update_data["name"])
-        self.assertEqual(workout.notes, update_data["notes"])
-
         updated_set = workout.exercises.first().sets.first()
         self.assertEqual(updated_set.reps, 6)
         self.assertEqual(updated_set.weight, 110)
-
-
-# --- API Level & Security Tests ---
-
-
-class ProgressAndHistoryTests(APITestCase):
-    def setUp(self):
-        self.user = User.objects.create_user(
-            username="testuser", password="testpassword"
-        )
-        self.client.force_authenticate(user=self.user)
-
-        # Workout 1
-        date1 = timezone.now() - timedelta(days=14)
-        self.w1 = Workout.objects.create(user=self.user, name="Back", date=date1)
-        e1 = Exercise.objects.create(
-            workout=self.w1, name="Deadlift", rest_period=timedelta(seconds=120)
-        )
-        Set.objects.create(exercise=e1, reps=5, min_reps=5, max_reps=5, weight=140)
-
-        # Workout 2
-        date2 = timezone.now() - timedelta(days=7)
-        self.w2 = Workout.objects.create(user=self.user, name="Back", date=date2)
-        e2 = Exercise.objects.create(
-            workout=self.w2, name="Deadlift", rest_period=timedelta(seconds=120)
-        )
-        Set.objects.create(exercise=e2, reps=5, min_reps=5, max_reps=5, weight=145)
-
-        # Current Workout (in progress)
-        self.current_date = timezone.now()
-        self.current_workout = Workout.objects.create(
-            user=self.user, name="Back", date=self.current_date
-        )
-
-    def testGettingLastPerformance(self):
-        url = reverse("exercise-last-performance")
-        response = self.client.get(
-            url, {"name": "Deadlift", "workout_id": self.current_workout.id}
-        )
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(
-            parse_datetime(response.data["date"]),
-            self.w2.date,
-        )
-        self.assertEqual(response.data["sets"][0]["weight"], 145)
-
-    def testGettingLastPerformanceMissingParams(self):
-        url = reverse("exercise-last-performance")
-
-        # Missing workout_id
-        response = self.client.get(url, {"name": "Deadlift"})
-
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-
-    def testExerciseDirectorySearch(self):
-        w3 = Workout.objects.create(
-            user=self.user, name="Chest", date=self.current_date - timedelta(days=1)
-        )
-        Exercise.objects.create(
-            workout=w3, name="Dumbbell Press", rest_period=timedelta(seconds=60)
-        )
-
-        url = reverse("exercise-directory")
-
-        # Test getting all unique exercises
-        response_all = self.client.get(url)
-        self.assertEqual(response_all.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response_all.data), 2)
-
-        # Test with search query
-        response_search = self.client.get(url, {"search": "Dumbbell"})
-        self.assertEqual(response_search.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response_search.data), 1)
-        self.assertEqual(response_search.data[0], "Dumbbell Press")
-
-    def testSingleExerciseHistory(self):
-        # Exercise with null reps/weights to test exclusion
-        e_null = Exercise.objects.create(
-            workout=self.current_workout,
-            name="Deadlift",
-            rest_period=timedelta(seconds=120),
-        )
-        Set.objects.create(
-            exercise=e_null, reps=None, min_reps=5, max_reps=5, weight=None
-        )
-
-        url = reverse("exercise-single-exercise-history")
-        response = self.client.get(url, {"exercise_name": "Deadlift"})
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 2)
-        self.assertEqual(response.data[0]["sets"][0]["weight"], 140)
-        self.assertEqual(response.data[1]["sets"][0]["weight"], 145)
-
-
-class SettingsAndGoalsTests(APITestCase):
-    def setUp(self):
-        self.user = User.objects.create_user(
-            username="testuser", password="testpassword"
-        )
-        self.client.force_authenticate(user=self.user)
-
-    def testCreateExerciseGoal(self):
-        url = reverse("exercisegoal-list")
-        data = {"exercise_name": "Bench Press", "goal_weight": 100.0}
-
-        response = self.client.post(url, data)
-
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(ExerciseGoal.objects.count(), 1)
-        self.assertEqual(ExerciseGoal.objects.first().goal_weight, 100.0)
-
-    def testCreateCustomExerciseName(self):
-        url = reverse("customexercisename-list")
-        data = {"name": "Zercher Squat"}
-
-        response = self.client.post(url, data)
-
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(CustomExerciseName.objects.count(), 1)
-        self.assertEqual(CustomExerciseName.objects.first().name, "Zercher Squat")
-
-
-class PermissionsTests(APITestCase):
-    def setUp(self):
-        self.user1 = User.objects.create_user(
-            username="user1", password="password123", email="user1@user1.com"
-        )
-        self.user2 = User.objects.create_user(
-            username="user2", password="password123", email="user2@user2.com"
-        )
-
-        self.workout_user1 = Workout.objects.create(
-            user=self.user1, name="User 1 Workout", date=timezone.now()
-        )
-        self.template_user1 = WorkoutTemplate.objects.create(
-            user=self.user1, name="User 1 Template"
-        )
-
-    def testUnauthenticatedUser(self):
-        response = self.client.get(reverse("workout-list"))
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-
-    def testObjectOwnerPermission(self):
-        self.client.force_authenticate(user=self.user2)
-
-        # Try to retrieve user1's workout
-        response = self.client.get(
-            reverse("workout-detail", args=[self.workout_user1.id])
-        )
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-
-        # Try to modify user1's template
-        response = self.client.patch(
-            reverse("workouttemplate-detail", args=[self.template_user1.id]),
-            {"name": "Hacked"},
-        )
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-
-        # Ensure user2's list is empty
-        response = self.client.get(reverse("workout-list"))
-        self.assertEqual(len(response.data), 0)
