@@ -10,11 +10,11 @@ services:
     volumes:
       - mysql_data:/var/lib/mysql
 
-  backend:
+  django:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: lifting_log_backend
+    container_name: lifting_log_django
     restart: always
     env_file:
       - .env
