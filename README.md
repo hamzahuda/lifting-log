@@ -2,7 +2,7 @@
 
 An Android weightlifting tracker designed to act as "Invisible Coach", automatically incrementing your lifts and estimating strength gain timelines so you can focus purely on the lift.
 
-For an in depth look at the entire development cycle read the full [Undergraduate Project Report](./readme-files/Mohammed_Hamza_Huda_UG_Project_Report.pdf).
+For an in depth look at the code and development cycle read the full [Undergraduate Project Report](./readme-files/Mohammed_Hamza_Huda_UG_Project_Report.pdf).
 
 <table>
   <tr>
