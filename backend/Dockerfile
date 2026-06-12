@@ -1,5 +1,9 @@
 FROM python:3.11-slim
 
+RUN groupadd -g 999 appuser && \
+    useradd -r -u 999 -g appuser appuser
+USER appuser
+
 RUN apt-get update && apt-get install -y \
     gcc \
     libmariadb-dev \
