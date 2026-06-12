@@ -7,7 +7,9 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 RUN groupadd -g 999 appuser && \
-    useradd -r -u 999 -g appuser appuser
+    useradd -r -u 999 -g appuser appuser \
+    mkdir -p /home/appuser && \
+    chown -R appuser:appuser /home/appuser
 
 WORKDIR /app
 
