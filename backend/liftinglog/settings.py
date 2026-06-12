@@ -87,9 +87,9 @@ WSGI_APPLICATION = "liftinglog.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
-        "NAME": env("DATABASE_NAME"),
+        "NAME": env("MYSQL_DATABASE"),
         "USER": env("DATABASE_USER"),
-        "PASSWORD": env("DATABASE_PASSWORD"),
+        "PASSWORD": env("MYSQL_ROOT_PASSWORD"),
         "HOST": env("DATABASE_HOST"),
         "PORT": env("DATABASE_PORT"),
         "OPTIONS": {"init_command": "SET sql_mode='STRICT_TRANS_TABLES'"},
@@ -162,11 +162,10 @@ SUPABASE_AUDIENCE = env("SUPABASE_AUDIENCE")
 SUPABASE_SECRET_KEY = env("SUPABASE_SECRET_KEY")
 
 
-# ==============================================================================
 # PRODUCTION SECURITY SETTINGS
-# ==============================================================================
 if not DEBUG:
     SECURE_SSL_REDIRECT = True
+    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
     SECURE_HSTS_SECONDS = env.int("SECURE_HSTS_SECONDS", default=31536000)  # 1 Year
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_HSTS_PRELOAD = True
