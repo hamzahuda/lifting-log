@@ -1,0 +1,24 @@
+services:
+  db:
+    restart: always
+
+  django:
+    restart: always
+    volumes:
+      - static_volume:/app/staticfiles
+
+  nginx:
+    image: nginx:alpine
+    container_name: lifting_log_nginx
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx:/etc/nginx/conf.d
+      - static_volume:/app/staticfiles
+    depends_on:
+      - django
+
+volumes:
+  static_volume:

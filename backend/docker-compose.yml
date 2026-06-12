@@ -2,25 +2,37 @@ services:
   db:
     image: mysql:8.0
     container_name: lifting_log_db
-    restart: always
     env_file:
       - .env
-    ports:
-      - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "mysqladmin",
+          "ping",
+          "-h",
+          "localhost",
+          "-u",
+          "root",
+          "-p${MYSQL_ROOT_PASSWORD}",
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 55
+      start_period: 5s
 
   django:
     build:
       context: .
       dockerfile: Dockerfile
     container_name: lifting_log_django
-    restart: always
     env_file:
       - .env
-    ports:
-      - "8000:8000"
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+
 volumes:
   mysql_data:
