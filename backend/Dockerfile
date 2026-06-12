@@ -8,10 +8,6 @@ RUN apt-get update && apt-get install -y \
 
 RUN groupadd -g 999 appuser && \
     useradd -r -u 999 -g appuser appuser
-<<<<<<< HEAD
-=======
-USER appuser
->>>>>>> 5b90c2bd1dbf63592807d1493f2afb65a3608e33
 
 WORKDIR /app
 
