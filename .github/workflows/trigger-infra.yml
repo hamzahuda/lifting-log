@@ -1,0 +1,68 @@
+name: CI Testing & Deployment Trigger
+
+on:
+    push:
+        branches:
+            - "**"
+
+jobs:
+    test-and-validate:
+        runs-on: ubuntu-latest
+
+        services:
+            mysql:
+                image: mysql:8.0
+                env:
+                    MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+                    MYSQL_DATABASE: test_lifting_log
+                ports:
+                    - 3306:3306
+                options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
+        steps:
+            - name: Checkout Application Code
+              uses: actions/checkout@v4
+
+            - name: Set up Python
+              uses: actions/setup-python@v5
+              with:
+                  python-version: "3.11"
+                  cache: "pip"
+
+            - name: Install Dependencies
+              run: |
+                  python -m pip install --upgrade pip
+                  pip install -r requirements.txt
+                  pip install flake8
+
+            - name: Run Code Linter (Flake8)
+              run: |
+                  flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+
+            - name: Run Django Tests
+              env:
+                  DEBUG: "True"
+                  DJANGO_SECRET_KEY: "temporary-ci-secret-key-for-testing"
+                  MYSQL_DATABASE: "test_lifting_log"
+                  DATABASE_USER: "root"
+                  MYSQL_ROOT_PASSWORD: ""
+                  DATABASE_HOST: "127.0.0.1"
+                  DATABASE_PORT: "3306"
+                  SUPABASE_URL: "https://placeholder.supabase.co"
+                  SUPABASE_AUDIENCE: "authenticated"
+                  SUPABASE_SECRET_KEY: "placeholder"
+              run: |
+                  python manage.py test
+
+    # PING INFRA REPO (ONLY IF TESTS PASS AND WE MERGED TO MAIN)
+    ping-infra-repo:
+        needs: test-and-validate
+        if: github.ref == 'refs/heads/main'
+        runs-on: ubuntu-latest
+        steps:
+            - name: Emit Repository Dispatch Event
+              uses: peter-evans/repository-dispatch@v3
+              with:
+                  token: ${{ secrets.INFRA_TRIGGER_TOKEN }}
+                  repository: hamzahuda/lifting-log-infra
+                  event-type: app_code_updated
