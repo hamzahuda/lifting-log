@@ -32,12 +32,12 @@ jobs:
             - name: Install Dependencies
               run: |
                   python -m pip install --upgrade pip
-                  pip install -r requirements.txt
+                  pip install -r backend/requirements.txt
                   pip install flake8
 
             - name: Run Code Linter (Flake8)
               run: |
-                  flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+                  flake8 backend/ --count --select=E9,F63,F7,F82 --show-source --statistics
 
             - name: Run Django Tests
               env:
@@ -52,6 +52,7 @@ jobs:
                   SUPABASE_AUDIENCE: "authenticated"
                   SUPABASE_SECRET_KEY: "placeholder"
               run: |
+                  cd backend
                   python manage.py test
 
     # PING INFRA REPO (ONLY IF TESTS PASS AND WE MERGED TO MAIN)
