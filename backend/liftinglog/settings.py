@@ -89,7 +89,7 @@ WSGI_APPLICATION = "liftinglog.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.mysql",
+        "ENGINE": "django_prometheus.db.backends.mysql",
         "NAME": env("MYSQL_DATABASE"),
         "USER": env("DATABASE_USER"),
         "PASSWORD": env("MYSQL_ROOT_PASSWORD"),
