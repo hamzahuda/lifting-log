@@ -5,4 +5,5 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("api-auth/", include("rest_framework.urls")),
     path("api/", include("tracker.urls")),
+    path("", include("django_prometheus.urls")),
 ]
