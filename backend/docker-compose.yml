@@ -34,18 +34,5 @@ services:
       db:
         condition: service_healthy
 
-  prometheus:
-    image: prom/prometheus:latest
-    volumes:
-      - ./prometheus.yml:/etc/prometheus/prometheus.yml
-      - prometheus_data:/prometheus
-
-  grafana:
-    image: grafana/grafana:latest
-    volumes:
-      - grafana_data:/var/lib/grafana
-
 volumes:
   mysql_data:
-  prometheus_data:
-  grafana_data:
